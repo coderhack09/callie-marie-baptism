@@ -112,7 +112,7 @@ Now, as they prepare to say yes before God and the people they love most, Cather
   },
   snapShare: {
     googleDriveLink: "https://drive.google.com/drive/folders/1VOkvdD_1YhX3P-g4p7UbLiYFNQnNbcTH?usp=sharing",
-    hashtag: ["#JezelAndRodel","#JezelAndRodelWedding"],
+    hashtag: ["#NiahnaCelestine","#NiahnaCelestineChristening"],
     instructions: "Please scan this QR Code, create a folder with your name and upload the photos and videos you have taken during our wedding reception. We are delighted to see your snaps too!",
   },
 }
