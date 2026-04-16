@@ -1,9 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import Link from "next/link"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
-import { Cormorant_Garamond, Cinzel } from "next/font/google"
 import { Section } from "@/components/section"
 import { CloudinaryImage } from "@/components/ui/cloudinary-image"
 import { getCloudinaryUrl } from "@/lib/cloudinary"
@@ -22,38 +20,26 @@ function onImgError(e: React.SyntheticEvent<HTMLImageElement>, fallback: string)
 }
 // Removed circular gallery in favor of a responsive masonry layout
 
-// Palette lives in globals.css → @theme inline → --color-motif-*
-// Edit there once to update every component.
-
-// CSS filter approximation of --color-motif-deep (sage green). Tune if needed.
-const GALLERY_DECO_FILTER = ""
-  // "brightness(0) saturate(100%) invert(37%) sepia(20%) saturate(500%) hue-rotate(80deg) brightness(88%) contrast(92%)"
-
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["400"],
-})
-
-const cinzel = Cinzel({
-  subsets: ["latin"],
-  weight: ["400", "600"],
-})
+// ── Motif palette ─────────────────────────────────────────────────────────────
+const DEEP   = "#8B6F5A"
+const MEDIUM = "#BFA07A"
+const ACCENT = "#CFA06B"
 
 const galleryItems = [
-  { image: "/mobile-background/couple (1).webp", text: " " },
-  { image: "/mobile-background/couple (7).webp", text: " " },
-  { image: "/mobile-background/couple (4).webp", text: " " },
-  { image: "/mobile-background/couple (9).webp", text: " " },
-  { image: "/mobile-background/couple (11).webp", text: " " },
-  { image: "/mobile-background/couple (14).webp", text: " " },
-  { image: "/mobile-background/couple (15).webp", text: " " },
-  { image: "/mobile-background/couple (16).webp", text: " " },
-  { image: "/mobile-background/couple (18).webp", text: " " },
-  { image: "/mobile-background/couple (19).webp", text: " " },
-  { image: "/mobile-background/couple (20).webp", text: " " },
-  { image: "/mobile-background/couple (21).webp", text: " " },
-  { image: "/mobile-background/couple (22).webp", text: " " },
-  { image: "/mobile-background/couple (23).webp", text: " " },
+  { image: "/mobile_display/baby (1).jpg"  },
+  { image: "/mobile_display/baby (3).jpg"  },
+  { image: "/mobile_display/baby (4).jpg"  },
+  { image: "/mobile_display/baby (5).jpg"  },
+  { image: "/mobile_display/baby (6).jpg"  },
+  { image: "/mobile_display/baby (8).jpg"  },
+  { image: "/mobile_display/baby (9).jpg"  },
+  { image: "/mobile_display/baby (11).jpg" },
+  { image: "/mobile_display/baby (13).jpg" },
+  { image: "/mobile_display/baby (15).jpg" },
+  { image: "/mobile_display/baby (17).jpg" },
+  { image: "/mobile_display/baby (18).jpg" },
+  { image: "/mobile_display/baby (20).jpg" },
+  { image: "/mobile_display/baby (21).jpg" },
 ]
 
 export function Gallery() {
@@ -151,78 +137,61 @@ export function Gallery() {
 
       <Section
         id="gallery"
-        className="relative z-10 py-16 sm:py-20 md:py-24 lg:py-28 overflow-hidden"
+        className="relative z-10 py-16 sm:py-20 md:py-24 lg:py-28"
       >
       {/* Corner floral decoration - aligned with Details section */}
       <div className="absolute inset-0 pointer-events-none z-[1]">
-        <CloudinaryImage
-          src="/decoration/flower-decoration-left-bottom-corner2.png"
-          alt=""
-          width={300}
-          height={300}
-          className="absolute top-0 left-0 w-auto h-auto max-w-[120px] sm:max-w-[160px] md:max-w-[200px]"
-          style={{ transform: "scaleY(-1)", filter: GALLERY_DECO_FILTER }}
-          priority={false}
-        />
-        <CloudinaryImage
-          src="/decoration/flower-decoration-left-bottom-corner2.png"
-          alt=""
-          width={300}
-          height={300}
-          className="absolute top-0 right-0 w-auto h-auto max-w-[120px] sm:max-w-[160px] md:max-w-[200px]"
-          style={{ transform: "scaleX(-1) scaleY(-1)", filter: GALLERY_DECO_FILTER }}
-          priority={false}
-        />
-        <CloudinaryImage
-          src="/decoration/flower-decoration-left-bottom-corner2.png"
-          alt=""
-          width={300}
-          height={300}
-          className="absolute bottom-0 left-0 w-auto h-auto max-w-[120px] sm:max-w-[160px] md:max-w-[200px]"
-          style={{ filter: GALLERY_DECO_FILTER }}
-          priority={false}
-        />
-        <CloudinaryImage
-          src="/decoration/flower-decoration-left-bottom-corner2.png"
-          alt=""
-          width={300}
-          height={300}
-          className="absolute bottom-0 right-0 w-auto h-auto max-w-[120px] sm:max-w-[160px] md:max-w-[200px]"
-          style={{ transform: "scaleX(-1)", filter: GALLERY_DECO_FILTER }}
-          priority={false}
-        />
+       
       </div>
 
-      {/* Header — wedding palette & copy */}
+      {/* Header */}
       <div className="relative z-10 text-center mb-12 sm:mb-16 md:mb-20 px-4 sm:px-6">
+
+        {/* Eyebrow */}
         <p
-          className={`${cormorant.className} text-[0.7rem] sm:text-xs md:text-sm uppercase tracking-[0.28em] mb-2`}
-          style={{ color: 'var(--color-motif-medium)' }}
+          className="garamond"
+          style={{
+            fontSize: "clamp(0.56rem, 2.2vw, 0.72rem)",
+            letterSpacing: "0.48em",
+            textTransform: "uppercase",
+            color: ACCENT,
+            marginBottom: "0.5rem",
+            paddingRight: "0.48em",
+          }}
         >
-          Our Story in Frames
-        </p>
-        <h2
-          className="lighten-regular text-[32px] sm:text-[40px] md:text-[48px] lg:text-[56px] xl:text-[64px] leading-tight"
-          style={{ color: 'var(--color-motif-deep)' }}
-        >
-          Gallery
-        </h2>
-        <p
-          className={`${cormorant.className} text-xs sm:text-sm md:text-base font-light max-w-xl mx-auto leading-relaxed px-2 mb-3 sm:mb-4`}
-          style={{ color: 'var(--color-motif-medium)' }}
-        >
-          From our first chapter to this beautiful season of commitment, every moment has been a testament to love, faith, and grace. We share these memories with heartfelt gratitude as we look forward to the lifetime that awaits us.
+          Precious Moments
         </p>
 
-        {/* Decorative element — motif accent dividers */}
-        <div className="flex items-center justify-center gap-2 mt-3 sm:mt-4">
-          <span className="h-px w-10 sm:w-14 rounded-full bg-motif-accent/60" />
-          <div className="flex gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full opacity-80 bg-motif-accent" />
-            <span className="w-1.5 h-1.5 rounded-full opacity-50 bg-motif-accent" />
-            <span className="w-1.5 h-1.5 rounded-full opacity-80 bg-motif-accent" />
-          </div>
-          <span className="h-px w-10 sm:w-14 rounded-full bg-motif-accent/60" />
+        {/* Ornament */}
+        <div className="flex items-center justify-center gap-3 mb-2">
+          <div className="h-px w-8 sm:w-12" style={{ background: `linear-gradient(to left, rgba(207,160,107,0.4), transparent)` }} />
+          <span style={{ color: ACCENT, fontSize: "7px", opacity: 0.7 }}>✦</span>
+          <div className="h-px w-8 sm:w-12" style={{ background: `linear-gradient(to right, rgba(207,160,107,0.4), transparent)` }} />
+        </div>
+
+        {/* Main title */}
+        <h2
+          className="gistesy"
+          style={{
+            fontSize: "clamp(2.4rem, 10vw, 5rem)",
+            color: DEEP,
+            lineHeight: 1.3,
+            letterSpacing: "-0.01em",
+            textShadow: `0 2px 24px rgba(139,111,90,0.12)`,
+            marginBottom: "0.6rem",
+            overflow: "visible",
+            paddingTop: "0.2em",
+          }}
+        >
+            Gallery
+        </h2>
+
+
+        {/* Divider */}
+        <div className="flex items-center justify-center gap-3">
+          <div className="h-px w-10 sm:w-14" style={{ background: `linear-gradient(to left, rgba(207,160,107,0.45), transparent)` }} />
+          <span style={{ color: "#D4B896", fontSize: "5px" }}>◆</span>
+          <div className="h-px w-10 sm:w-14" style={{ background: `linear-gradient(to right, rgba(207,160,107,0.45), transparent)` }} />
         </div>
       </div>
 
@@ -257,7 +226,7 @@ export function Gallery() {
                           <img
                             src={imgSrc(item.image, 600)}
                             onError={(e) => onImgError(e, item.image)}
-                            alt={item.text || `Gallery image ${index + 1}`}
+                            alt={`Gallery image ${index + 1}`}
                             loading="lazy"
                             decoding="async"
                             className="w-full h-full object-cover transition-transform duration-500 group-active:scale-[1.02]"
@@ -290,7 +259,7 @@ export function Gallery() {
                         <img
                           src={imgSrc(item.image, 500)}
                           onError={(e) => onImgError(e, item.image)}
-                          alt={item.text || `Gallery image ${index + 1}`}
+                          alt={`Gallery image ${index + 1}`}
                           loading="lazy"
                           decoding="async"
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
@@ -304,36 +273,6 @@ export function Gallery() {
               </>
             )}
 
-            {/* View more */}
-            {!isLoading && (
-              <div className="mt-10 sm:mt-12 flex justify-center">
-                <Link
-                  href="/gallery"
-                  onClick={() => sessionStorage.setItem("returnFromGallery", "true")}
-                  className={`${cinzel.className} inline-flex items-center justify-center rounded-sm px-8 py-3.5 text-[0.65rem] sm:text-xs uppercase tracking-[0.22em] font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-motif-cream focus-visible:ring-motif-deep`}
-                  style={{
-                    color: 'var(--color-motif-cream)',
-                    backgroundColor: 'var(--color-motif-deep)',
-                    border: '2px solid var(--color-motif-deep)',
-                    boxShadow: '0 4px 14px color-mix(in srgb, var(--color-motif-deep) 13%, transparent)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'var(--color-motif-accent)'
-                    e.currentTarget.style.borderColor = 'var(--color-motif-deep)'
-                    e.currentTarget.style.color = 'var(--color-motif-cream)'
-                    e.currentTarget.style.boxShadow = '0 6px 20px color-mix(in srgb, var(--color-motif-deep) 19%, transparent)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'var(--color-motif-accent)'
-                    e.currentTarget.style.borderColor = 'var(--color-motif-deep)'
-                    e.currentTarget.style.color = 'var(--color-motif-cream)'
-                    e.currentTarget.style.boxShadow = '0 4px 14px color-mix(in srgb, var(--color-motif-deep) 13%, transparent)'
-                  }}
-                >
-                  View full gallery
-                </Link>
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -461,7 +400,7 @@ export function Gallery() {
                 <img
                   src={imgSrc(selectedImage.image, 1200)}
                   onError={(e) => onImgError(e, selectedImage.image)}
-                  alt={selectedImage.text || "Gallery image"}
+                  alt="Gallery image"
                   style={{ 
                     transform: `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${zoomScale})`, 
                     transition: pinchStartDist ? 'none' : 'transform 200ms ease-out' 

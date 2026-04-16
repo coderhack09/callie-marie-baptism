@@ -2,369 +2,466 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "motion/react"
-import { Instagram, Twitter, Facebook, MapPin, Calendar, Clock, Heart, Music2 } from "lucide-react"
+import { Instagram, Facebook, MapPin, Calendar, Clock, Heart, Music2, Twitter } from "lucide-react"
 import { siteConfig } from "@/content/site"
-import { Cormorant_Garamond, Cinzel } from "next/font/google"
 import { CloudinaryImage } from "@/components/ui/cloudinary-image"
 
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["400"],
-})
+// ── Motif palette ─────────────────────────────────────────────────────────────
+const DEEP   = "#8B6F5A"
+const MEDIUM = "#BFA07A"
+const ACCENT = "#CFA06B"
 
-const cinzel = Cinzel({
-  subsets: ["latin"],
-  weight: ["400", "600"],
-})
-
-// Colors sourced from globals.css @theme inline — edit there to update everywhere
-const palette = {
-  deep:           "var(--color-motif-deep)",    // sage green — headings, icons
-  softBrown:      "var(--color-motif-medium)",  // muted sage — body text, links
-  background:     "var(--color-motif-cream)",   // warm ivory — page surface
-  champagneGold:  "var(--color-motif-silver)",  // luxury silver — accents, borders
-  champagneLight: "var(--color-motif-cream)",   // same as background
-} as const
+const toTitleCase = (str: string) =>
+  str.toLowerCase().split(" ").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
 
 const DECO_FILTER =
-  "brightness(0) saturate(100%) invert(22%) sepia(88%) saturate(1800%) hue-rotate(185deg) brightness(90%) contrast(105%)"
-
-// Helper function to convert text to title case (first letter of each word uppercase)
-const toTitleCase = (str: string) => {
-  return str
-    .toLowerCase()
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ')
-}
+  "brightness(0) saturate(100%) invert(62%) sepia(40%) saturate(400%) hue-rotate(5deg) brightness(95%) contrast(90%)"
 
 export function Footer() {
-  const year = new Date().getFullYear()
-  const ceremonyDate = siteConfig.ceremony.date
-  const ceremonyTime = siteConfig.ceremony.time
+  const year          = new Date().getFullYear()
+  const ceremonyDate  = siteConfig.ceremony.date
+  const ceremonyTime  = siteConfig.ceremony.time
   const receptionTime = siteConfig.reception.time
   const ceremonyVenue = siteConfig.ceremony.venue
   const receptionVenue = siteConfig.reception.venue
-  // Combined venue when same for both (e.g. Altamers Mountain Resort)
-  const isSameVenue = ceremonyVenue === receptionVenue
-  const combinedVenue = isSameVenue ? ceremonyVenue : null
+  const isSameVenue   = ceremonyVenue === receptionVenue
+  const childName     = siteConfig.couple.child ?? `${siteConfig.couple.brideNickname} & ${siteConfig.couple.groomNickname}`
+  const brideNickname = siteConfig.couple.brideNickname
+  const groomNickname = siteConfig.couple.groomNickname
 
   const quotes = [
-    `"I have found the one whom my soul loves." – Song of Solomon 3:4`,
-    "Welcome to our wedding website! We've found a love that's a true blessing, and we give thanks to God for writing the beautiful story of our journey together.",
-    "Thank you for your love, prayers, and support. We can't wait to celebrate this joyful day together!",
+    `"Children are a heritage from the Lord, offspring a reward from Him." — Psalm 127:3`,
+    "Today we celebrate Niahna Celestine's first blessing — a sacred moment of grace, faith, and gratitude shared with those we love.",
+    "Thank you for your presence, your prayers, and your love. We are truly grateful to celebrate this milestone with you.",
   ]
 
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0)
-  const [displayedText, setDisplayedText] = useState("")
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [isPaused, setIsPaused] = useState(false)
+  const [displayedText, setDisplayedText]         = useState("")
+  const [isDeleting, setIsDeleting]               = useState(false)
+  const [isPaused, setIsPaused]                   = useState(false)
 
   useEffect(() => {
     if (isPaused) {
-      const pauseTimeout = setTimeout(() => {
-        setIsPaused(false)
-      }, 3000)
-      return () => clearTimeout(pauseTimeout)
+      const t = setTimeout(() => setIsPaused(false), 3000)
+      return () => clearTimeout(t)
     }
-
     if (isDeleting) {
       if (displayedText.length > 0) {
-        const deleteTimeout = setTimeout(() => {
-          setDisplayedText(displayedText.slice(0, -1))
-        }, 30)
-        return () => clearTimeout(deleteTimeout)
+        const t = setTimeout(() => setDisplayedText(displayedText.slice(0, -1)), 28)
+        return () => clearTimeout(t)
       } else {
         setIsDeleting(false)
-        setCurrentQuoteIndex((prev) => (prev + 1) % quotes.length)
+        setCurrentQuoteIndex((p) => (p + 1) % quotes.length)
       }
     } else {
-      const currentQuote = quotes[currentQuoteIndex]
-      if (displayedText.length < currentQuote.length) {
-        const typeTimeout = setTimeout(() => {
-          setDisplayedText(currentQuote.slice(0, displayedText.length + 1))
-        }, 50)
-        return () => clearTimeout(typeTimeout)
+      const current = quotes[currentQuoteIndex]
+      if (displayedText.length < current.length) {
+        const t = setTimeout(() => setDisplayedText(current.slice(0, displayedText.length + 1)), 48)
+        return () => clearTimeout(t)
       } else {
         setIsPaused(true)
         setIsDeleting(true)
       }
     }
-  }, [displayedText, isDeleting, isPaused, currentQuoteIndex, quotes])
+  }, [displayedText, isDeleting, isPaused, currentQuoteIndex])
 
   const fadeInUp = {
-    initial: { opacity: 0, y: 60 },
+    initial: { opacity: 0, y: 50 },
     animate: { opacity: 1, y: 0 },
     transition: { duration: 0.8, ease: "easeOut" },
   }
-
-  const staggerChildren = {
-    animate: {
-      transition: { staggerChildren: 0.2 },
-    },
-  }
+  const staggerChildren = { animate: { transition: { staggerChildren: 0.18 } } }
 
   const nav = [
-    { label: "Home", href: "#home" },
-    { label: "Events", href: "#details" },
-    { label: "Gallery", href: "#gallery" },
-    { label: "RSVP", href: "#guest-list" },
+    { label: "Home",        href: "#home" },
+    { label: "Details",     href: "#details" },
+    { label: "Gallery",     href: "#gallery" },
+    { label: "RSVP",        href: "#guest-list" },
+    { label: "Messages",    href: "#messages" },
   ] as const
 
-  const brideNickname = siteConfig.couple.brideNickname
-  const groomNickname = siteConfig.couple.groomNickname
-
   return (
-    <div className="relative w-full" style={{ backgroundColor: palette.background }}>
-      {/* Full-bleed layered background — align with gallery/details */}
+    <div className="relative w-full" style={{ backgroundColor: "var(--color-motif-cream)" }}>
+      {/* Layered background */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div
-          className="absolute inset-0 opacity-[0.25]"
-          style={{
-            background: 'linear-gradient(165deg, var(--color-motif-cream) 0%, color-mix(in srgb, var(--color-motif-silver) 13%, transparent) 35%, color-mix(in srgb, var(--color-motif-medium) 6%, transparent) 70%, color-mix(in srgb, var(--color-motif-deep) 3%, transparent) 100%)',
-          }}
-        />
-        <div
-          className="absolute inset-0 opacity-[0.08]"
-          style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 15%, var(--color-motif-silver) 0%, transparent 55%)' }}
-        />
+        <div className="absolute inset-0 opacity-[0.22]"
+          style={{ background: "linear-gradient(165deg, var(--color-motif-cream) 0%, rgba(212,184,150,0.14) 40%, rgba(207,160,107,0.06) 70%, rgba(139,111,90,0.03) 100%)" }} />
+        <div className="absolute inset-0 opacity-[0.07]"
+          style={{ background: "radial-gradient(ellipse 80% 45% at 50% 0%, rgba(207,160,107,0.5) 0%, transparent 60%)" }} />
       </div>
 
-      <footer className="relative z-10 mt-12 sm:mt-16 overflow-hidden">
-      {/* Corner decorations — deep brown tint (hero style) */}
-      {/* <div className="absolute left-0 top-0 z-0 pointer-events-none">
-        <CloudinaryImage src="/decoration/flower-decoration-left-bottom-corner2.png" alt="" width={300} height={300} className="w-auto h-auto max-w-[160px] sm:max-w-[200px] md:max-w-[240px] scale-y-[-1]" priority={false} style={{ filter: DECO_FILTER }} />
-      </div>
-      <div className="absolute right-0 top-0 z-0 pointer-events-none">
-        <CloudinaryImage src="/decoration/flower-decoration-left-bottom-corner2.png" alt="" width={300} height={300} className="w-auto h-auto max-w-[160px] sm:max-w-[200px] md:max-w-[240px] scale-x-[-1] scale-y-[-1]" priority={false} style={{ filter: DECO_FILTER }} />
-      </div>
-      <div className="absolute left-0 bottom-0 z-0 pointer-events-none">
-        <CloudinaryImage src="/decoration/flower-decoration-left-bottom-corner2.png" alt="" width={300} height={300} className="w-auto h-auto max-w-[160px] sm:max-w-[200px] md:max-w-[240px]" priority={false} style={{ filter: DECO_FILTER }} />
-      </div>
-      <div className="absolute right-0 bottom-0 z-0 pointer-events-none">
-        <CloudinaryImage src="/decoration/flower-decoration-left-bottom-corner2.png" alt="" width={300} height={300} className="w-auto h-auto max-w-[160px] sm:max-w-[200px] md:max-w-[240px] scale-x-[-1]" priority={false} style={{ filter: DECO_FILTER }} />
-      </div> */}
-      
-      {/* Monogram / Couple Illustration - centered at top */}
-      <div className="relative z-10 flex flex-col items-center pt-6 sm:pt-8 md:pt-10 mb-5 sm:mb-6 md:mb-8">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          className="relative"
-        >
-          <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 lg:w-80 lg:h-80 opacity-95">
-            <CloudinaryImage
-              src={siteConfig.couple.monogram}
-              alt={`${groomNickname} & ${brideNickname} monogram`}
-              fill
-              className="object-contain"
-              priority={false}
-              // style={{ filter: DECO_FILTER }}
-            />
-          </div>
-        </motion.div>
+      <footer className="relative z-10 overflow-hidden">
 
-        {/* Names & Date below illustration — dark text on white */}
-        <div className="mt-3 sm:mt-4 md:mt-5 text-center">
-          {/* <p className={`${cormorant.className} tracking-[0.25em] sm:tracking-[0.3em] text-xs sm:text-sm md:text-base uppercase`} style={{ color: palette.deep }}>
-            {brideNickname} & {groomNickname}
-          </p>
-          <p className={`${cormorant.className} text-sm sm:text-base md:text-lg mt-1 sm:mt-2`} style={{ color: palette.deep }}>
-            {ceremonyDate}
-          </p> */}
-          <p className={`${cormorant.className} text-xs sm:text-sm md:text-base`} style={{ color: palette.deep }}>
-            { siteConfig.ceremony.location || siteConfig.reception.location}
-          </p>
+        {/* Corner florals */}
+        <div className="absolute left-0 top-0 z-0 pointer-events-none">
+          {/* <CloudinaryImage src="/decoration/flower-decoration-left-bottom-corner2.png" alt="" width={280} height={280}
+            className="w-auto h-auto max-w-[120px] sm:max-w-[160px] md:max-w-[200px] opacity-40 scale-y-[-1]"
+            priority={false} style={{ filter: DECO_FILTER }} /> */}
         </div>
-      </div>
+        <div className="absolute right-0 top-0 z-0 pointer-events-none">
+          {/* <CloudinaryImage src="/decoration/flower-decoration-left-bottom-corner2.png" alt="" width={280} height={280}
+            className="w-auto h-auto max-w-[120px] sm:max-w-[160px] md:max-w-[200px] opacity-40 scale-x-[-1] scale-y-[-1]"
+            priority={false} style={{ filter: DECO_FILTER }} /> */}
+        </div>
+        <div className="absolute left-0 bottom-0 z-0 pointer-events-none">
+          {/* <CloudinaryImage src="/decoration/flower-decoration-left-bottom-corner2.png" alt="" width={280} height={280}
+            className="w-auto h-auto max-w-[120px] sm:max-w-[160px] md:max-w-[200px] opacity-40"
+            priority={false} style={{ filter: DECO_FILTER }} /> */}
+        </div>
+        <div className="absolute right-0 bottom-0 z-0 pointer-events-none">
+          {/* <CloudinaryImage src="/decoration/flower-decoration-left-bottom-corner2.png" alt="" width={280} height={280}
+            className="w-auto h-auto max-w-[120px] sm:max-w-[160px] md:max-w-[200px] opacity-40 scale-x-[-1]"
+            priority={false} style={{ filter: DECO_FILTER }} /> */}
+        </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 md:px-8 pb-6 sm:pb-8 md:pb-10">
-        <motion.div className="grid grid-cols-1 lg:grid-cols-4 gap-5 sm:gap-6 md:gap-8 mb-6 sm:mb-8 md:mb-10" variants={staggerChildren} initial="initial" animate="animate">
-          {/* Couple Info */}
-          <motion.div className="lg:col-span-2" variants={fadeInUp}>
-            <div className="mb-5 sm:mb-6 md:mb-8">
-              <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 md:mb-5">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full flex items-center justify-center flex-shrink-0 shadow-md" style={{ backgroundColor: 'color-mix(in srgb, var(--color-motif-deep) 9%, transparent)' }}>
-                  <Heart className="w-5 h-5 sm:w-6 sm:h-6 md:w-6 md:h-6 flex-shrink-0" style={{ color: palette.deep }} fill="var(--color-motif-deep)" />
-                </div>
-                <h3 
-                 className="lighten-regular text-[32px] sm:text-[40px] md:text-[48px] lg:text-[56px] xl:text-[64px] leading-tight"
-                 style={{ color: 'var(--color-motif-deep)' }}
-                >
-                  {brideNickname} & {groomNickname}
-                  </h3>
-              </div>
-              <div className="space-y-2.5 sm:space-y-3 md:space-y-4">
-                <div className={`flex items-center gap-2 sm:gap-2.5 md:gap-3 ${cormorant.className}`} style={{ color: palette.softBrown }}>
-                  <Calendar className="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 flex-shrink-0" style={{ color: palette.deep }} />
-                  <span className="text-sm sm:text-base md:text-lg font-medium text-motif-deep">{ceremonyDate}</span>
-                </div>
-                <div className={`flex items-center gap-2 sm:gap-2.5 md:gap-3 ${cormorant.className}`} style={{ color: palette.softBrown }}>
-                  <MapPin className="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 flex-shrink-0" style={{ color: palette.deep }} />
-                  <span className="text-xs sm:text-sm md:text-base leading-relaxed text-motif-deep">{toTitleCase(ceremonyVenue)}</span>
-                </div>
-              </div>
+        {/* ── Monogram / header ── */}
+        <div className="relative z-10 flex flex-col items-center pt-8 sm:pt-10 md:pt-12 mb-6 sm:mb-8">
+          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: "easeOut" }}>
+            <div className="relative w-44 h-44 sm:w-56 sm:h-56 md:w-68 md:h-68 lg:w-72 lg:h-72 opacity-90">
+              <CloudinaryImage
+                src={siteConfig.couple.monogram}
+                alt={`${childName} monogram`}
+                fill
+                className="object-contain"
+                priority={false}
+              />
             </div>
-
-            <motion.div className="backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg" style={{ backgroundColor: 'color-mix(in srgb, var(--color-motif-cream) 93%, transparent)', boxShadow: '0 18px 45px color-mix(in srgb, var(--color-motif-deep) 7%, transparent)' }} whileHover={{ scale: 1.02 }} transition={{ duration: 0.3 }}>
-              <blockquote className={`${cormorant.className} italic text-sm sm:text-base md:text-lg leading-relaxed min-h-[60px] sm:min-h-[70px] md:min-h-[80px]`} style={{ color: palette.deep }}>
-                &quot;{displayedText}
-                <span className="inline-block w-0.5 h-4 sm:h-5 md:h-6 ml-1 animate-pulse" style={{ backgroundColor: palette.champagneGold }}>|</span>&quot;
-              </blockquote>
-              <div className="flex items-center gap-1.5 sm:gap-2 mt-3 sm:mt-4">
-                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full" style={{ backgroundColor: palette.champagneGold }} />
-                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full opacity-60" style={{ backgroundColor: palette.champagneGold }} />
-                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full" style={{ backgroundColor: palette.champagneGold }} />
-              </div>
-            </motion.div>
           </motion.div>
 
-          {/* Event Details quick tiles — Ceremony & Reception combined when same venue */}
-          <motion.div className="space-y-3 sm:space-y-4 md:space-y-5" variants={fadeInUp}>
-            {isSameVenue ? (
-              <motion.div className="backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 transition-all duration-300 shadow-lg hover:shadow-xl" style={{ backgroundColor: 'color-mix(in srgb, var(--color-motif-cream) 93%, transparent)', boxShadow: '0 18px 45px color-mix(in srgb, var(--color-motif-deep) 7%, transparent)' }} whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-                <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3 mb-2.5 sm:mb-3 md:mb-4">
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-motif-deep rounded-full flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 flex-shrink-0" style={{ color: palette.background }} />
+          {/* Child name + venue */}
+          <div className="mt-3 sm:mt-4 text-center">
+            <p
+              className="gistesy"
+              style={{
+                fontSize: "clamp(1.5rem, 5.5vw, 2.6rem)",
+                color: DEEP,
+                lineHeight: 1.2,
+                overflow: "visible",
+                paddingTop: "0.08em",
+                marginBottom: "0.2rem",
+                textShadow: "0 2px 16px rgba(139,111,90,0.10)",
+              }}
+            >
+              {childName}
+            </p>
+            <p
+              className="garamond"
+              style={{ fontSize: "clamp(0.68rem, 2vw, 0.82rem)", color: MEDIUM, fontStyle: "italic", letterSpacing: "0.03em" }}
+            >
+              {toTitleCase(siteConfig.ceremony.location || siteConfig.reception.location)}
+            </p>
+          </div>
+
+          {/* Ornament divider */}
+          <div className="flex items-center gap-3 mt-3 sm:mt-4">
+            <div className="h-px w-12 sm:w-20" style={{ background: "linear-gradient(to left, rgba(207,160,107,0.45), transparent)" }} />
+            <span style={{ color: ACCENT, fontSize: "7px", opacity: 0.7 }}>✦</span>
+            <div className="h-px w-12 sm:w-20" style={{ background: "linear-gradient(to right, rgba(207,160,107,0.45), transparent)" }} />
+          </div>
+        </div>
+
+        {/* ── Main grid ── */}
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 md:px-8 pb-8 sm:pb-10">
+          <motion.div
+            className="grid grid-cols-1 lg:grid-cols-4 gap-5 sm:gap-6 md:gap-8 mb-7 sm:mb-8"
+            variants={staggerChildren} initial="initial" animate="animate"
+          >
+
+            {/* ── Col 1-2: intro + typewriter quote ── */}
+            <motion.div className="lg:col-span-2" variants={fadeInUp}>
+              <div className="mb-5 sm:mb-6">
+                <div className="flex items-center gap-2.5 mb-3 sm:mb-4">
+                  {/* <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm"
+                    style={{ background: "rgba(207,160,107,0.14)" }}>
+                    <Heart className="w-5 h-5" style={{ color: ACCENT }} fill={ACCENT} />
                   </div>
-                  <h4 className={`${cinzel.className} font-semibold text-base sm:text-lg md:text-xl`} style={{ color: palette.deep }}>Ceremony & Reception</h4>
+                  <h3
+                    className="gistesy"
+                    style={{ fontSize: "clamp(1.5rem, 5vw, 2.4rem)", color: DEEP, lineHeight: 1.15, overflow: "visible", paddingTop: "0.08em" }}
+                  >
+                    Niahna Celestine
+                  </h3> */}
                 </div>
-                <div className={`space-y-2 sm:space-y-2.5 md:space-y-3 ${cormorant.className} text-xs sm:text-sm leading-relaxed`} style={{ color: palette.softBrown }}>
-                  <div className="flex items-start gap-2 sm:gap-2.5 md:gap-3">
-                    <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0 mt-0.5" style={{ color: palette.deep }} />
-                    <span className="text-motif-deep">{toTitleCase(siteConfig.ceremony.location || siteConfig.reception.location)}</span>
+
+                <div className="space-y-2 sm:space-y-2.5">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 flex-shrink-0" style={{ color: ACCENT }} />
+                    <span className="garamond" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP }}>{ceremonyDate}</span>
                   </div>
-                  <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3">
-                    <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" style={{ color: palette.deep }} />
-                    <span className="text-motif-deep">Ceremony {ceremonyTime} · Reception {receptionTime}</span>
+                  <div className="flex items-start gap-2">
+                    <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: ACCENT }} />
+                    <span className="garamond" style={{ fontSize: "clamp(0.72rem, 2.2vw, 0.84rem)", color: DEEP, lineHeight: 1.6 }}>
+                      {toTitleCase(ceremonyVenue)}
+                    </span>
                   </div>
+                </div>
+              </div>
+
+              {/* Typewriter quote card */}
+              <motion.div
+                className="rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 border"
+                style={{
+                  background: "rgba(255,247,240,0.88)",
+                  borderColor: "rgba(207,160,107,0.22)",
+                  boxShadow: "0 8px 30px rgba(139,111,90,0.08)",
+                }}
+                whileHover={{ scale: 1.015 }}
+                transition={{ duration: 0.3 }}
+              >
+                {/* Opening quote mark */}
+                <div className="mb-1" style={{ fontSize: "2rem", color: ACCENT, opacity: 0.25, fontFamily: "Georgia, serif", lineHeight: 1 }}>
+                  &#8220;
+                </div>
+                <blockquote
+                  className="garamond"
+                  style={{
+                    fontSize: "clamp(0.8rem, 2.6vw, 0.95rem)",
+                    color: DEEP,
+                    fontStyle: "italic",
+                    lineHeight: 1.85,
+                    minHeight: "clamp(3.5rem, 10vw, 5rem)",
+                  }}
+                >
+                  {displayedText}
+                  <span className="inline-block w-px h-4 ml-0.5 animate-pulse align-middle" style={{ backgroundColor: ACCENT }}>|</span>
+                </blockquote>
+                <div className="flex items-center gap-1.5 mt-3">
+                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: ACCENT, opacity: 0.7 }} />
+                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: ACCENT, opacity: 0.45 }} />
+                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: ACCENT, opacity: 0.7 }} />
                 </div>
               </motion.div>
-            ) : (
-              <>
-                  <motion.div className="backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 transition-all duration-300 shadow-lg hover:shadow-xl" style={{ backgroundColor: 'color-mix(in srgb, var(--color-motif-cream) 93%, transparent)' }} whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-                  <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3 mb-2.5 sm:mb-3 md:mb-4">
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-white rounded-full flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 flex-shrink-0" style={{ color: palette.deep }} />
-                    </div>
-                    <h4 className={`${cinzel.className} font-semibold text-base sm:text-lg md:text-xl`} style={{ color: palette.softBrown }}>Ceremony</h4>
-                  </div>
-                  <div className={`space-y-2 sm:space-y-2.5 md:space-y-3 ${cormorant.className} text-xs sm:text-sm leading-relaxed`} style={{ color: palette.softBrown }}>
-                    <div className="flex items-start gap-2 sm:gap-2.5 md:gap-3">
-                      <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0 mt-0.5 text-motif-deep" style={{ color: palette.background }} />
-                      <span className="text-motif-deep">{toTitleCase(siteConfig.ceremony.location)}</span>
-                    </div>
-                    <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3">
-                      <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" style={{ color: palette.deep }} />
-                      <span>{ceremonyTime}</span>
-                    </div>
-                  </div>
-                </motion.div>
-                      <motion.div className="backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 transition-all duration-300 shadow-lg hover:shadow-xl" style={{ backgroundColor: 'color-mix(in srgb, var(--color-motif-cream) 93%, transparent)' }} whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-                  <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3 mb-2.5 sm:mb-3 md:mb-4">
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-motif-cream rounded-full flex items-center justify-center flex-shrink-0">
-                      <Heart className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 flex-shrink-0" style={{ color: palette.deep }} fill="color-mix(in srgb, var(--color-motif-deep) 9%, transparent)" />
-                    </div>
-                    <h4 className={`${cinzel.className} font-semibold text-base sm:text-lg md:text-xl`} style={{ color: palette.softBrown }}>Reception</h4>
-                  </div>
-                  <div className={`space-y-2 sm:space-y-2.5 md:space-y-3 ${cormorant.className} text-xs sm:text-sm leading-relaxed`} style={{ color: palette.softBrown }}>
-                    <div className="flex items-start gap-2 sm:gap-2.5 md:gap-3">
-                      <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0 mt-0.5" style={{ color: palette.deep }} />
-                      <span>{toTitleCase(siteConfig.reception.location)}</span>
-                    </div>
-                    <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3">
-                      <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" style={{ color: palette.deep }} />
-                      <span>{receptionTime}</span>
-                    </div>
-                  </div>
-                </motion.div>
-              </>
-            )}
+            </motion.div>
 
-            <motion.div className="backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 transition-all duration-300 shadow-lg hover:shadow-xl" style={{ backgroundColor: 'color-mix(in srgb, var(--color-motif-cream) 93%, transparent)' }} whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-              <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3 mb-2.5 sm:mb-3 md:mb-4">
-                <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 bg-motif-deep rounded-full flex items-center justify-center flex-shrink-0">
-                  <Calendar className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 flex-shrink-0 text-motif-deep" style={{ color: palette.background }} />
+            {/* ── Col 3: event detail tiles ── */}
+            <motion.div className="space-y-3 sm:space-y-4" variants={fadeInUp}>
+              {isSameVenue ? (
+                <motion.div
+                  className="rounded-xl sm:rounded-2xl p-3.5 sm:p-4 border"
+                  style={{ background: "rgba(255,247,240,0.88)", borderColor: "rgba(207,160,107,0.22)", boxShadow: "0 6px 22px rgba(139,111,90,0.07)" }}
+                  whileHover={{ y: -3 }} transition={{ duration: 0.2 }}
+                >
+                  <div className="flex items-center gap-2 sm:gap-2.5 mb-2.5 sm:mb-3">
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center flex-shrink-0"
+                      style={{ background: `linear-gradient(135deg, ${ACCENT}, ${DEEP})` }}>
+                      <MapPin className="w-4 h-4 text-white" />
+                    </div>
+                    <h4 className="gistesy" style={{ fontSize: "clamp(0.95rem, 3vw, 1.15rem)", color: DEEP }}>Christening &amp; Reception</h4>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-start gap-2">
+                      <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: ACCENT }} />
+                      <span className="garamond" style={{ fontSize: "clamp(0.7rem, 2vw, 0.8rem)", color: DEEP, lineHeight: 1.6 }}>
+                        {toTitleCase(siteConfig.ceremony.location || siteConfig.reception.location)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: ACCENT }} />
+                      <span className="garamond" style={{ fontSize: "clamp(0.7rem, 2vw, 0.8rem)", color: DEEP }}>
+                        {ceremonyTime} · {receptionTime}
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              ) : (
+                <>
+                  {/* Ceremony */}
+                  <motion.div
+                    className="rounded-xl sm:rounded-2xl p-3.5 sm:p-4 border"
+                    style={{ background: "rgba(255,247,240,0.88)", borderColor: "rgba(207,160,107,0.22)", boxShadow: "0 6px 22px rgba(139,111,90,0.07)" }}
+                    whileHover={{ y: -3 }} transition={{ duration: 0.2 }}
+                  >
+                    <div className="flex items-center gap-2 mb-2.5">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                        style={{ background: `linear-gradient(135deg, ${ACCENT}, ${DEEP})` }}>
+                        <Clock className="w-4 h-4 text-white" />
+                      </div>
+                      <h4 className="gistesy" style={{ fontSize: "clamp(0.9rem, 2.8vw, 1.05rem)", color: DEEP }}>Christening Ceremony</h4>
+                    </div>
+                    <div className="space-y-1.5">
+                      <div className="flex items-start gap-2">
+                        <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: ACCENT }} />
+                        <span className="garamond" style={{ fontSize: "clamp(0.68rem, 1.9vw, 0.78rem)", color: DEEP, lineHeight: 1.6 }}>
+                          {toTitleCase(siteConfig.ceremony.location)}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: ACCENT }} />
+                        <span className="garamond" style={{ fontSize: "clamp(0.68rem, 1.9vw, 0.78rem)", color: DEEP }}>{ceremonyTime}</span>
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* Reception */}
+                  <motion.div
+                    className="rounded-xl sm:rounded-2xl p-3.5 sm:p-4 border"
+                    style={{ background: "rgba(255,247,240,0.88)", borderColor: "rgba(207,160,107,0.22)", boxShadow: "0 6px 22px rgba(139,111,90,0.07)" }}
+                    whileHover={{ y: -3 }} transition={{ duration: 0.2 }}
+                  >
+                    <div className="flex items-center gap-2 mb-2.5">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                        style={{ background: `linear-gradient(135deg, ${MEDIUM}, ${DEEP})` }}>
+                        <Heart className="w-4 h-4 text-white" fill="white" />
+                      </div>
+                      <h4 className="gistesy" style={{ fontSize: "clamp(0.9rem, 2.8vw, 1.05rem)", color: DEEP }}>Celebration Reception</h4>
+                    </div>
+                    <div className="space-y-1.5">
+                      <div className="flex items-start gap-2">
+                        <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: ACCENT }} />
+                        <span className="garamond" style={{ fontSize: "clamp(0.68rem, 1.9vw, 0.78rem)", color: DEEP, lineHeight: 1.6 }}>
+                          {toTitleCase(siteConfig.reception.location)}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: ACCENT }} />
+                        <span className="garamond" style={{ fontSize: "clamp(0.68rem, 1.9vw, 0.78rem)", color: DEEP }}>{receptionTime}</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                </>
+              )}
+
+              {/* RSVP deadline */}
+              <motion.div
+                className="rounded-xl sm:rounded-2xl p-3.5 sm:p-4 border"
+                style={{ background: "rgba(255,247,240,0.88)", borderColor: "rgba(207,160,107,0.22)", boxShadow: "0 6px 22px rgba(139,111,90,0.07)" }}
+                whileHover={{ y: -3 }} transition={{ duration: 0.2 }}
+              >
+                <div className="flex items-center gap-2 mb-2.5">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{ background: `linear-gradient(135deg, ${ACCENT}, ${DEEP})` }}>
+                    <Calendar className="w-4 h-4 text-white" />
+                  </div>
+                  <h4 className="gistesy" style={{ fontSize: "clamp(0.9rem, 2.8vw, 1.05rem)", color: DEEP }}>RSVP Deadline</h4>
                 </div>
-                <h4 className={`${cinzel.className} font-semibold text-base sm:text-lg md:text-xl`} style={{ color: palette.deep }}>RSVP Deadline</h4>
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: ACCENT }} />
+                    <span className="garamond" style={{ fontSize: "clamp(0.68rem, 1.9vw, 0.78rem)", color: DEEP }}>{siteConfig.details.rsvp.deadline}</span>
+                  </div>
+                  <p className="garamond" style={{ fontSize: "clamp(0.65rem, 1.7vw, 0.74rem)", color: MEDIUM, fontStyle: "italic", paddingLeft: "1.375rem" }}>
+                    Please confirm your attendance by this date.
+                  </p>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* ── Col 4: links + social ── */}
+            <motion.div className="space-y-5 sm:space-y-6" variants={fadeInUp}>
+
+              {/* Quick links */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-1 h-6 rounded-full" style={{ background: `linear-gradient(to bottom, ${ACCENT}, ${DEEP})` }} />
+                  <h4 className="garamond font-bold" style={{ fontSize: "clamp(0.72rem, 2vw, 0.84rem)", color: DEEP, letterSpacing: "0.28em", textTransform: "uppercase" }}>
+                    Quick Links
+                  </h4>
+                </div>
+                <div className="space-y-1.5 sm:space-y-2">
+                  {nav.map((item) => (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      className="garamond block transition-all duration-200 hover:translate-x-1"
+                      style={{ fontSize: "clamp(0.75rem, 2.2vw, 0.88rem)", color: MEDIUM }}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = ACCENT)}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = MEDIUM)}
+                    >
+                      {item.label}
+                    </a>
+                  ))}
+                </div>
               </div>
-              <div className={`space-y-2 sm:space-y-2.5 md:space-y-3 ${cormorant.className} text-xs sm:text-sm leading-relaxed`} style={{ color: palette.softBrown }}>
-                <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3">
-                  <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" style={{ color: palette.deep }} />
-                  <span className="text-motif-deep">{siteConfig.details.rsvp.deadline}</span>
+
+              {/* Social */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-1 h-6 rounded-full" style={{ background: `linear-gradient(to bottom, ${ACCENT}, ${DEEP})` }} />
+                  <h4 className="garamond font-bold" style={{ fontSize: "clamp(0.72rem, 2vw, 0.84rem)", color: DEEP, letterSpacing: "0.28em", textTransform: "uppercase" }}>
+                    Stay Connected
+                  </h4>
                 </div>
-                <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3">
-                  <span className="text-xs sm:text-sm leading-relaxed opacity-90 text-motif-deep">Please confirm your attendance by this date.</span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {[
+                    { href: "https://www.facebook.com", Icon: Facebook, label: "Facebook" },
+                    { href: "https://www.instagram.com", Icon: Instagram, label: "Instagram" },
+                    { href: "https://www.youtube.com",   Icon: Music2,    label: "YouTube" },
+                    { href: "https://x.com",             Icon: Twitter,   label: "Twitter" },
+                  ].map(({ href, Icon, label }) => (
+                    <a
+                      key={label}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={label}
+                      className="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full border transition-all duration-200 hover:scale-110"
+                      style={{
+                        background: "rgba(207,160,107,0.08)",
+                        borderColor: "rgba(207,160,107,0.28)",
+                        color: DEEP,
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(207,160,107,0.20)"; e.currentTarget.style.borderColor = "rgba(207,160,107,0.50)" }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(207,160,107,0.08)"; e.currentTarget.style.borderColor = "rgba(207,160,107,0.28)" }}
+                    >
+                      <Icon className="w-4 h-4" />
+                    </a>
+                  ))}
                 </div>
               </div>
             </motion.div>
           </motion.div>
 
-          {/* Contact + Quick Links */}
-          <motion.div className="space-y-5 sm:space-y-6 md:space-y-7" variants={fadeInUp}>
-            <div>
-              <h4 className={`${cinzel.className} font-semibold text-base sm:text-lg md:text-xl mb-3 sm:mb-4 md:mb-5 flex items-center gap-2 sm:gap-2.5 md:gap-3`} style={{ color: palette.softBrown }}>
-                <div className="w-1.5 sm:w-2 h-6 sm:h-7 md:h-8 rounded-full" style={{ backgroundColor: palette.deep }} /> <span className="text-motif-deep">Follow Us</span>
-              </h4>
-              <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3 flex-wrap">
-                <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center h-10 w-10 sm:h-11 sm:w-11 rounded-full transition-all duration-200 hover:scale-110" style={{ backgroundColor: 'color-mix(in srgb, var(--color-motif-medium) 8%, transparent)', color: palette.deep }} aria-label="Facebook">
-                  <Facebook className="w-4 h-4 sm:w-5 sm:h-5" />
-                </a>
-                <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center h-10 w-10 sm:h-11 sm:w-11 rounded-full transition-all duration-200 hover:scale-110" style={{ backgroundColor: 'color-mix(in srgb, var(--color-motif-medium) 8%, transparent)', color: palette.deep }} aria-label="Instagram">
-                  <Instagram className="w-4 h-4 sm:w-5 sm:h-5" />
-                </a>
-                  <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center text-center h-10 w-10 sm:h-11 sm:w-11 rounded-full transition-all duration-200 hover:scale-110" style={{ backgroundColor: 'color-mix(in srgb, var(--color-motif-medium) 8%, transparent)', color: palette.deep }} aria-label="YouTube">
-                  <Music2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                </a>
-                <a href="https://x.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center text-center h-10 w-10 sm:h-11 sm:w-11 rounded-full transition-all duration-200 hover:scale-110" style={{ backgroundColor: 'color-mix(in srgb, var(--color-motif-medium) 8%, transparent)', color: palette.deep }} aria-label="Twitter">
-                  <Twitter className="w-4 h-4 sm:w-5 sm:h-5" />
-                </a>
-              </div>
+          {/* ── Bottom divider + copyright ── */}
+          <motion.div variants={fadeInUp}>
+            {/* Ornamental divider */}
+            <div className="flex items-center justify-center gap-3 mb-5 sm:mb-6">
+              <div className="h-px flex-1" style={{ background: "linear-gradient(to right, transparent, rgba(207,160,107,0.35))" }} />
+              <span style={{ color: ACCENT, fontSize: "5px", opacity: 0.65 }}>◆</span>
+              <span style={{ color: ACCENT, fontSize: "7px", opacity: 0.5 }}>✦</span>
+              <span style={{ color: ACCENT, fontSize: "5px", opacity: 0.65 }}>◆</span>
+              <div className="h-px flex-1" style={{ background: "linear-gradient(to left, transparent, rgba(207,160,107,0.35))" }} />
             </div>
 
-            <div>
-              <h5 className={`${cinzel.className} font-semibold text-sm sm:text-base md:text-lg mb-2.5 sm:mb-3 md:mb-4`} style={{ color: palette.deep }}>Quick Links</h5>
-              <div className="space-y-1.5 sm:space-y-2">
-                {nav.map((item) => (
-                  <a key={item.href} href={item.href} className={`block transition-colors duration-200 ${cormorant.className} text-xs sm:text-sm leading-relaxed hover:opacity-80`} style={{ color: palette.deep }}>
-                    {item.label}
+            <div className="flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4">
+              <div className="text-center md:text-left">
+                <p className="garamond" style={{ fontSize: "clamp(0.65rem, 1.8vw, 0.76rem)", color: MEDIUM }}>
+                  © {year} — Aileen &amp; Arjay — crafted with love, prayers, and gratitude.
+                </p>
+                <p className="garamond" style={{ fontSize: "clamp(0.62rem, 1.6vw, 0.72rem)", color: MEDIUM, opacity: 0.8, fontStyle: "italic", marginTop: "0.2rem" }}>
+                  In celebration of Niahna Celestine&apos;s christening.
+                </p>
+              </div>
+              <div className="text-center md:text-right space-y-0.5">
+                <p className="garamond" style={{ fontSize: "clamp(0.62rem, 1.6vw, 0.72rem)", color: MEDIUM, opacity: 0.9 }}>
+                  Developed by{" "}
+                  <a
+                    href="https://lance28-beep.github.io/portfolio-website/"
+                    target="_blank" rel="noopener noreferrer"
+                    className="underline transition-colors duration-200"
+                    style={{ color: ACCENT }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = DEEP)}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = ACCENT)}
+                  >
+                    Lance Valle
                   </a>
-                ))}
+                </p>
+                <p className="garamond" style={{ fontSize: "clamp(0.62rem, 1.6vw, 0.72rem)", color: MEDIUM, opacity: 0.9 }}>
+                  Want a site like this?{" "}
+                  <a
+                    href="https://www.facebook.com/WeddingInvitationNaga"
+                    target="_blank" rel="noopener noreferrer"
+                    className="underline transition-colors duration-200"
+                    style={{ color: ACCENT }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = DEEP)}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = ACCENT)}
+                  >
+                    Wedding Invitation Naga
+                  </a>
+                </p>
               </div>
             </div>
           </motion.div>
-        </motion.div>
-
-        {/* Bottom Row — dark text on white */}
-        <motion.div className="pt-5 sm:pt-6 md:pt-7" variants={fadeInUp}>
-          <div className="flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 md:gap-5">
-            <div className="text-center md:text-left">
-                <p className={`${cormorant.className} text-xs sm:text-sm leading-relaxed`} style={{ color: palette.deep }}>
-                © {year} {groomNickname} & {brideNickname} — crafted with love, prayers, and gratitude.
-              </p>
-              <p className={`${cormorant.className} text-xs sm:text-sm mt-1 leading-relaxed opacity-90`} style={{ color: palette.deep }}>
-                This celebration site was designed to share our story and joy with you.
-              </p>
-            </div>
-            <div className="text-center md:text-right space-y-1">
-                  <p className={`${cormorant.className} text-xs sm:text-sm opacity-90`} style={{ color: palette.deep }}>
-                Developed by{" "}
-                <a href="https://lance28-beep.github.io/portfolio-website/" target="_blank" rel="noopener noreferrer" className="underline transition-colors duration-200 hover:opacity-80" style={{ color: palette.deep }}>
-                  Lance Valle
-                </a>
-              </p>
-              <p className={`${cormorant.className} text-xs sm:text-sm opacity-90`} style={{ color: palette.deep }}>
-                Want a website like this? Visit{" "}
-                <a href="https://www.facebook.com/WeddingInvitationNaga" target="_blank" rel="noopener noreferrer" className="underline transition-colors duration-200 hover:opacity-80" style={{ color: palette.deep }}>
-                  Wedding Invitation Naga
-                </a>
-              </p>
-            </div>
-          </div>
-        </motion.div>
-
-      </div>
+        </div>
       </footer>
     </div>
   )

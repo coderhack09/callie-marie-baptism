@@ -18,18 +18,12 @@ import {
   UserPlus,
   Users,
 } from "lucide-react"
-import { Cormorant_Garamond, Cinzel } from "next/font/google"
 import { siteConfig } from "@/content/site"
 
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["400"],
-})
-
-const cinzel = Cinzel({
-  subsets: ["latin"],
-  weight: ["400"],
-})
+// ── Motif palette ─────────────────────────────────────────────────────────────
+const DEEP   = "#8B6F5A"
+const MEDIUM = "#BFA07A"
+const ACCENT = "#CFA06B"
 
 interface ApiGuest {
   id: string | number
@@ -405,35 +399,80 @@ export function GuestList() {
     <Section id="guest-list" className="relative z-30 py-6 sm:py-10 md:py-12 lg:py-16">
       {/* Header */}
       <div className="relative z-10 text-center mb-4 sm:mb-6 md:mb-8 lg:mb-10 px-2 sm:px-3 md:px-4">
-        {/* Small label */}
+
+        {/* Eyebrow */}
         <p
-          className={`${cormorant.className} text-[0.7rem] sm:text-xs md:text-sm uppercase tracking-[0.28em] text-motif-cream mb-2`}
-          style={{ textShadow: "0 2px 10px rgba(0,0,0,0.8)" }}
+          className="garamond"
+          style={{
+            fontSize: "clamp(0.56rem, 2.2vw, 0.72rem)",
+            letterSpacing: "0.48em",
+            textTransform: "uppercase",
+            color: "rgba(255,247,240,0.82)",
+            marginBottom: "0.4rem",
+            paddingRight: "0.48em",
+            textShadow: "0 1px 8px rgba(0,0,0,0.6)",
+          }}
         >
           Confirm Your Attendance
         </p>
-        
+
+        {/* Ornament */}
+        <div className="flex items-center justify-center gap-3 mb-2">
+          <div className="h-px w-8 sm:w-12" style={{ background: "linear-gradient(to left, rgba(207,160,107,0.5), transparent)" }} />
+          <span style={{ color: ACCENT, fontSize: "7px", opacity: 0.8 }}>✦</span>
+          <div className="h-px w-8 sm:w-12" style={{ background: "linear-gradient(to right, rgba(207,160,107,0.5), transparent)" }} />
+        </div>
+
+        {/* Title */}
         <h2
-          className={`${cinzel.className} text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-motif-cream mb-1.5 sm:mb-3 md:mb-4`}
-          style={{ textShadow: "0 4px 18px rgba(0,0,0,0.85)" }}
+          className="gistesy"
+          style={{
+            fontSize: "clamp(2.8rem, 12vw, 5.5rem)",
+            color: "var(--color-motif-cream)",
+            lineHeight: 1.1,
+            overflow: "visible",
+            paddingTop: "0.1em",
+            marginBottom: "0.5rem",
+            textShadow: "0 4px 20px rgba(0,0,0,0.55)",
+          }}
         >
           RSVP
         </h2>
-        
-        <p className={`${cormorant.className} text-xs sm:text-sm md:text-base text-motif-cream/90 font-light max-w-xl mx-auto leading-relaxed px-2 mb-2 sm:mb-3`}>
-          Please search for your name below to confirm your presence at our special day
+
+        <p
+          className="garamond"
+          style={{
+            fontSize: "clamp(0.78rem, 2.8vw, 0.96rem)",
+            color: "rgba(255,247,240,0.85)",
+            fontStyle: "italic",
+            lineHeight: 1.8,
+            maxWidth: "460px",
+            margin: "0 auto 0.4rem",
+            textShadow: "0 1px 8px rgba(0,0,0,0.5)",
+          }}
+        >
+          Please search for your name below to confirm your presence at this blessed celebration.
         </p>
-        <p className={`${cormorant.className} text-sm sm:text-base md:text-lg lg:text-xl text-motif-cream font-bold max-w-xl mx-auto leading-relaxed px-2 mb-2 sm:mb-3`}>
+
+        <p
+          className="garamond"
+          style={{
+            fontSize: "clamp(0.78rem, 2.8vw, 0.9rem)",
+            color: "rgba(255,247,240,0.92)",
+            fontWeight: 600,
+            letterSpacing: "0.04em",
+            marginBottom: "0.5rem",
+            textShadow: "0 1px 8px rgba(0,0,0,0.5)",
+          }}
+        >
           RSVP Deadline: {siteConfig.details.rsvp.deadline}
         </p>
-        
-        {/* Decorative element below subtitle */}
-        <div className="flex items-center justify-center gap-1.5 sm:gap-2 mt-2 sm:mt-3 md:mt-4 lg:mt-5">
-          <div className="w-6 sm:w-8 md:w-12 lg:w-16 h-px bg-gradient-to-r from-transparent via-motif-deep/80 to-transparent" />
-          <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-motif-deep/90 rounded-full" />
-          <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-motif-cream/85 rounded-full" />
-          <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-motif-deep/90 rounded-full" />
-          <div className="w-6 sm:w-8 md:w-12 lg:w-16 h-px bg-gradient-to-l from-transparent via-motif-deep/80 to-transparent" />
+
+        {/* Divider */}
+        <div className="flex items-center justify-center gap-3 mt-2">
+          <div className="h-px w-8 sm:w-12" style={{ background: "linear-gradient(to left, rgba(207,160,107,0.45), transparent)" }} />
+          <span style={{ color: "#D4B896", fontSize: "5px" }}>◆</span>
+          <div className="h-px w-8 sm:w-12" style={{ background: "linear-gradient(to right, rgba(207,160,107,0.45), transparent)" }} />
         </div>
       </div>
 
@@ -449,10 +488,10 @@ export function GuestList() {
                   <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-white" />
                 </div>
                 <div>
-                  <label className="block text-xs sm:text-sm md:text-base font-semibold text-motif-cream font-sans mb-0.5 sm:mb-1">
+                  <label className="garamond block mb-0.5 sm:mb-1" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.94rem)", color: "var(--color-motif-cream)", fontWeight: 600 }}>
                     Find Your Name
                   </label>
-                  <p className="text-[10px] sm:text-xs text-motif-cream/80 font-sans">
+                  <p className="garamond" style={{ fontSize: "clamp(0.65rem, 2vw, 0.76rem)", color: "rgba(255,247,240,0.75)", fontStyle: "italic" }}>
                     Type as you search to see instant results
                   </p>
                 </div>
@@ -525,8 +564,8 @@ export function GuestList() {
                           <UserPlus className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-semibold text-xs sm:text-sm text-motif-deep mb-1">Not finding your name?</h4>
-                          <p className="text-[10px] sm:text-xs text-motif-medium leading-relaxed">
+                          <h4 className="garamond mb-1" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP, fontWeight: 600 }}>Not finding your name?</h4>
+                          <p className="garamond" style={{ fontSize: "clamp(0.65rem, 2vw, 0.76rem)", color: MEDIUM, lineHeight: 1.6 }}>
                             We'd love to have you with us! Send a request to join the celebration.
                           </p>
                         </div>
@@ -568,14 +607,14 @@ export function GuestList() {
                       <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 bg-motif-cream/20 rounded-full flex items-center justify-center flex-shrink-0">
                         <Heart className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 lg:h-5 lg:w-5 text-motif-cream" />
                       </div>
-                      <h3 className={`${cinzel.className} text-sm sm:text-base md:text-xl lg:text-2xl xl:text-3xl font-bold text-motif-cream truncate`}>
-                        You're Invited!
+                      <h3 className="gistesy text-motif-cream" style={{ fontSize: "clamp(1.2rem, 5vw, 2rem)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em" }}>
+                        You Are Warmly Invited
                       </h3>
                     </div>
-                    <p className={`${cormorant.className} text-motif-cream/95 text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg leading-tight sm:leading-normal`}>
-                      Hello <span className="font-extrabold text-motif-cream">{selectedGuest?.Name}</span>, you are invited to our wedding!
+                    <p className="garamond text-motif-cream/95" style={{ fontSize: "clamp(0.72rem, 2.5vw, 0.9rem)", lineHeight: 1.6 }}>
+                      Dear <span className="font-bold text-motif-cream">{selectedGuest?.Name}</span>, witness and celebrate the Christening!
                     </p>
-                    <p className={`${cormorant.className} text-motif-cream/90 text-[10px] sm:text-xs md:text-sm mt-1 sm:mt-1.5`}>
+                    <p className="garamond text-motif-cream/85 mt-1" style={{ fontSize: "clamp(0.65rem, 2vw, 0.8rem)" }}>
                       We've reserved <span className="font-bold text-motif-cream">{selectedGuest?.AllowedGuests || 1}</span> {selectedGuest?.AllowedGuests === 1 ? 'seat' : 'seats'} for you.
                     </p>
                   </div>
@@ -598,10 +637,10 @@ export function GuestList() {
                     <div className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-motif-deep rounded-full mb-2 sm:mb-3 md:mb-4">
                       <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 text-white" />
                     </div>
-                    <h4 className={`${cinzel.className} text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-motif-deep mb-1.5 sm:mb-2 md:mb-3`}>
+                    <h4 className="gistesy text-motif-deep mb-1.5 sm:mb-2 md:mb-3" style={{ fontSize: "clamp(1.3rem, 5vw, 1.9rem)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em" }}>
                       Thank You for Responding!
                     </h4>
-                    <p className="text-motif-medium text-[10px] sm:text-xs md:text-sm mb-2 sm:mb-3 md:mb-4 px-2">
+                    <p className="garamond text-motif-medium text-[10px] sm:text-xs md:text-sm mb-2 sm:mb-3 md:mb-4 px-2">
                       We've received your RSVP and look forward to celebrating with you!
                     </p>
                     <div className="bg-motif-cream/40 rounded-lg p-2.5 sm:p-3 md:p-4 border border-motif-deep/70 space-y-2 sm:space-y-2.5 md:space-y-3">
@@ -659,8 +698,8 @@ export function GuestList() {
                   >
                     {/* Can you attend? */}
                     <div>
-                    <label className={`flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-motif-deep mb-1.5 sm:mb-2 ${cormorant.className}`}>
-                        <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-motif-deep flex-shrink-0" />
+                    <label className="garamond flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP, fontWeight: 600 }}>
+                        <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: ACCENT }} />
                         <span>Can you attend? *</span>
                       </label>
                       <div className="grid grid-cols-2 gap-1.5 sm:gap-2 md:gap-3">
@@ -720,11 +759,11 @@ export function GuestList() {
                     {/* Who's Coming With You - Companion Names */}
                     {formData.RSVP === "Yes" && companions.length > 0 && (
                       <div className="space-y-2.5 sm:space-y-3">
-                        <label className={`flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-motif-deep ${cormorant.className}`}>
-                          <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-motif-deep flex-shrink-0" />
+                        <label className="garamond flex items-center gap-1.5 sm:gap-2" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP, fontWeight: 600 }}>
+                          <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: ACCENT }} />
                           <span>Who's Coming With You?</span>
                         </label>
-                        <p className="text-[10px] sm:text-xs text-motif-medium -mt-1 sm:-mt-1.5">
+                        <p className="garamond -mt-1 sm:-mt-1.5" style={{ fontSize: "clamp(0.65rem, 2vw, 0.76rem)", color: MEDIUM }}>
                           Please provide names and relationships for your <span className="font-semibold">{companions.length}</span> additional {companions.length === 1 ? 'guest' : 'guests'}
                         </p>
                         {companions.map((companion, index) => (
@@ -776,16 +815,16 @@ export function GuestList() {
 
                     {/* Message to the couple */}
                     <div>
-                    <label className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-motif-deep mb-1.5 sm:mb-2 font-sans flex-wrap">
-                      <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-motif-deep flex-shrink-0" />
-                        <span>Your Message to the Couple</span>
-                      <span className="text-[10px] sm:text-xs font-normal text-motif-deep/70">(Optional)</span>
+                    <label className="garamond flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 flex-wrap" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP, fontWeight: 600 }}>
+                      <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: ACCENT }} />
+                        <span>Message for Niahna</span>
+                      <span className="garamond font-normal" style={{ fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: `${DEEP}90` }}>(Optional)</span>
                       </label>
                       <textarea
                         name="Message"
                         value={formData.Message}
                         onChange={handleFormChange}
-                        placeholder="Share your excitement..."
+                        placeholder="Leave a heartfelt message for Niahna to read and treasure in the future..."
                         rows={3}
                       className="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 border-2 border-motif-deep/60 focus:border-motif-deep rounded-lg text-xs sm:text-sm font-sans text-motif-deep placeholder:text-motif-medium/70 transition-all duration-300 focus:ring-2 focus:ring-motif-deep/20 resize-none bg-motif-cream"
                       />
@@ -793,10 +832,10 @@ export function GuestList() {
 
                     {/* Email */}
                     <div>
-                    <label className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-motif-deep mb-1.5 sm:mb-2 font-sans flex-wrap">
-                        <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-motif-deep flex-shrink-0" />
+                    <label className="garamond flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 flex-wrap" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP, fontWeight: 600 }}>
+                        <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: ACCENT }} />
                         <span>Your Email Address</span>
-                        <span className="text-[10px] sm:text-xs font-normal text-motif-deep/70">(Optional)</span>
+                        <span className="garamond font-normal" style={{ fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: `${DEEP}90` }}>(Optional)</span>
                       </label>
                       <input
                         type="email"
@@ -848,7 +887,7 @@ export function GuestList() {
                     </div>
                     
                     {/* Title */}
-                    <h4 className="text-base sm:text-lg md:text-xl lg:text-2xl ${cinzel.className} font-bold text-motif-medium mb-2 sm:mb-3">
+                    <h4 className="gistesy text-motif-cream mb-2 sm:mb-3" style={{ fontSize: "clamp(1.4rem, 5vw, 2rem)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em" }}>
                       RSVP Confirmed!
                     </h4>
                     
@@ -919,7 +958,7 @@ export function GuestList() {
                       <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 bg-motif-cream/20 rounded-full flex items-center justify-center backdrop-blur-sm flex-shrink-0">
                         <UserPlus className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 lg:h-5 lg:w-5 text-motif-cream" />
                       </div>
-                      <h3 className="text-sm sm:text-base md:text-xl lg:text-2xl xl:text-3xl ${cinzel.className} font-bold text-motif-cream truncate">
+                      <h3 className="gistesy text-motif-cream" style={{ fontSize: "clamp(1.2rem, 5vw, 2rem)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em" }}>
                         Request to Join
                       </h3>
                     </div>
@@ -951,8 +990,8 @@ export function GuestList() {
                 >
                   {/* Name */}
                   <div>
-                    <label className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-motif-deep mb-1.5 sm:mb-2 font-sans">
-                      <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-motif-deep flex-shrink-0" />
+                    <label className="garamond flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP, fontWeight: 600 }}>
+                      <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: ACCENT }} />
                       <span>Full Name *</span>
                     </label>
                     <input
@@ -968,10 +1007,10 @@ export function GuestList() {
 
                   {/* Email */}
                   <div>
-                    <label className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-motif-deep mb-1.5 sm:mb-2 font-sans flex-wrap">
-                      <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-motif-deep flex-shrink-0" />
+                    <label className="garamond flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 flex-wrap" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP, fontWeight: 600 }}>
+                      <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: ACCENT }} />
                       <span>Email Address</span>
-                      <span className="text-[10px] sm:text-xs font-normal text-motif-deep/70">(Optional)</span>
+                      <span className="garamond font-normal" style={{ fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: `${DEEP}90` }}>(Optional)</span>
                     </label>
                     <input
                       type="email"
@@ -985,10 +1024,10 @@ export function GuestList() {
 
                   {/* Phone */}
                   <div>
-                    <label className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-motif-deep mb-1.5 sm:mb-2 font-sans flex-wrap">
-                      <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-motif-deep flex-shrink-0" />
+                    <label className="garamond flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 flex-wrap" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP, fontWeight: 600 }}>
+                      <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: ACCENT }} />
                       <span>Phone Number</span>
-                      <span className="text-[10px] sm:text-xs font-normal text-motif-deep/70">(Optional)</span>
+                      <span className="garamond font-normal" style={{ fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: `${DEEP}90` }}>(Optional)</span>
                     </label>
                     <input
                       type="tel"
@@ -1002,8 +1041,8 @@ export function GuestList() {
 
                   {/* Number of Guests */}
                   <div>
-                    <label className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-motif-deep mb-1.5 sm:mb-2 font-sans">
-                      <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-motif-deep flex-shrink-0" />
+                    <label className="garamond flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP, fontWeight: 600 }}>
+                      <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: ACCENT }} />
                       <span>Number of Guests *</span>
                     </label>
                     <input
@@ -1020,10 +1059,10 @@ export function GuestList() {
 
                   {/* Message */}
                   <div>
-                    <label className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-motif-deep mb-1.5 sm:mb-2 font-sans flex-wrap">
-                      <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-motif-deep flex-shrink-0" />
+                    <label className="garamond flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 flex-wrap" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP, fontWeight: 600 }}>
+                      <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: ACCENT }} />
                       <span>Message</span>
-                        <span className="text-[10px] sm:text-xs font-normal text-motif-deep/70">(Optional)</span>
+                      <span className="garamond font-normal" style={{ fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: `${DEEP}90` }}>(Optional)</span>
                     </label>
                     <textarea
                       name="Message"
@@ -1060,41 +1099,39 @@ export function GuestList() {
 
               {/* Enhanced Success Overlay */}
               {requestSuccess && (
-                <div className="absolute inset-0 bg-motif-medium/98 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-300 p-2 sm:p-3 md:p-4">
+                <div className="absolute inset-0 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-300 p-2 sm:p-3 md:p-4" style={{ background: `${DEEP}f5` }}>
                   <div className="text-center p-3 sm:p-4 md:p-5 lg:p-6 max-w-sm mx-auto">
-                    {/* Enhanced Icon Circle */}
+                    {/* Icon Circle */}
                     <div className="relative inline-flex items-center justify-center mb-3 sm:mb-4">
-                      {/* Animated rings */}
-                      <div className="absolute inset-0 rounded-full border-2 border-[#8B3036]/20 animate-ping" />
-                      <div className="absolute inset-0 rounded-full border-2 border-[#8B3036]/30" />
-                      {/* Icon container */}
-                      <div className="relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 bg-white rounded-full flex items-center justify-center shadow-xl">
-                        <CheckCircle className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-10 lg:w-10 text-motif-medium" strokeWidth={2.5} />
+                      <div className="absolute inset-0 rounded-full border-2 animate-ping" style={{ borderColor: `${ACCENT}40` }} />
+                      <div className="absolute inset-0 rounded-full border-2" style={{ borderColor: `${ACCENT}55` }} />
+                      <div className="relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full flex items-center justify-center shadow-xl" style={{ background: "var(--color-motif-cream)" }}>
+                        <CheckCircle className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-10 lg:w-10" style={{ color: ACCENT }} strokeWidth={2.5} />
                       </div>
                     </div>
-                    
+
                     {/* Title */}
-                    <h4 className="text-base sm:text-lg md:text-xl lg:text-2xl font-serif font-bold text-[#8B3036] mb-2 sm:mb-3">
+                    <h4 className="gistesy mb-2 sm:mb-3" style={{ fontSize: "clamp(1.4rem, 5vw, 2rem)", color: "var(--color-motif-cream)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em" }}>
                       Request Sent!
                     </h4>
-                    
+
                     {/* Message */}
                     <div className="space-y-1 sm:space-y-1.5 mb-2 sm:mb-3">
-                      <p className="text-[#8B3036]/95 text-xs sm:text-sm font-medium">
+                      <p className="garamond" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: "rgba(255,247,240,0.92)", fontWeight: 500 }}>
                         We've received your request
                       </p>
-                      <p className="text-[#8B3036]/85 text-[10px] sm:text-xs">
+                      <p className="garamond" style={{ fontSize: "clamp(0.65rem, 2vw, 0.76rem)", color: "rgba(255,247,240,0.75)", fontStyle: "italic" }}>
                         We'll review it and get back to you soon
                       </p>
                     </div>
-                    
-                    {/* Subtle closing indicator */}
+
+                    {/* Closing indicator */}
                     <div className="flex items-center justify-center gap-1 sm:gap-1.5 mt-2 sm:mt-3">
-                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 bg-[#8B3036]/60 rounded-full animate-pulse" />
-                      <p className="text-[#8B3036]/70 text-[10px] sm:text-xs">
+                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full animate-pulse" style={{ background: "rgba(207,160,107,0.6)" }} />
+                      <p className="garamond" style={{ fontSize: "clamp(0.6rem, 1.8vw, 0.7rem)", color: "rgba(255,247,240,0.6)" }}>
                         This will close automatically
                       </p>
-                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 bg-[#8B3036]/60 rounded-full animate-pulse" />
+                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full animate-pulse" style={{ background: "rgba(207,160,107,0.6)" }} />
                     </div>
                   </div>
                 </div>

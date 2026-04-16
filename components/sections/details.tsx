@@ -5,7 +5,6 @@ import { useState, useEffect } from "react"
 import { QRCodeSVG } from "qrcode.react"
 import { siteConfig } from "@/content/site"
 import { CloudinaryImage } from "@/components/ui/cloudinary-image"
-import { Cinzel, Cormorant_Garamond } from "next/font/google"
 import {
   Shirt,
   Clock,
@@ -19,33 +18,15 @@ import {
   MapPin,
 } from "lucide-react"
 
-
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["400"],
-})
-
-const cinzel = Cinzel({
-  subsets: ["latin"],
-  weight: ["400", "600"],
-})  
-
-// Colors sourced from globals.css @theme inline — edit there to update everywhere
+// ── Motif palette ─────────────────────────────────────────────────────────────
+const DEEP   = "#8B6F5A"
+const MEDIUM = "#BFA07A"
+const ACCENT = "#CFA06B"
 
 export function Details() {
   const [copiedItems, setCopiedItems] = useState<Set<string>>(new Set())
   const [currentReceptionImageIndex, setCurrentReceptionImageIndex] = useState(0)
   const [showImageModal, setShowImageModal] = useState<string | null>(null)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [rotationOffset, setRotationOffset] = useState(0)
-  
-  const coupleImages = [
-    "/mobile-background/couple (1).jpg",
-    "/mobile-background/couple (2).jpg",
-    "/mobile-background/couple (3).jpg",
-    "/mobile-background/couple (4).jpg",
-  ]
-
   const receptionImages = siteConfig.reception.image
 
   useEffect(() => {
@@ -54,16 +35,6 @@ export function Details() {
     }, 3000)
     return () => clearInterval(timer)
   }, [])
-
-  // Gentle reminders couple photos — subtle carousel + wobble animation
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % coupleImages.length)
-      setRotationOffset((prev) => (prev + 10) % 360)
-    }, 2600)
-
-    return () => clearInterval(interval)
-  }, [coupleImages.length])
 
   const copyToClipboard = async (text: string, itemId: string) => {
     try {
@@ -97,8 +68,6 @@ export function Details() {
   const formattedCeremonyDate = siteConfig.ceremony.date
   const formattedReceptionDate = siteConfig.ceremony.date // reception follows ceremony on same day
 
-  const DECO_FILTER = "brightness(0) saturate(100%) invert(22%) sepia(88%) saturate(1800%) hue-rotate(185deg) brightness(90%) contrast(105%)"
-
   const openInMaps = (link: string) => {
     window.open(link, '_blank', 'noopener,noreferrer')
   }
@@ -123,36 +92,10 @@ export function Details() {
         />
       </div>
 
-      {/* Flower decoration - top left corner */}
-      <div className="absolute left-0 top-0 z-0 pointer-events-none">
-        <CloudinaryImage
-          src="/decoration/flower-decoration-left-bottom-corner2.png"
-          alt=""
-          width={300}
-          height={300}
-          className="w-auto h-auto max-w-[160px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[280px] opacity-65 scale-y-[-1]"
-          // style={{ filter: DECO_FILTER }}
-          priority={false}
-        />
-      </div>
-
-      {/* Flower decoration - top right corner */}
-      <div className="absolute right-0 top-0 z-0 pointer-events-none">
-        <CloudinaryImage
-          src="/decoration/flower-decoration-left-bottom-corner2.png"
-          alt=""
-          width={300}
-          height={300}
-          className="w-auto h-auto max-w-[160px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[280px] opacity-65 scale-x-[-1] scale-y-[-1]"
-          // style={{ filter: DECO_FILTER }}
-          priority={false}
-        />
-      </div>
-
       {/* Flower decoration - left bottom corner */}
       <div className="absolute left-0 bottom-0 z-0 pointer-events-none">
         <CloudinaryImage
-          src="/decoration/flower-decoration-left-bottom-corner2.png"
+          src="/decoration/balloons-half.png"
           alt=""
           width={300}
           height={300}
@@ -165,7 +108,7 @@ export function Details() {
       {/* Flower decoration - right bottom corner */}
       <div className="absolute right-0 bottom-0 z-0 pointer-events-none">
         <CloudinaryImage
-          src="/decoration/flower-decoration-left-bottom-corner2.png"
+          src="/decoration/balloons-half.png"
           alt=""
           width={300}
           height={300}
@@ -177,22 +120,68 @@ export function Details() {
 
       {/* Header */}
       <div className="relative z-10 text-center mb-12 sm:mb-16 md:mb-20 px-4 sm:px-6">
-        <div className="flex items-center justify-center gap-2 mb-4 sm:mb-5">
-          <div className="h-px w-16 sm:w-24 bg-motif-silver/60" />
-          <div className="w-1.5 h-1.5 rounded-full bg-motif-silver shadow-[0_0_18px_color-mix(in_srgb,var(--color-motif-silver)_80%,transparent)]" />
-          <div className="h-px w-16 sm:w-24 bg-motif-silver/60" />
-        </div>
-        <h2
-         className="lighten-regular text-[32px] sm:text-[40px] md:text-[48px] lg:text-[56px] xl:text-[64px] leading-tight"
-         style={{ color: 'var(--color-motif-deep)' }}
-        >
-          Event Details
-        </h2>
+
+        {/* Eyebrow */}
         <p
-          className="text-xs sm:text-sm md:text-base text-motif-medium font-normal max-w-xl mx-auto leading-relaxed tracking-[0.14em] px-4"
+          className="garamond"
+          style={{
+            fontSize: "clamp(0.56rem, 2.2vw, 0.72rem)",
+            letterSpacing: "0.48em",
+            textTransform: "uppercase",
+            color: ACCENT,
+            marginBottom: "0.5rem",
+            paddingRight: "0.48em",
+          }}
         >
-          Everything you need to know about our special day.
+          All You Need to Know
         </p>
+
+        {/* Ornament */}
+        <div className="flex items-center justify-center gap-3 mb-2">
+          <div className="h-px w-8 sm:w-12" style={{ background: `linear-gradient(to left, rgba(207,160,107,0.4), transparent)` }} />
+          <span style={{ color: ACCENT, fontSize: "7px", opacity: 0.7 }}>✦</span>
+          <div className="h-px w-8 sm:w-12" style={{ background: `linear-gradient(to right, rgba(207,160,107,0.4), transparent)` }} />
+        </div>
+
+        {/* Title */}
+        <h2
+          className="gistesy"
+          style={{
+            fontSize: "clamp(2.6rem, 11vw, 5.5rem)",
+            color: DEEP,
+            lineHeight: 1.15,
+            letterSpacing: "-0.01em",
+            textShadow: `0 2px 24px rgba(139,111,90,0.10)`,
+            marginBottom: "0.6rem",
+            overflow: "visible",
+            paddingTop: "0.15em",
+          }}
+        >
+          Day of Grace
+        </h2>
+
+        {/* Subtitle */}
+        <p
+          className="garamond"
+          style={{
+            fontSize: "clamp(0.78rem, 2.8vw, 0.96rem)",
+            color: MEDIUM,
+            fontStyle: "italic",
+            lineHeight: 1.85,
+            maxWidth: "460px",
+            margin: "0 auto clamp(0.6rem, 2vw, 1rem)",
+          }}
+        >
+          Every sacred detail, lovingly prepared for this blessed celebration
+          of Niahna Celestine's Christening.
+        </p>
+
+        {/* Divider */}
+        <div className="flex items-center justify-center gap-3">
+          <div className="h-px w-10 sm:w-14" style={{ background: `linear-gradient(to left, rgba(207,160,107,0.45), transparent)` }} />
+          <span style={{ color: "#D4B896", fontSize: "5px" }}>◆</span>
+          <div className="h-px w-10 sm:w-14" style={{ background: `linear-gradient(to right, rgba(207,160,107,0.45), transparent)` }} />
+        </div>
       </div>
 
       {/* Venue and Event Information */}
@@ -219,13 +208,13 @@ export function Details() {
               
               {/* Venue name overlay with warm gold accent */}
               <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 md:bottom-6 md:left-6 right-3 sm:right-4 md:right-6">
-                {/* <p className="text-sm sm:text-base md:text-lg font-[family-name:var(--font-ephesis)] text-[#FFF7F6] mb-1 sm:mb-2 drop-shadow-lg">
-                  Ceremony
-                </p> */}
-                <h3 className="lighten-regular text-[32px] sm:text-[40px] md:text-[48px] lg:text-[56px] xl:text-[64px] leading-tight" style={{ color: 'var(--color-motif-cream)' }}>
+                <p className="garamond" style={{ fontSize: "clamp(0.55rem, 2vw, 0.7rem)", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgba(255,247,240,0.75)", marginBottom: "0.25rem" }}>
+                  Christening Venue
+                </p>
+                <h3 className="gistesy" style={{ fontSize: "clamp(1.6rem, 6vw, 3rem)", color: "var(--color-motif-cream)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.1em" }}>
                   {siteConfig.ceremony.location}
                 </h3>
-                <p className="text-xs sm:text-sm md:text-base text-motif-cream/95 tracking-wide" style={{ color: 'var(--color-motif-cream)' }}>
+                <p className="garamond" style={{ fontSize: "clamp(0.7rem, 2.5vw, 0.88rem)", color: "rgba(255,247,240,0.85)", letterSpacing: "0.04em", marginTop: "0.2rem" }}>
                   {siteConfig.ceremony.venue}
                 </p>
               </div>
@@ -236,37 +225,37 @@ export function Details() {
               {/* Date Section */}
               <div className="text-center mb-5 sm:mb-8 md:mb-10">
                 {/* Day name */}
-                <p className="text-[10px] sm:text-xs md:text-sm font-semibold text-motif-medium uppercase tracking-[0.2em] mb-2 sm:mb-3">
+                <p className="garamond" style={{ fontSize: "clamp(0.6rem, 2.2vw, 0.75rem)", letterSpacing: "0.38em", textTransform: "uppercase", color: ACCENT, marginBottom: "0.4rem", paddingRight: "0.38em" }}>
                   {siteConfig.ceremony.day}
                 </p>
-                
-                {/* Month - Script style with warm gold */}
+
+                {/* Month */}
                 <div className="mb-2 sm:mb-4">
-                  <p className="lighten-regular text-[32px] sm:text-[40px] md:text-[48px] lg:text-[56px] xl:text-[64px] leading-tight" style={{ color: 'var(--color-motif-medium)' }}>
-                  {new Date(siteConfig.ceremony.date).toLocaleString('default', { month: 'long' })}
-                  </p>
-                </div>
-                
-                {/* Day and Year */}
-                <div className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6 md:mb-7">
-                  <p className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal text-motif-deep leading-none">
-                  {new Date(siteConfig.ceremony.date).getDate()}
-                  </p>
-                  <div className="h-10 sm:h-12 md:h-16 lg:h-20 w-[2px] bg-gradient-to-b from-motif-medium via-motif-deep to-motif-medium" />
-                  <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-light text-motif-deep leading-none">
-                  {new Date(siteConfig.ceremony.date).getFullYear()}
+                  <p className="gistesy" style={{ fontSize: "clamp(2rem, 8vw, 4rem)", color: MEDIUM, lineHeight: 1.1, overflow: "visible", paddingTop: "0.1em" }}>
+                    {new Date(siteConfig.ceremony.date).toLocaleString('default', { month: 'long' })}
                   </p>
                 </div>
 
-                {/* Decorative line */}
-                <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                  <div className="h-[1px] w-8 sm:w-10 md:w-14 bg-gradient-to-r from-transparent via-motif-medium to-motif-medium" />
-                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-motif-medium rounded-full" />
-                  <div className="h-[1px] w-8 sm:w-10 md:w-14 bg-gradient-to-l from-transparent via-motif-medium to-motif-medium" />
+                {/* Day and Year */}
+                <div className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6 md:mb-7">
+                  <p className="amsterdam-one" style={{ fontSize: "clamp(2.5rem, 10vw, 5rem)", color: DEEP, lineHeight: 1 }}>
+                    {new Date(siteConfig.ceremony.date).getDate()}
+                  </p>
+                  <div className="h-10 sm:h-12 md:h-16 w-[1px]" style={{ background: `linear-gradient(to bottom, transparent, ${ACCENT}, transparent)` }} />
+                  <p className="garamond" style={{ fontSize: "clamp(1.2rem, 4vw, 2rem)", color: DEEP, lineHeight: 1, fontWeight: 300 }}>
+                    {new Date(siteConfig.ceremony.date).getFullYear()}
+                  </p>
+                </div>
+
+                {/* Ornament */}
+                <div className="flex items-center justify-center gap-3 mb-3 sm:mb-4">
+                  <div className="h-px w-8 sm:w-12" style={{ background: `linear-gradient(to left, rgba(207,160,107,0.4), transparent)` }} />
+                  <span style={{ color: ACCENT, fontSize: "6px", opacity: 0.65 }}>✦</span>
+                  <div className="h-px w-8 sm:w-12" style={{ background: `linear-gradient(to right, rgba(207,160,107,0.4), transparent)` }} />
                 </div>
 
                 {/* Time */}
-                <p className="text-sm sm:text-base md:text-lg lg:text-xl font-semibold text-motif-deep tracking-wide">
+                <p className="garamond" style={{ fontSize: "clamp(0.9rem, 3vw, 1.15rem)", color: DEEP, letterSpacing: "0.1em" }}>
                   {siteConfig.ceremony.time}
                 </p>
               </div>
@@ -276,13 +265,13 @@ export function Details() {
                 <div className="flex items-start gap-2 sm:gap-3 md:gap-4">
                   <MapPin className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-motif-deep mt-0.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] font-semibold text-motif-deep mb-1.5 sm:mb-2 uppercase tracking-wide">
+                    <p className="garamond" style={{ fontSize: "clamp(0.6rem, 2vw, 0.72rem)", letterSpacing: "0.32em", textTransform: "uppercase", color: ACCENT, marginBottom: "0.4rem", paddingRight: "0.32em" }}>
                       Location
                     </p>
-                    <p className="text-xs sm:text-sm md:text-base lg:text-lg font-[family-name:var(--font-crimson)] text-motif-deep leading-relaxed">
+                    <p className="garamond" style={{ fontSize: "clamp(0.82rem, 2.8vw, 1rem)", color: DEEP, lineHeight: 1.5 }}>
                       {ceremonyVenueName}
                     </p>
-                    <p className="text-[10px] sm:text-xs md:text-sm font-[family-name:var(--font-crimson)] text-motif-deep/70 leading-relaxed">
+                    <p className="garamond" style={{ fontSize: "clamp(0.7rem, 2.2vw, 0.84rem)", color: `${DEEP}b0`, lineHeight: 1.5 }}>
                       {ceremonyAddress}
                     </p>
                   </div>
@@ -298,7 +287,7 @@ export function Details() {
                         bgColor="var(--color-motif-cream)"
                       />
                     </div>
-                    <p className="text-[9px] sm:text-[10px] md:text-xs font-[family-name:var(--font-crimson)] text-motif-deep/60 italic text-center max-w-[80px]">
+                    <p className="garamond" style={{ fontSize: "clamp(0.6rem, 1.8vw, 0.7rem)", color: `${DEEP}90`, fontStyle: "italic", textAlign: "center", maxWidth: "80px" }}>
                       Scan for directions
                     </p>
                   </div>
@@ -309,23 +298,25 @@ export function Details() {
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 md:gap-4">
                 <button
                   onClick={() => openInMaps(ceremonyMapsLink)}
-                  className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 md:py-3 bg-motif-deep hover:bg-motif-accent text-motif-cream rounded-lg font-[family-name:var(--font-crimson)] font-semibold text-xs sm:text-sm md:text-base transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] premium-shadow"
+                  className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 md:py-3 rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                  style={{ background: DEEP, color: "var(--color-motif-cream)" }}
                   aria-label="Get directions to ceremony venue"
                 >
-                  <Navigation className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 flex-shrink-0" />
-                  <span>Get Directions</span>
+                  <Navigation className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+                  <span className="garamond" style={{ fontSize: "clamp(0.75rem, 2.5vw, 0.9rem)", letterSpacing: "0.06em" }}>Get Directions</span>
                 </button>
                 <button
                   onClick={() => copyToClipboard(ceremonyVenue, 'ceremony')}
-                  className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 md:py-3 bg-motif-cream border-2 border-motif-deep/30 hover:border-motif-deep/50 hover:bg-motif-silver/20 text-motif-deep rounded-lg font-[family-name:var(--font-crimson)] font-semibold text-xs sm:text-sm md:text-base transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                  className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 md:py-3 bg-motif-cream border border-motif-deep/25 hover:border-motif-deep/45 rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                  style={{ color: DEEP }}
                   aria-label="Copy ceremony venue address"
                 >
                   {copiedItems.has('ceremony') ? (
-                    <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 flex-shrink-0 text-motif-deep" />
+                    <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
                   ) : (
-                    <Copy className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 flex-shrink-0" />
+                    <Copy className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
                   )}
-                  <span>{copiedItems.has('ceremony') ? 'Copied!' : 'Copy Address'}</span>
+                  <span className="garamond" style={{ fontSize: "clamp(0.75rem, 2.5vw, 0.9rem)", letterSpacing: "0.06em" }}>{copiedItems.has('ceremony') ? 'Copied!' : 'Copy Address'}</span>
                 </button>
               </div>
             </div>
@@ -360,13 +351,13 @@ export function Details() {
               
           
               <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 md:bottom-6 md:left-6 right-3 sm:right-4 md:right-6 z-20">
-                {/* <p className="text-sm sm:text-base md:text-lg font-[family-name:var(--font-ephesis)] text-[#FFF7F6] mb-1 sm:mb-2 drop-shadow-lg">
-                  Reception
-                </p> */}
-                <h3 className="lighten-regular text-[32px] sm:text-[40px] md:text-[48px] lg:text-[56px] xl:text-[64px] leading-tight" style={{ color: 'var(--color-motif-cream)' }}>
+                <p className="garamond" style={{ fontSize: "clamp(0.55rem, 2vw, 0.7rem)", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgba(255,247,240,0.75)", marginBottom: "0.25rem" }}>
+                  Reception Venue
+                </p>
+                <h3 className="gistesy" style={{ fontSize: "clamp(1.6rem, 6vw, 3rem)", color: "var(--color-motif-cream)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.1em" }}>
                   {siteConfig.reception.location}
                 </h3>
-                <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] text-white/95 drop-shadow-md tracking-wide">
+                <p className="garamond" style={{ fontSize: "clamp(0.7rem, 2.5vw, 0.88rem)", color: "rgba(255,247,240,0.85)", letterSpacing: "0.04em", marginTop: "0.2rem" }}>
                   {siteConfig.reception.venue}
                 </p>
               </div>
@@ -376,15 +367,15 @@ export function Details() {
          
               <div className="text-center mb-5 sm:mb-8">
                 {siteConfig.reception.time === "To follow after the ceremony" ? (
-                  <p className="text-sm sm:text-base md:text-lg lg:text-xl font-[family-name:var(--font-crimson)]  font-semibold text-motif-deep tracking-wide">
+                  <p className="garamond" style={{ fontSize: "clamp(0.9rem, 3vw, 1.1rem)", color: DEEP, fontStyle: "italic", letterSpacing: "0.04em" }}>
                     To follow after the ceremony
                   </p>
                 ) : (
                   <>
-                    <p className="text-[10px] sm:text-xs md:text-sm font-[family-name:var(--font-crimson)] font-semibold text-motif-medium uppercase tracking-[0.2em] mb-2 sm:mb-3">
+                    <p className="garamond" style={{ fontSize: "clamp(0.6rem, 2.2vw, 0.75rem)", letterSpacing: "0.38em", textTransform: "uppercase", color: ACCENT, marginBottom: "0.4rem", paddingRight: "0.38em" }}>
                       {siteConfig.reception.time === "After ceremony" ? "Starts" : "Starts at"}
                     </p>
-                    <p className="text-sm sm:text-base md:text-lg lg:text-xl font-[family-name:var(--font-crimson)] font-semibold text-motif-deep tracking-wide">
+                    <p className="garamond" style={{ fontSize: "clamp(0.9rem, 3vw, 1.1rem)", color: DEEP, letterSpacing: "0.08em" }}>
                       {siteConfig.reception.time}
                     </p>
                   </>
@@ -396,13 +387,13 @@ export function Details() {
                 <div className="flex items-start gap-2 sm:gap-3 md:gap-4">
                   <MapPin className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-motif-deep mt-0.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] font-semibold text-motif-deep mb-1.5 sm:mb-2 uppercase tracking-wide">
+                    <p className="garamond" style={{ fontSize: "clamp(0.6rem, 2vw, 0.72rem)", letterSpacing: "0.32em", textTransform: "uppercase", color: ACCENT, marginBottom: "0.4rem", paddingRight: "0.32em" }}>
                       Location
                     </p>
-                    <p className="text-xs sm:text-sm md:text-base lg:text-lg font-[family-name:var(--font-crimson)] text-motif-deep leading-relaxed">
+                    <p className="garamond" style={{ fontSize: "clamp(0.82rem, 2.8vw, 1rem)", color: DEEP, lineHeight: 1.5 }}>
                       {receptionVenueName}
                     </p>
-                    <p className="text-[10px] sm:text-xs md:text-sm font-[family-name:var(--font-crimson)] text-motif-deep/70 leading-relaxed">
+                    <p className="garamond" style={{ fontSize: "clamp(0.7rem, 2.2vw, 0.84rem)", color: `${DEEP}b0`, lineHeight: 1.5 }}>
                       {receptionAddress}
                     </p>
                   </div>
@@ -418,34 +409,35 @@ export function Details() {
                         bgColor="var(--color-motif-cream)"
                       />
                     </div>
-                    <p className="text-[9px] sm:text-[10px] md:text-xs font-[family-name:var(--font-crimson)] text-motif-deep/60 italic text-center max-w-[80px]">
+                    <p className="garamond" style={{ fontSize: "clamp(0.6rem, 1.8vw, 0.7rem)", color: `${DEEP}90`, fontStyle: "italic", textAlign: "center", maxWidth: "80px" }}>
                       Scan for directions
                     </p>
                   </div>
                 </div>
               </div>
 
-     
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 md:gap-4">
                 <button
                   onClick={() => openInMaps(receptionMapsLink)}
-                  className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 md:py-3 bg-motif-deep hover:bg-motif-accent text-motif-cream rounded-lg font-[family-name:var(--font-crimson)] font-semibold text-xs sm:text-sm md:text-base transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] premium-shadow"
+                  className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 md:py-3 rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                  style={{ background: DEEP, color: "var(--color-motif-cream)" }}
                   aria-label="Get directions to reception venue"
                 >
-                  <Navigation className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 flex-shrink-0" />
-                  <span>Get Directions</span>
+                  <Navigation className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+                  <span className="garamond" style={{ fontSize: "clamp(0.75rem, 2.5vw, 0.9rem)", letterSpacing: "0.06em" }}>Get Directions</span>
                 </button>
                 <button
                   onClick={() => copyToClipboard(receptionVenue, 'reception')}
-                  className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 md:py-3 bg-motif-cream border-2 border-motif-deep/30 hover:border-motif-deep/50 hover:bg-motif-silver/20 text-motif-deep rounded-lg font-[family-name:var(--font-crimson)] font-semibold text-xs sm:text-sm md:text-base transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                  className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 md:py-3 bg-motif-cream border border-motif-deep/25 hover:border-motif-deep/45 rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                  style={{ color: DEEP }}
                   aria-label="Copy reception venue address"
                 >
                   {copiedItems.has('reception') ? (
-                    <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 flex-shrink-0 text-motif-deep" />
+                    <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
                   ) : (
-                    <Copy className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 flex-shrink-0" />
+                    <Copy className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
                   )}
-                  <span>{copiedItems.has('reception') ? 'Copied!' : 'Copy Address'}</span>
+                  <span className="garamond" style={{ fontSize: "clamp(0.75rem, 2.5vw, 0.9rem)", letterSpacing: "0.06em" }}>{copiedItems.has('reception') ? 'Copied!' : 'Copy Address'}</span>
                 </button>
               </div>
             </div>
@@ -456,260 +448,11 @@ export function Details() {
       {/* Attire Information */}
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6">
         {/* Section Header */}
-        <div className="text-center mb-8 sm:mb-10 md:mb-12">
-          <div className="flex items-center justify-center gap-3 sm:gap-4 mb-4 sm:mb-5">
-            <div className="h-px w-10 sm:w-14 md:w-20 bg-motif-silver/60" />
-            <Shirt className="w-5 h-5 sm:w-6 sm:h-6 text-motif-silver" />
-            <div className="h-px w-10 sm:w-14 md:w-20 bg-motif-silver/60" />
-          </div>
-          <h3
-           className="lighten-regular text-[32px] sm:text-[40px] md:text-[48px] lg:text-[56px] xl:text-[64px] leading-tight"
-           style={{ color: 'var(--color-motif-deep)' }}
-          >
-            Attire Guidelines
-          </h3>
-          <p
-            className="text-sm sm:text-base md:text-lg text-motif-medium font-normal"
-          >
-            Please dress according to the guidelines below.
-          </p>
-        </div>
-                {/* Attire Cards */}
-                <div className="space-y-5 sm:space-y-6 md:space-y-8">
-          {/* Principal Sponsor Attire */}
-          <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-br from-motif-silver/22 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-lg" />
-            
-            <div className="relative bg-motif-cream backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-7 lg:p-9 border  hover:shadow-[0_20px_48px_rgba(0,0,0,0.24)] hover:border-motif-deep/70 transition-all duration-300">
-              <h4
-                className="lighten-regular text-[24px] sm:text-[32px] md:text-[40px] lg:text-[48px] xl:text-[56px] leading-tight text-center mb-4 sm:mb-5 md:mb-6 "
-                style={{ color: 'var(--color-motif-deep)' }}
-              >
-                Principal Sponsors: 
-              </h4>
 
-              {/* Copy: follow color palette */}
-              {/* <p className={`${cinzel.className} text-center text-xs sm:text-sm md:text-base lg:text-lg text-motif-deep/90 font-light leading-relaxed mb-4 sm:mb-5 md:mb-6 max-w-xl mx-auto px-3`}>
-                Please follow the color palette below for your outfit.
-              </p> */}
 
-              {/* Principal sponsor attire image */}
-              <div className="relative w-full aspect-[4/3] sm:aspect-[3/2] max-w-2xl mx-auto rounded-lg sm:rounded-xl overflow-hidden border border-motif-medium/30 mb-4 sm:mb-6 md:mb-8">
-                <CloudinaryImage
-                  src={siteConfig.dressCode.sponsors.photo}
-                  alt="Principal sponsor attire — follow the color palette"
-                  fill
-                  className="object-contain bg-[#FFF7F6]/50 p-2 sm:p-3"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 672px"
-                />
-              </div>
 
-              {/* Color palette for principal sponsors — keep explicit dress-code colors (not UI palette) */}
-              <div className="flex justify-center gap-2 sm:gap-3 md:gap-4 flex-wrap mb-5 sm:mb-6 md:mb-7 px-2">
-                {siteConfig.dressCode.sponsors.palette.split(',').map((color) => (
-                  <div
-                    key={color.trim()}
-                    className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full ring-1 ring-gray-300/60 hover:scale-110 transition-transform duration-300"
-                    style={{ backgroundColor: color.trim() }}
-                    title={color.trim()}
-                  />
-                ))}
-              </div>
-              
-              {/* Sponsors Dress Code Text */}
-              <div className="text-center pt-3 sm:pt-4 border-t border-motif-silver/70 px-3 sm:px-4">
-                <p className="text-sm sm:text-base md:text-lg font-[family-name:var(--font-crimson)] text-motif-deep leading-relaxed mb-2">
-                  <span className="font-semibold">{siteConfig.dressCode.sponsors.male}</span>
-                  <br />
-                  <span className="font-semibold">{siteConfig.dressCode.sponsors.female}</span>
-                </p>
-                {/* <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] text-motif-deep leading-relaxed mb-2">
-                  <span className="font-semibold">Palette inspiration:</span> {siteConfig.dressCode.colors}
-                </p>
-                <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] text-motif-deep leading-relaxed italic">
-                  {siteConfig.dressCode.note}
-                </p> */}
-              </div>
-            </div>
-          </div>
 
-        </div>
-
-                {/* Entourage Attire Cards */}
-                <div className="space-y-5 sm:space-y-6 md:space-y-8 mb-4">
-          {/* Guests Attire */}
-          <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-br from-motif-silver/22 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-lg" />
-            
-            <div className="relative bg-motif-cream backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-7 lg:p-9 border  hover:shadow-[0_20px_48px_rgba(0,0,0,0.24)] hover:border-motif-deep/70 transition-all duration-300">
-              <h4
-                className="lighten-regular text-[24px] sm:text-[32px] md:text-[40px] lg:text-[48px] xl:text-[56px] leading-tight text-center mb-4 sm:mb-5 md:mb-6 "
-                style={{ color: 'var(--color-motif-deep)' }}
-              >
-                Entourage  & Secondary Attire 
-              </h4>
-
-              {/* Copy: follow color palette */}
-              {/* <p className="text-center text-xs sm:text-sm md:text-base lg:text-lg text-motif-deep/90 font-light leading-relaxed mb-4 sm:mb-5 md:mb-6 max-w-xl mx-auto px-3">
-              Kindly follow the color palette below for your outfit.
-              </p> */}
-
-              {/* Principal sponsor attire image */}
-              <div className="relative w-full aspect-[4/3] sm:aspect-[3/2] max-w-2xl mx-auto rounded-lg sm:rounded-xl overflow-hidden border border-motif-medium/30 mb-4 sm:mb-6 md:mb-8">
-                <CloudinaryImage
-                  src={siteConfig.dressCode.entourage.photo}
-                  alt={siteConfig.dressCode.entourage.notes}
-                  fill
-                  className="object-contain bg-[#FFF7F6]/50 p-2 sm:p-3"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 672px"
-                />
-              </div>
-
-              {/* Color palette for principal sponsors — keep explicit dress-code colors (not UI palette) */}
-              <div className="flex justify-center gap-2 sm:gap-3 md:gap-4 flex-wrap mb-5 sm:mb-6 md:mb-7 px-2">
-                {siteConfig.dressCode.entourage.palette.split(',').map((color) => (
-                  <div
-                    key={color.trim()}
-                    className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full ring-1 ring-gray-300/60 hover:scale-110 transition-transform duration-300"
-                    style={{ backgroundColor: color.trim() }}
-                    title={color.trim()}
-                  />
-                ))}
-              </div>
-              
-              {/* Guests Dress Code Text */}
-              <div className="text-center pt-3 sm:pt-4 border-t border-motif-silver/70 px-3 sm:px-4 mb-4">
-                <p className="text-sm sm:text-base md:text-lg font-[family-name:var(--font-crimson)] text-motif-deep leading-relaxed mb-2">
-                  <span className="font-semibold">{siteConfig.dressCode.entourage.notes}</span>
-                  <br />
-               
-                </p>
-                {/* <div className="mt-3 sm:mt-4 text-left max-w-2xl mx-auto">
-                  <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
-                    <span className="inline-flex h-2 w-2 rounded-full bg-motif-accent/80" aria-hidden="true" />
-                    <p className={`${cinzel.className} text-[11px] sm:text-xs tracking-[0.22em] uppercase text-motif-deep/80`}>
-                      Notes
-                    </p>
-                    <span className="hidden sm:block h-px flex-1 bg-motif-deep/15" aria-hidden="true" />
-                  </div>
-
-                  <ul className="space-y-2 sm:space-y-2.5">
-                    <li className="flex gap-3">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-motif-deep/40" aria-hidden="true" />
-                      <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] text-motif-deep/90 leading-relaxed">
-                        Ladies, we know you’d look beautiful in white—but let’s save that for the bride.
-                      </p>
-                    </li>
-                    <li className="flex gap-3">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-motif-deep/40" aria-hidden="true" />
-                      <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] text-motif-deep/90 leading-relaxed">
-                        We kindly encourage everyone to avoid casual attire such as jeans, shorts, slippers, and sando.
-                      </p>
-                    </li>
-                    <li className="flex gap-3">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-motif-deep/40" aria-hidden="true" />
-                      <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] text-motif-deep/90 leading-relaxed">
-                        We also gently discourage wearing all or predominantly black outfits to match the bright and joyful mood of our wedding celebration.
-                      </p>
-                    </li>
-                  </ul>
-                </div> */}
-                {/* <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] text-motif-deep leading-relaxed italic">
-                  {siteConfig.dressCode.note}
-                </p> */}
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        {/* Attire Cards */}
-        <div className="space-y-5 sm:space-y-6 md:space-y-8 mb-4">
-          {/* Guests Attire */}
-          <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-br from-motif-silver/22 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-lg" />
-            
-            <div className="relative bg-motif-cream backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-7 lg:p-9 border  hover:shadow-[0_20px_48px_rgba(0,0,0,0.24)] hover:border-motif-deep/70 transition-all duration-300">
-              <h4
-                className="lighten-regular text-[24px] sm:text-[32px] md:text-[40px] lg:text-[48px] xl:text-[56px] leading-tight text-center mb-4 sm:mb-5 md:mb-6 "
-                style={{ color: 'var(--color-motif-deep)' }}
-              >
-                Guest Attire
-              </h4>
-
-              {/* Copy: follow color palette */}
-              <p className="text-center text-xs sm:text-sm md:text-base lg:text-lg text-motif-deep/90 font-light leading-relaxed mb-4 sm:mb-5 md:mb-6 max-w-xl mx-auto px-3">
-              Kindly follow the color palette below for your outfit.
-              </p>
-
-              {/* Principal sponsor attire image */}
-              <div className="relative w-full aspect-[4/3] sm:aspect-[3/2] max-w-2xl mx-auto rounded-lg sm:rounded-xl overflow-hidden border border-motif-medium/30 mb-4 sm:mb-6 md:mb-8">
-                <CloudinaryImage
-                  src={siteConfig.dressCode.guests.photo}
-                  alt={siteConfig.dressCode.guests.notes}
-                  fill
-                  className="object-contain bg-[#FFF7F6]/50 p-2 sm:p-3"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 672px"
-                />
-              </div>
-
-              {/* Color palette for principal sponsors — keep explicit dress-code colors (not UI palette) */}
-              <div className="flex justify-center gap-2 sm:gap-3 md:gap-4 flex-wrap mb-5 sm:mb-6 md:mb-7 px-2">
-                {siteConfig.dressCode.guests.palette.split(',').map((color) => (
-                  <div
-                    key={color.trim()}
-                    className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full ring-1 ring-gray-300/60 hover:scale-110 transition-transform duration-300"
-                    style={{ backgroundColor: color.trim() }}
-                    title={color.trim()}
-                  />
-                ))}
-              </div>
-              
-              {/* Guests Dress Code Text */}
-              <div className="text-center pt-3 sm:pt-4 border-t border-motif-silver/70 px-3 sm:px-4 mb-4">
-                <p className="text-sm sm:text-base md:text-lg font-[family-name:var(--font-crimson)] text-motif-deep leading-relaxed mb-2">
-                  <span className="font-semibold">{siteConfig.dressCode.guests.notes}</span>
-                  <br />
-               
-                </p>
-                {/* <div className="mt-3 sm:mt-4 text-left max-w-2xl mx-auto">
-                  <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
-                    <span className="inline-flex h-2 w-2 rounded-full bg-motif-accent/80" aria-hidden="true" />
-                    <p className={`${cinzel.className} text-[11px] sm:text-xs tracking-[0.22em] uppercase text-motif-deep/80`}>
-                      Notes
-                    </p>
-                    <span className="hidden sm:block h-px flex-1 bg-motif-deep/15" aria-hidden="true" />
-                  </div>
-
-                  <ul className="space-y-2 sm:space-y-2.5">
-                    <li className="flex gap-3">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-motif-deep/40" aria-hidden="true" />
-                      <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] text-motif-deep/90 leading-relaxed">
-                        Ladies, we know you’d look beautiful in white—but let’s save that for the bride.
-                      </p>
-                    </li>
-                    <li className="flex gap-3">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-motif-deep/40" aria-hidden="true" />
-                      <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] text-motif-deep/90 leading-relaxed">
-                        We kindly encourage everyone to avoid casual attire such as jeans, shorts, slippers, and sando.
-                      </p>
-                    </li>
-                    <li className="flex gap-3">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-motif-deep/40" aria-hidden="true" />
-                      <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] text-motif-deep/90 leading-relaxed">
-                        We also gently discourage wearing all or predominantly black outfits to match the bright and joyful mood of our wedding celebration.
-                      </p>
-                    </li>
-                  </ul>
-                </div> */}
-                {/* <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] text-motif-deep leading-relaxed italic">
-                  {siteConfig.dressCode.note}
-                </p> */}
-              </div>
-            </div>
-          </div>
-
-        </div>
+        
 
      {/* Gentle Reminders Container */}
      <div className="relative z-10 max-w-4xl mx-auto px-3 sm:px-5 mt-8 sm:mt-12 md:mt-16">
@@ -752,59 +495,52 @@ export function Details() {
             </div> */}
 
             {/* Title */}
-            <h3 
-             className="lighten-regular text-[40px] sm:text-[50px] md:text-[60px] lg:text-[70px] xl:text-[80px] leading-tight text-center mb-4 sm:mb-5 md:mb-6 "
-             style={{ color: 'var(--color-motif-deep)' }}
-             >
+            <p className="garamond text-center" style={{ fontSize: "clamp(0.56rem, 2.2vw, 0.72rem)", letterSpacing: "0.48em", textTransform: "uppercase", color: ACCENT, marginBottom: "0.4rem", paddingRight: "0.48em" }}>
+              A Few Kind Notes
+            </p>
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <div className="h-px w-8 sm:w-12" style={{ background: `linear-gradient(to left, rgba(207, 160, 107, 0), transparent)` }} />
+              <span style={{ color: ACCENT, fontSize: "7px", opacity: 0.7 }}>✦</span>
+              <div className="h-px w-8 sm:w-12" style={{ background: `linear-gradient(to right, rgba(207, 160, 107, 0), transparent)` }} />
+            </div>
+            <h3
+              className="gistesy text-center"
+              style={{ fontSize: "clamp(2rem, 9vw, 4.5rem)", color: DEEP, lineHeight: 1.15, overflow: "visible", paddingTop: "0.1em", marginBottom: "clamp(1rem, 3vw, 1.5rem)" }}
+            >
               Gentle Reminders
             </h3>
 
             {/* Reminders List */}
             <div className="space-y-4 sm:space-y-5 md:space-y-6 max-w-2xl mx-auto">
-              {/* Children Reminder */}
-              {/* <div className="bg-motif-cream/60 rounded-lg p-4 sm:p-5 md:p-6 border border-motif-deep/10 shadow-sm">
-                <h4 className={`${cinzel.className} text-base sm:text-lg md:text-xl font-semibold text-motif-deep mb-2 sm:mb-3`}>
-                  CHILDREN
-                </h4>
-                <p className={`${cormorant.className} text-sm sm:text-base md:text-lg text-motif-deep/80 leading-relaxed`}>
-                  While we love your little ones, we kindly request an adults-only celebration so everyone can relax and enjoy the evening.
+              {/* Unplugged Christening */}
+              <div className="rounded-lg p-4 sm:p-5 md:p-6 border border-motif-accent/20 shadow-sm" style={{ background: "rgba(255,247,240,0.55)" }}>
+                <p className="garamond text-center" style={{ fontSize: "clamp(0.55rem, 1.8vw, 0.66rem)", letterSpacing: "0.38em", textTransform: "uppercase", color: ACCENT, marginBottom: "0.25rem", paddingRight: "0.38em" }}>
+                  A Sacred Moment
                 </p>
-              </div> */}
-
-              {/* Unplugged Ceremony Reminder */}
-              <div className="bg-motif-cream/60 rounded-lg p-4 sm:p-5 md:p-6 border border-motif-deep/10 shadow-sm">
-                <h4 className="lighten-regular text-[24px] sm:text-[30px] md:text-[35px] lg:text-[40px] xl:text-[45px] leading-tight text-center mb-4 sm:mb-5 md:mb-6 "
-                style={{ color: 'var(--color-motif-deep)' }}
+                <h4 className="gistesy text-center"
+                  style={{ fontSize: "clamp(1.4rem, 5vw, 2.2rem)", color: DEEP, lineHeight: 1.1, overflow: "visible", paddingTop: "0.1em", marginBottom: "0.75rem" }}
                 >
-                Unplugged Ceremony
-
+                  Unplugged Christening
                 </h4>
-                <p className={`${cormorant.className} text-sm sm:text-base md:text-lg text-motif-deep/80 leading-relaxed`}>
-                We’re having a mostly unplugged ceremony. Guests may take photos, but we kindly ask that it be kept minimal. Please avoid blocking or crowding our official photographers so they can capture the special moments. We’d love for everyone to stay present and share the moment with us. Don’t worry—professional photos will be shared with you after the event. Thank you for your understanding 
+                <p className="garamond" style={{ fontSize: "clamp(0.82rem, 2.8vw, 0.96rem)", color: `${DEEP}cc`, lineHeight: 1.85, textAlign: "center" }}>
+                  We are hosting a mostly unplugged christening. You are welcome to take a few photos, but we kindly ask that it be kept minimal. Please refrain from blocking our official photographer so every precious moment is beautifully captured. We hope you will be fully present with us — professional photos will be shared with you after the celebration. Thank you for your grace and understanding.
                 </p>
               </div>
 
-              {/* Arrival Reminder */}
-              <div className="bg-motif-cream/60 rounded-lg p-4 sm:p-5 md:p-6 border border-motif-deep/10 shadow-sm">
-                <h4 className="lighten-regular text-[24px] sm:text-[30px] md:text-[35px] lg:text-[40px] xl:text-[45px] leading-tight text-center mb-4 sm:mb-5 md:mb-6 "
-                style={{ color: 'var(--color-motif-deep)' }}
+              {/* Arrival */}
+              <div className="rounded-lg p-4 sm:p-5 md:p-6 border border-motif-accent/20 shadow-sm" style={{ background: "rgba(255,247,240,0.55)" }}>
+                <p className="garamond text-center" style={{ fontSize: "clamp(0.55rem, 1.8vw, 0.66rem)", letterSpacing: "0.38em", textTransform: "uppercase", color: ACCENT, marginBottom: "0.25rem", paddingRight: "0.38em" }}>
+                  Be On Time
+                </p>
+                <h4 className="gistesy text-center"
+                  style={{ fontSize: "clamp(1.4rem, 5vw, 2.2rem)", color: DEEP, lineHeight: 1.1, overflow: "visible", paddingTop: "0.1em", marginBottom: "0.75rem" }}
                 >
-                Arrival
+                  Arrival
                 </h4>
-                <p className={`${cormorant.className} text-sm sm:text-base md:text-lg text-motif-deep/80 leading-relaxed`}>
-                To ensure everything runs smoothly, please arrive at least 30 minutes before the ceremony starts. The program will begin at {siteConfig.ceremony.time}, so we kindly ask everyone to arrive by {siteConfig.ceremony.guestsTime}. This will give you time to find your seat, take in the beautiful setup, and be fully present for our special moment
+                <p className="garamond" style={{ fontSize: "clamp(0.82rem, 2.8vw, 0.96rem)", color: `${DEEP}cc`, lineHeight: 1.85, textAlign: "center" }}>
+                  To ensure this sacred celebration begins peacefully, we kindly ask that you arrive at least 30 minutes early. The ceremony begins at <span style={{ color: DEEP, fontWeight: 600 }}>{siteConfig.ceremony.time}</span>, so please plan to be seated by <span style={{ color: DEEP, fontWeight: 600 }}>{siteConfig.ceremony.guestsTime}</span>. Your timely presence allows everyone to share in the full blessing of this moment.
                 </p>
               </div>
-
-              {/* Gifts Reminder */}
-              {/* <div className="bg-motif-cream/60 rounded-lg p-4 sm:p-5 md:p-6 border border-motif-deep/10 shadow-sm">
-                <h4 className={`${cinzel.className} text-base sm:text-lg md:text-xl font-semibold text-motif-deep mb-2 sm:mb-3`}>
-                  GIFTS
-                </h4>
-                <p className={`${cormorant.className} text-sm sm:text-base md:text-lg text-motif-deep/80 leading-relaxed`}>
-                We are grateful to God for your love and prayers on our special day.
-                For those who wish to give a gift, a monetary gift to help us begin our life together would be deeply appreciated.                </p>
-              </div> */}
             </div>
           </div>
         </div>
@@ -894,7 +630,7 @@ export function Details() {
 
             {/* Enhanced content section */}
             <div
-              className={`${cormorant.className} p-5 sm:p-6 md:p-8 bg-motif-deep backdrop-blur-sm border-t-2 relative`}
+              className="garamond p-5 sm:p-6 md:p-8 bg-motif-deep backdrop-blur-sm border-t-2 relative"
               style={{ borderColor: "var(--color-motif-cream)" }}
             >
               {/* Decorative line */}
@@ -905,8 +641,8 @@ export function Details() {
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                   <div className="space-y-2">
                     <h3
-                      className={`${cinzel.className} text-xl sm:text-2xl md:text-3xl font-bold flex items-center gap-3`}
-                      style={{ color: "var(--color-motif-cream)" }}
+                      className="gistesy flex items-center gap-3"
+                      style={{ fontSize: "clamp(1.2rem, 4vw, 1.8rem)", color: "var(--color-motif-cream)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em" }}
                     >
                       {showImageModal === "ceremony" ? (
                         <Heart className="w-6 h-6 text-motif-cream" fill="var(--color-motif-cream)" />

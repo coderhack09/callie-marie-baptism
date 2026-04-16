@@ -31,10 +31,10 @@ cloudinary.config({
 })
 
 // ---------------------------------------------------------------------------
-// Constants — must stay in sync with lib/cloudinary.ts
+// Constants
 // ---------------------------------------------------------------------------
 
-const PROJECT_PREFIX = "wedding-projects/jezel-and-rodel"
+const ROOT_NAMESPACE = "wedding-projects"
 const SOURCE_DIR = path.resolve(process.cwd(), "public")
 
 const IMAGE_EXTENSIONS = new Set([
@@ -55,6 +55,33 @@ const BATCH_SIZE = 5
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+/**
+ * Normalises a human-readable project name into a URL-safe slug.
+ * "Niahna Celestine" → "niahna-celestine"
+ */
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+}
+
+/** Parses --project from argv; exits with an error if it is missing. */
+function resolveProjectPrefix(argv: string[]): string {
+  const idx = argv.indexOf("--project")
+  const projectName = idx !== -1 ? argv[idx + 1] : undefined
+  if (!projectName) {
+    console.error(
+      "❌  No project name supplied.\n" +
+        '    Usage: pnpm sync:cloudinary --project "Niahna Celestine"'
+    )
+    process.exit(1)
+  }
+  return `${ROOT_NAMESPACE}/${slugify(projectName)}`
+}
 
 function isVideoFile(filePath: string): boolean {
   return VIDEO_EXTENSIONS.has(path.extname(filePath))
@@ -85,19 +112,22 @@ function collectLocalFiles(dir: string): string[] {
 /**
  * Converts an absolute local file path to a Cloudinary public ID.
  * "/abs/path/to/public/Details/reception.png"
- *   → "wedding-projects/jennifer-and-patrick/Details/reception"
+ *   → "wedding-projects/niahna-celestine/Details/reception"
  */
-function toPublicId(absPath: string): string {
+function toPublicId(absPath: string, projectPrefix: string): string {
   const rel = path.relative(SOURCE_DIR, absPath)
   const withoutExt = rel.replace(/\.[^/.]+$/, "")
-  return `${PROJECT_PREFIX}/${withoutExt.split(path.sep).join("/")}`
+  return `${projectPrefix}/${withoutExt.split(path.sep).join("/")}`
 }
 
 /**
- * Fetches every resource public_id under PROJECT_PREFIX from Cloudinary
+ * Fetches every resource public_id under projectPrefix from Cloudinary
  * for a given resource type, handling pagination automatically.
  */
-async function listCloudinaryIds(resourceType: "image" | "video"): Promise<Set<string>> {
+async function listCloudinaryIds(
+  projectPrefix: string,
+  resourceType: "image" | "video"
+): Promise<Set<string>> {
   const ids = new Set<string>()
   let nextCursor: string | undefined
 
@@ -105,7 +135,7 @@ async function listCloudinaryIds(resourceType: "image" | "video"): Promise<Set<s
     const res = await cloudinary.api.resources({
       resource_type: resourceType,
       type: "upload",
-      prefix: PROJECT_PREFIX,
+      prefix: projectPrefix,
       max_results: 500,
       ...(nextCursor ? { next_cursor: nextCursor } : {}),
     })
@@ -183,6 +213,7 @@ async function deleteCloudinaryAsset(
 
 async function main(): Promise<void> {
   const dryRun = process.argv.includes("--dry-run")
+  const PROJECT_PREFIX = resolveProjectPrefix(process.argv)
 
   const { NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } =
     process.env
@@ -204,7 +235,7 @@ async function main(): Promise<void> {
   const localFiles = collectLocalFiles(SOURCE_DIR)
   // Map publicId → absPath for O(1) lookups
   const localById = new Map<string, string>(
-    localFiles.map((f) => [toPublicId(f), f])
+    localFiles.map((f) => [toPublicId(f, PROJECT_PREFIX), f])
   )
 
   console.log(`   Local media files : ${localFiles.length}`)
@@ -212,8 +243,8 @@ async function main(): Promise<void> {
   // ── Step 2: Fetch remote assets ────────────────────────────────────────────
   console.log("   Fetching Cloudinary index...")
   const [remoteImages, remoteVideos] = await Promise.all([
-    listCloudinaryIds("image"),
-    listCloudinaryIds("video"),
+    listCloudinaryIds(PROJECT_PREFIX, "image"),
+    listCloudinaryIds(PROJECT_PREFIX, "video"),
   ])
 
   const remoteAll = new Map<string, "image" | "video">([

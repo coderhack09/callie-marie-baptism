@@ -1,11 +1,12 @@
 export const siteConfig = {
   couple: {
-    bride: "Jezel Mae A. Prudente ", //Noenyl Bryle M. Gonzaga
-    brideNickname: "Jezel Mae", //Ltryl
-    groom: "Rodel C. Campos", //Ltryl B. Benitez
-    groomNickname: "Rodel",
-    monogram:"/monogram/monogramnew.png" ,//Ltryl
-    backgroundMusic:"/background_music/Kay Tagal Kitang Hinintay - Spongecola (wedding version).mp3"
+    bride: "Clarisse Mae Arnan Reyes",
+    brideNickname: "Macy",
+    groom: "Kenneth Erwin Brucelo Jose",
+    groomNickname: "Kenneth",
+    child: "Niahna Celestine",
+    monogram:"/monogram/monogram_niana-removebg-preview.png" ,//Ltryl
+    backgroundMusic:"/background_music/For This Child - Baby Dedication Song - Ken Blount.mp3"
   },
   googleAPI:{
     messageForm: "https://docs.google.com/forms/d/e/1FAIpQLSdIdbbjMODRyh7_s2dM9grIW2chcjoZV-RzQ5Fi_Xn6Wp8lAw/formResponse", //done
@@ -19,17 +20,17 @@ export const siteConfig = {
     googleShare: "https://docs.google.com/spreadsheets/d/1vZ5A4SKlFNHqU02P52OczTzgcaCBOvkop6Oxe2hZ59U/edit?usp=sharing",
   },
   wedding: {
-    date: "June 6, 2026",
-    time: "10:00 AM",
-    venue: "Sagrado Corazon De Jesus Nazareno Parish, Tagum City",
+    date: "May 31, 2026",
+    time: "8:00 AM",
+    venue: "Our lady of miraculous medal parish and shrine",
     tagline: "are getting married!",
     theme: "Our wedding palette is inspired by timeless elegance and warmth.Motif Colors: Champagne Gold, Soft Beige, Warm Soft Brown",
     motif: "#001F4B, #04396D, #015B97, #6497B2, #B2CDE0",
   },
   details: {
     rsvp: {
-      deadline: "MAY 30, 2026",
-      contact: "Jezel Mae A. Prudente",
+      deadline: "MAY 31, 2026",
+      contact: "Niahna Celestine",
       phone: "0917 888 8888",
     },
   },
@@ -42,21 +43,21 @@ export const siteConfig = {
     },
   },
   ceremony: {
-    location: "Sagrado Corazon De Jesus Nazareno Parish",
-    venue: "Bermudez Compound, Apokon, Tagum City",
-    date: "June 6, 2026",
-    day: "Saturday",
-    time: "10:00 AM",
-    entourageTime: "9:00 AM",
-    guestsTime: "9:30 AM",
-    image: "/Details/reception.png",
+    location: "Our lady of Miraculous Medal Parish",
+    venue: "Brgy. Mansilingan, Bacolod City",
+    date: "May 31, 2026",
+    day: "Friday",
+    time: "8:00 AM",
+    entourageTime: "7:00 AM",
+    guestsTime: "7:30 AM",
+    image: "/Details/ceremony.png",
   },
   reception: {
-    location: "Sam's Center (just beside the church)",
-    venue: "Bermudez Compound, Apokon, Tagum City",
+    location: "Nazareth Activity Hub",
+    venue: "Brgy. Mansilingan, Across Buanzon Cockpit, Bacolod City",
     date: "May 22, 2026",
     time: "12:00 PM",
-    image: ["/Details/reception1.png","/Details/receotion2.png"],
+    image: ["/Details/reception1.png","/Details/reception2.png"],
   },                          
   dressCode: {
       theme: "SEMI-FORMAL",

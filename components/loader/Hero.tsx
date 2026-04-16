@@ -1,231 +1,116 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { siteConfig } from '@/content/site';
-import { CloudinaryImage } from '@/components/ui/cloudinary-image';
+import React from 'react';
+import { FadeIn } from './FadeIn';
 
 interface HeroProps {
   onOpen: () => void;
   visible: boolean;
 }
 
-// Background (beige)          #F5EFE6
-// Section Alternate           #E8DCCB
-// Soft Brown (headings)       #8B6F5A
-// Deep Brown (accents/shadow) #4E3B31
-// Champagne Gold (buttons)    #D6BFA3
-// Champagne Hover (richer)    #C9A989
-// Borders / Dividers          #F2E4D3
-  // Palette tuned for champagne gold + beige + soft brown
- // Palette tuned to motif: sage green, muted sage, warm ivory, powder blue, steel blue, luxury silver
- const palette = {
-  deep: '--color-motif-deep',    // sage green — primary elegance, headings, borders
-  medium: '--color-motif-medium',  // soft muted sage — secondary text, subtle elements
-  accent: '--color-motif-accent',  // steel blue — deeper accent, hashtag, dividers
-  cream: '--color-motif-cream',   // warm ivory — surfaces, overlays, light text on dark
-  soft: '--color-motif-soft',    // powder blue — highlights, glow accents, progress fill
-  silver: '--color-motif-silver',  // luxury silver — neutral separators, track backgrounds
-};
-
-
-const desktopImages: string[] = [
-  '/desktop-background/couple (1).webp',
-  '/desktop-background/couple (2).webp',
-  '/desktop-background/couple (3).webp',
-  '/desktop-background/couple (4).webp',
-  '/desktop-background/couple (5).webp'
-];
-
-const mobileImages: string[] = [
-'/mobile-background/couple (17).webp',
-  '/mobile-background/couple (23).webp',
-  '/mobile-background/couple (9).webp',
-  '/mobile-background/couple (2).webp',
-  '/mobile-background/couple (4).webp'
-];
-
 export const Hero: React.FC<HeroProps> = ({ onOpen, visible }) => {
-  const [index, setIndex] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const [contentVisible, setContentVisible] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    if (typeof window === 'undefined') return;
-
-    const media = window.matchMedia('(max-width: 768px)');
-    const handleChange = () => setIsMobile(media.matches);
-    handleChange();
-    media.addEventListener('change', handleChange);
-    return () => media.removeEventListener('change', handleChange);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-    const timer = setInterval(() => {
-      setIndex((prev) => (prev + 1) % 5);
-    }, 5500);
-    return () => clearInterval(timer);
-  }, [mounted]);
-
-  useEffect(() => {
-    if (visible) {
-      const timer = setTimeout(() => setContentVisible(true), 300);
-      return () => clearTimeout(timer);
-    } else {
-      setContentVisible(false);
-    }
-  }, [visible]);
-
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes gentleFloat {
-        0%, 100% {
-          transform: translateY(0px);
-        }
-        50% {
-          transform: translateY(-8px);
-        }
-      }
-    `;
-    document.head.appendChild(style);
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
-
-  const images = useMemo(() => (isMobile ? mobileImages : desktopImages), [isMobile]);
 
   return (
-      <div className={`fixed inset-0 z-30 flex items-center justify-center overflow-hidden transition-opacity duration-500 ${visible ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
-      {/* Background Image Carousel */}
+    <div className={`fixed inset-0 z-30 flex items-center justify-center overflow-hidden transition-all duration-1000 ${visible ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
+      {/* Background Video */}
       <div className="absolute inset-0 z-0">
-        {images.map((src, i) => (
-          <div
-            key={src}
-            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${i === index ? 'opacity-100' : 'opacity-0'}`}
-            style={{
-              transform: i === index ? 'scale(1)' : 'scale(1.05)',
-              transition: 'opacity 1s ease-in-out, transform 1s ease-in-out'
-            }}
-          >
-            <CloudinaryImage
-              src={src}
-              alt="Couple"
-              fill
-              quality={90}
-              priority={i === 0}
-              className="object-cover"
-              sizes="100vw"
-            />
-          </div>
-        ))}
-        
-        {/* Linear gradient overlay for text readability */}
-        <div
-          className="absolute inset-0 pointer-events-none"
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="/background_music/background.mp4" type="video/mp4" />
+        </video>
+
+        {/* Overlay - linear gradient only, keep video visible */}
+        <div 
+          className="absolute inset-0" 
           style={{
-            background: 'linear-gradient(to bottom, rgba(47,79,62,0.55) 0%, rgba(47,79,62,0.15) 40%, rgba(47,79,62,0.15) 60%, rgba(47,79,62,0.72) 100%)'
+            background: "linear-gradient(145deg, color-mix(in srgb, var(--color-motif-cream) 70%, transparent) 0%, color-mix(in srgb, var(--color-motif-soft) 62%, transparent) 52%, color-mix(in srgb, var(--color-motif-medium) 52%, transparent) 100%)",
+            opacity: 0.48
           }}
         />
       </div>
 
       {/* Content Container */}
-      <div className="relative z-10 flex flex-col items-center text-center p-6 w-full max-w-md mx-auto h-full">
-        
-        {/* Top Logo/Monogram */}
-        <div 
-          className={`mb-auto mt-8 transition-all duration-1000 ease-out ${
-            contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'
-          }`}
-        >
-          <div className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 flex items-center justify-center">
-            {/* Monogram Image with subtle animation */}
-            <div 
-              className="relative w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 transition-transform duration-700 ease-out hover:scale-105"
+      <div className="relative z-10 flex flex-col items-center justify-center text-center p-6 w-full max-w-md mx-auto min-h-screen">
+        {/* Monogram */}
+        <FadeIn show={visible} delay={300} className="mb-12 sm:mb-16">
+          <div 
+            className="amsterdam-one text-center"
+            style={{
+              lineHeight: '1.1',
+              color: 'var(--color-motif-deep)',
+              textShadow: '0 2px 6px color-mix(in srgb, var(--color-motif-medium) 35%, transparent)',
+            }}
+          >
+            <div
               style={{
-                animation: contentVisible ? 'gentleFloat 3s ease-in-out infinite' : 'none'
+                fontSize: 'clamp(2.6rem, 11.8vw, 4.8rem)',
+                fontWeight: 400,
+                transform: 'translateX(-0.32rem)',
               }}
             >
-              <CloudinaryImage
-                src={siteConfig.couple.monogram}
-                alt="Monogram"
-                fill
-                className="object-contain"
-                priority
-                style={{
-                  filter: "brightness(0) invert(1) drop-shadow(0 0 18px rgba(255,255,255,0.7))",
-                }}
-              />
+              Niahna
+            </div>
+            <div
+              style={{
+                fontSize: 'clamp(2.2rem, 9.7vw, 3.9rem)',
+                fontWeight: 400,
+                marginTop: 'clamp(0.55rem, 2.3vw, 1rem)',
+                transform: 'translateX(0.34rem)',
+              }}
+            >
+              Celestine
             </div>
           </div>
-        </div>
+        </FadeIn>
 
-        <div className="flex-1" />
-
-        <div className="flex flex-col items-center justify-end w-full gap-5 sm:gap-6 pb-14 sm:pb-16 md:pb-20">
-          <h2
-            className={`text-6xl md:text-8xl transform -rotate-6 transition-all duration-1000 ease-out delay-200 ${
-              contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
-            style={{
-              fontFamily: '"Great Vibes", cursive',
-              fontWeight: 400,
-              color: 'var(--color-motif-cream)',
-              textShadow: '0 2px 16px rgba(47,79,62,0.5)',
-            }}
-          >
-            You are
-          </h2>
-          
-          <h1
-            className={`text-5xl md:text-7xl font-bold tracking-wider uppercase transition-all duration-1000 ease-out delay-300 ${
-              contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
-            style={{
-              fontFamily: '"Cinzel", serif',
-              fontWeight: 700,
-              color: 'var(--color-motif-cream)',
-              textShadow: '0 2px 20px rgba(47,79,62,0.5)',
-              letterSpacing: '0.05em',
-            }}
-          >
-            Invited!
-          </h1>
-
-          <button 
-            onClick={() => {
-              onOpen();
-            }}
-            className={`px-10 py-4 font-serif text-sm tracking-[0.2em] uppercase rounded-sm border transition-all duration-500 ease-out delay-500 shadow-lg hover:shadow-xl ${
-              contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
-            style={{
-              backgroundColor: 'var(--color-motif-deep)',
-              borderColor: 'var(--color-motif-deep)',
-              color: 'var(--color-motif-cream)',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--color-motif-deep)';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.borderColor = 'var(--color-motif-medium)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--color-motif-deep)';
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.borderColor = 'var(--color-motif-medium)';
-            }}
-          >
-            <span
-              style={{ fontFamily: '"Cinzel", serif', fontWeight: 500, color: 'var(--color-motif-cream)' }}
+        <div className="flex flex-col items-center gap-6 sm:gap-8">
+          <FadeIn show={visible} delay={600}>
+            <h1
+              className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-wider"
+              style={{
+                fontFamily: '"Cinzel", serif',
+                fontWeight: 700,
+                color: 'var(--color-motif-deep)',
+                textShadow: '0 2px 6px color-mix(in srgb, var(--color-motif-medium) 35%, transparent)',
+              }}
             >
-              Open Invitation
-            </span>
-          </button>
-        </div>
+              You're Invited
+            </h1>
+          </FadeIn>
 
-        {/* Bottom Spacer */}
-        <div className="h-4" />
+          <FadeIn show={visible} delay={900}>
+            <button 
+              onClick={() => {
+                onOpen();
+              }}
+              className="group relative px-10 py-4 bg-transparent border-2 font-serif text-sm tracking-[0.2em] uppercase transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 active:translate-y-0 rounded-sm overflow-hidden"
+              style={{
+                borderColor: 'var(--color-motif-accent)',
+                color: 'var(--color-motif-deep)',
+                boxShadow: '0 10px 28px color-mix(in srgb, var(--color-motif-medium) 26%, transparent)',
+              }}
+            >
+              <span
+                className="relative z-10 drop-shadow-md transition-colors duration-500 group-hover:text-[var(--color-motif-cream)]"
+                style={{ fontFamily: '"Cinzel", serif', fontWeight: 500 }}
+              >
+                Open Invitation
+              </span>
+              {/* Button sheen effect */}
+              <div
+                className="absolute top-0 left-[-100%] w-full h-full skew-x-12 group-hover:animate-[shimmer_1s_infinite]"
+                style={{ background: 'color-mix(in srgb, var(--color-motif-silver) 50%, transparent)' }}
+              />
+              <div
+                className="absolute inset-0 -z-10 transition-all duration-500 group-hover:opacity-100 opacity-0"
+                style={{ background: 'linear-gradient(135deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 100%)' }}
+              />
+            </button>
+          </FadeIn>
+        </div>
       </div>
     </div>
   );

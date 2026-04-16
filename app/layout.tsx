@@ -6,20 +6,20 @@ import "./globals.css"
 import { siteConfig } from "@/content/site"
 import { ClientLayout } from "@/components/client-layout"
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://jezel-and-rodel.weddinginvitationrsvp.com/"
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://niahna-celestine.weddinginvitationrsvp.com/"
 const canonicalUrl = siteUrl.replace(/\/$/, "")
-const desktopHero = "/Details/LinkPreview.jpg"
-const mobileHero = "/Details/LinkPreview.jpg"
+const desktopHero = "/Details/LinkPreview.png"
+const mobileHero = "/Details/LinkPreview.png"
 const eventImageUrl = `${canonicalUrl}${desktopHero}`
 
-const coupleNames = `${siteConfig.couple.groomNickname} & ${siteConfig.couple.brideNickname}`
+const coupleNames = `Niahna Celestine`
 const eventTitle = `${coupleNames} - Wedding Invitation`
-const eventDescription = `Celebrate the wedding of ${siteConfig.couple.groomNickname} and ${siteConfig.couple.brideNickname} on ${siteConfig.wedding.date} at ${siteConfig.ceremony.venue}. RSVP, explore their story, and find everything you need to join the celebration.`
+const eventDescription = `Celebrate the Christening of Niahna Celestine on ${siteConfig.wedding.date} at ${siteConfig.ceremony.venue}. RSVP, explore their story, and find everything you need to join the celebration.`
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Event",
-  name: `${siteConfig.couple.groomNickname} & ${siteConfig.couple.brideNickname} Wedding`,
+  name: `Niahna Celestine - Christening Celebration`,
   startDate: "2026-03-21T09:30:00+08:00",
   endDate: "2026-03-21T21:30:00+08:00",
   eventStatus: "https://schema.org/EventScheduled",
@@ -50,12 +50,12 @@ const jsonLd = {
   ],
   image: [eventImageUrl],
   description:
-    `You're invited to celebrate the wedding of ${siteConfig.couple.groomNickname} & ${siteConfig.couple.brideNickname}. Discover ceremony and reception details, RSVP, and explore their story.`,
+    `You're invited to celebrate the Christening of Niahna Celestine. Discover ceremony and reception details, RSVP, and explore their story.`,
   organizer: {
     "@type": "Person",
     name: coupleNames,
   },
-  eventHashtag: `#${siteConfig.couple.groomNickname}And${siteConfig.couple.brideNickname}SayIDo`,
+  eventHashtag: `#NiahnaCelestine`,
 }
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
@@ -71,11 +71,10 @@ export const metadata: Metadata = {
   },
   description: eventDescription,
   keywords:
-    `${siteConfig.couple.groomNickname} ${siteConfig.couple.brideNickname} wedding, ${siteConfig.ceremony.venue} wedding, ${siteConfig.reception.venue} wedding, wedding invitation, RSVP, wedding gallery, message wall, love story, #${siteConfig.couple.groomNickname}And${siteConfig.couple.brideNickname}SayIDo`,
+    `Niahna Celestine, Christening Celebration, ${siteConfig.ceremony.venue} Christening, ${siteConfig.reception.venue} Christening, Christening Invitation, RSVP, Christening Gallery, Message Wall, Love Story, #NiahnaCelestine`,
   applicationName: `${coupleNames} Wedding Invitation`,
   authors: [
-    { name: siteConfig.couple.groomNickname },
-    { name: siteConfig.couple.brideNickname },
+    { name: "Niahna Celestine" },
   ],
   creator: coupleNames,
   publisher: coupleNames,
@@ -102,9 +101,9 @@ export const metadata: Metadata = {
   },
   manifest: "/favicon_io/site.webmanifest",
   openGraph: {
-    title: `${coupleNames} | ${siteConfig.wedding.date}`,
+    title: `Niahna Celestine - Christening Celebration`,
     description:
-      `Celebrate the union of ${siteConfig.couple.groomNickname} & ${siteConfig.couple.brideNickname} on ${siteConfig.wedding.date}. Discover their story, RSVP, and find important details for the ceremony and reception.`,
+      `Celebrate the Christening of Niahna Celestine on ${siteConfig.wedding.date}. Discover their story, RSVP, and find important details for the ceremony and reception.`,
     url: canonicalUrl,
     siteName: `${coupleNames} Wedding`,
     locale: "en_PH",
@@ -116,18 +115,18 @@ export const metadata: Metadata = {
         width: 1200,
         height: 630,
         type: "image/jpeg",
-        alt: `${coupleNames} Wedding Invitation - ${siteConfig.wedding.date}`,
+        alt: `Niahna Celestine - Christening Celebration`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${coupleNames} Wedding Invitation`,
+    title: `Niahna Celestine - Christening Celebration`,
     description:
-      `You're invited to the wedding of ${siteConfig.couple.groomNickname} & ${siteConfig.couple.brideNickname} on ${siteConfig.wedding.date}. RSVP, explore their story, and get all the details for the big day! #${siteConfig.couple.groomNickname}And${siteConfig.couple.brideNickname}SayIDo`,
+      `You're invited to the Christening of Niahna Celestine on ${siteConfig.wedding.date}. RSVP, explore their story, and get all the details for the big day! #NiahnaCelestine`,
     images: [eventImageUrl],
-    creator: `@${siteConfig.couple.groomNickname}And${siteConfig.couple.brideNickname}`,
-    site: `@${siteConfig.couple.groomNickname}And${siteConfig.couple.brideNickname}`,
+    creator: `@NiahnaCelestine`,
+    site: `@NiahnaCelestine`,
   },
   robots: {
     index: true,

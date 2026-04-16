@@ -1,19 +1,13 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Heart, RefreshCw, TrendingUp, Mail, Users, MapPin, Calendar, Crown } from "lucide-react"
-import { Cormorant_Garamond, Cinzel } from "next/font/google"
-import { CloudinaryImage } from "@/components/ui/cloudinary-image"
+import { Heart, RefreshCw, TrendingUp, Users, Calendar, Crown } from "lucide-react"
 
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["400"],
-})
-
-const cinzel = Cinzel({
-  subsets: ["latin"],
-  weight: ["400"],
-})
+// ── Motif palette ─────────────────────────────────────────────────────────────
+const DEEP   = "#8B6F5A"
+const MEDIUM = "#BFA07A"
+const ACCENT = "#CFA06B"
+const CREAM  = "var(--color-motif-cream)"
 
 interface Guest {
   id: string | number
@@ -26,7 +20,7 @@ interface Guest {
   companions: { name: string; relationship: string }[]
   tableNumber: string
   isVip: boolean
-  status: 'pending' | 'confirmed' | 'declined' | 'request'
+  status: "pending" | "confirmed" | "declined" | "request"
   addedBy?: string
   createdAt?: string
   updatedAt?: string
@@ -34,476 +28,410 @@ interface Guest {
 
 const CARDS_PER_VIEW = 4
 
-// Colors sourced from globals.css @theme inline — edit there to update everywhere
-const BOOK_ACCENT = "var(--color-motif-deep)"    // sage green — primary
-const BOOK_DARK = "var(--color-motif-deep)"      // headings / names
-const BOOK_DARKER = "var(--color-motif-deep)"  // body text (steel blue depth)
-const BOOK_CREAM = "var(--color-motif-cream)"    // card surfaces
-const DECO_FILTER_BOOK =
-  "brightness(0) saturate(100%) invert(22%) sepia(88%) saturate(1800%) hue-rotate(185deg) brightness(90%) contrast(105%)"
-
 export function BookOfGuests() {
-  const [totalGuests, setTotalGuests] = useState(0)
-  const [rsvpCount, setRsvpCount] = useState(0)
+  const [totalGuests, setTotalGuests]       = useState(0)
+  const [rsvpCount, setRsvpCount]           = useState(0)
   const [confirmedGuests, setConfirmedGuests] = useState<Guest[]>([])
-  const [isRefreshing, setIsRefreshing] = useState(false)
-  const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
-  const [previousTotal, setPreviousTotal] = useState(0)
-  const [showIncrease, setShowIncrease] = useState(false)
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isRefreshing, setIsRefreshing]     = useState(false)
+  const [showIncrease, setShowIncrease]     = useState(false)
+  const [currentIndex, setCurrentIndex]     = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
-  const [justEntered, setJustEntered] = useState(false)
+  const [justEntered, setJustEntered]       = useState(false)
 
-  // Helper function to get initials from name
-  const getInitials = (name: string): string => {
-    const words = name.trim().split(' ')
-    if (words.length >= 2) {
-      return (words[0][0] + words[words.length - 1][0]).toUpperCase()
-    }
-    return name.substring(0, 2).toUpperCase()
+  const getInitials = (name: string) => {
+    const w = name.trim().split(" ")
+    return w.length >= 2
+      ? (w[0][0] + w[w.length - 1][0]).toUpperCase()
+      : name.substring(0, 2).toUpperCase()
   }
 
-  // Helper function to format date
-  const formatDate = (dateString?: string): string => {
-    if (!dateString) return 'Recently'
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-  }
+  const formatDate = (d?: string) =>
+    d
+      ? new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+      : "Recently"
 
   const fetchGuests = async (showLoading = false) => {
     if (showLoading) setIsRefreshing(true)
-    
     try {
-      // Fetch from local API route which connects to Google Sheets
-      const response = await fetch("/api/guests", {
-        cache: "no-store"
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch guest list")
-      }
-
-      const data: Guest[] = await response.json()
-
-      // Filter only confirmed/attending guests
-      const attendingGuests = data.filter((guest) => guest.status === "confirmed")
-      
-      // Sort guests: VIPs first, then by updatedAt (most recent first)
-      const sortedGuests = attendingGuests.sort((a, b) => {
-        // VIPs come first
+      const res = await fetch("/api/guests", { cache: "no-store" })
+      if (!res.ok) throw new Error("fetch failed")
+      const data: Guest[] = await res.json()
+      const attending = data.filter((g) => g.status === "confirmed")
+      const sorted = [...attending].sort((a, b) => {
         if (a.isVip && !b.isVip) return -1
         if (!a.isVip && b.isVip) return 1
-        
-        // Then sort by most recent update
-        const dateA = new Date(a.updatedAt || 0).getTime()
-        const dateB = new Date(b.updatedAt || 0).getTime()
-        return dateB - dateA
+        return new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime()
       })
-      
-      // Calculate total guests by summing allowedGuests for each confirmed guest
-      const totalGuestCount = attendingGuests.reduce((sum, guest) => {
-        return sum + (guest.allowedGuests || 1)
-      }, 0)
-      
-      // Show increase animation if count went up
-      if (totalGuestCount > totalGuests && totalGuests > 0) {
-        setPreviousTotal(totalGuests)
+      const total = attending.reduce((s, g) => s + (g.allowedGuests || 1), 0)
+      if (total > totalGuests && totalGuests > 0) {
         setShowIncrease(true)
         setTimeout(() => setShowIncrease(false), 2000)
       }
-      
-      setTotalGuests(totalGuestCount)
-      setRsvpCount(attendingGuests.length)
-      setConfirmedGuests(sortedGuests)
-      setLastUpdate(new Date())
-    } catch (error: any) {
-      console.error("Failed to load guests:", error)
+      setTotalGuests(total)
+      setRsvpCount(attending.length)
+      setConfirmedGuests(sorted)
+    } catch {
+      // silent
     } finally {
-      if (showLoading) {
-        setTimeout(() => setIsRefreshing(false), 500)
-      }
+      if (showLoading) setTimeout(() => setIsRefreshing(false), 500)
     }
   }
 
-  // Get visible guests (max 4 cards) for carousel
   const getVisibleGuests = () => {
     if (confirmedGuests.length <= CARDS_PER_VIEW) return confirmedGuests
-    const visible: Guest[] = []
-    for (let i = 0; i < CARDS_PER_VIEW; i++) {
-      const index = (currentIndex + i) % confirmedGuests.length
-      visible.push(confirmedGuests[index])
-    }
-    return visible
+    return Array.from({ length: CARDS_PER_VIEW }, (_, i) =>
+      confirmedGuests[(currentIndex + i) % confirmedGuests.length]
+    )
   }
 
   useEffect(() => {
-    // Initial fetch
     fetchGuests()
-
-    // Set up automatic polling every 30 seconds for real-time updates
-    const pollInterval = setInterval(() => {
-      fetchGuests()
-    }, 30000) // 30 seconds
-
-    // Set up event listener for RSVP updates
-    const handleRsvpUpdate = () => {
-      // Add a small delay to allow Google Sheets to update
-      setTimeout(() => {
-        fetchGuests(true)
-      }, 2000)
-    }
-
-    window.addEventListener("rsvpUpdated", handleRsvpUpdate)
-
-    return () => {
-      clearInterval(pollInterval)
-      window.removeEventListener("rsvpUpdated", handleRsvpUpdate)
-    }
+    const poll = setInterval(fetchGuests, 30000)
+    const onRsvp = () => setTimeout(() => fetchGuests(true), 2000)
+    window.addEventListener("rsvpUpdated", onRsvp)
+    return () => { clearInterval(poll); window.removeEventListener("rsvpUpdated", onRsvp) }
   }, [totalGuests])
 
-  // Auto-rotate carousel every 5 seconds when more than 4 guests
   useEffect(() => {
     if (confirmedGuests.length <= CARDS_PER_VIEW) return
-    const interval = setInterval(() => {
+    const iv = setInterval(() => {
       setIsTransitioning(true)
       setTimeout(() => {
-        setCurrentIndex((prev) => {
-          const next = prev + CARDS_PER_VIEW
-          return next >= confirmedGuests.length ? 0 : next
-        })
+        setCurrentIndex((p) => { const n = p + CARDS_PER_VIEW; return n >= confirmedGuests.length ? 0 : n })
         setIsTransitioning(false)
         setJustEntered(true)
         setTimeout(() => setJustEntered(false), 1100)
       }, 600)
     }, 5000)
-    return () => clearInterval(interval)
+    return () => clearInterval(iv)
   }, [confirmedGuests.length])
 
   return (
     <div
       id="guests"
-      className="relative z-10 py-4 sm:py-8 md:py-12 lg:py-16 overflow-hidden isolate"
+      className="relative z-10 py-8 sm:py-12 md:py-16 overflow-hidden"
+      style={{ backgroundColor: CREAM }}
     >
-      {/* Background — warm brown */}
-      <div
-        className="absolute inset-0 -z-10"
-        style={{ backgroundColor: 'var(--color-motif-cream)' }}
-      />
+      {/* Soft background texture */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden>
+        <div
+          className="absolute inset-0 opacity-[0.18]"
+          style={{ background: "linear-gradient(160deg, var(--color-motif-cream) 0%, color-mix(in srgb, var(--color-motif-soft) 18%, transparent) 50%, var(--color-motif-cream) 100%)" }}
+        />
+        <div
+          className="absolute inset-0 opacity-[0.07]"
+          style={{ background: "radial-gradient(ellipse 70% 40% at 50% 10%, var(--color-motif-soft) 0%, transparent 60%)" }}
+        />
+      </div>
 
-      {/* Flower decoration — warm brown tint */}
-      {/* <div className="absolute left-0 top-0 z-0 pointer-events-none">
-        <CloudinaryImage
-          src="/decoration/flower-decoration-left-bottom-corner2.png"
-          alt=""
-          width={300}
-          height={300}
-          className="w-auto h-auto max-w-[160px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[280px] opacity-70 scale-y-[-1]"
-          priority={false}
-          style={{ filter: DECO_FILTER_BOOK }}
-        />
-      </div>
-      <div className="absolute right-0 top-0 z-0 pointer-events-none">
-        <CloudinaryImage
-          src="/decoration/flower-decoration-left-bottom-corner2.png"
-          alt=""
-          width={300}
-          height={300}
-          className="w-auto h-auto max-w-[160px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[280px] opacity-70 scale-x-[-1] scale-y-[-1]"
-          priority={false}
-          style={{ filter: DECO_FILTER_BOOK }}
-        />
-      </div>
-      <div className="absolute left-0 bottom-0 z-0 pointer-events-none">
-        <CloudinaryImage
-          src="/decoration/flower-decoration-left-bottom-corner2.png"
-          alt=""
-          width={300}
-          height={300}
-          className="w-auto h-auto max-w-[160px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[280px] opacity-70"
-          priority={false}
-          style={{ filter: DECO_FILTER_BOOK }}
-        />
-      </div>
-      <div className="absolute right-0 bottom-0 z-0 pointer-events-none">
-        <CloudinaryImage
-          src="/decoration/flower-decoration-left-bottom-corner2.png"
-          alt=""
-          width={300}
-          height={300}
-          className="w-auto h-auto max-w-[160px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[280px] opacity-70 scale-x-[-1]"
-          priority={false}
-          style={{ filter: DECO_FILTER_BOOK }}
-        />
-      </div> */}
+      {/* ── Section Header ──────────────────────────────────────────── */}
+      <div className="relative z-10 text-center mb-6 sm:mb-8 md:mb-10 px-4">
 
-      {/* Section Header */}
-      <div className="relative z-10 text-center mb-3 sm:mb-4 md:mb-6 px-2 sm:px-3 md:px-4">
+        {/* Eyebrow */}
         <p
-          className={`${cormorant.className} text-[0.6rem] sm:text-[0.7rem] md:text-xs uppercase tracking-[0.25em] mb-1 sm:mb-1.5 mt-4 sm:mt-6 md:mt-8`}
-          style={{ color: BOOK_DARK }}
+          className="garamond"
+          style={{
+            fontSize: "clamp(0.56rem, 2.2vw, 0.72rem)",
+            letterSpacing: "0.48em",
+            textTransform: "uppercase",
+            color: ACCENT,
+            marginBottom: "0.45rem",
+            paddingRight: "0.48em",
+          }}
         >
           Our Cherished Guests
         </p>
+
+        {/* Ornament */}
+        <div className="flex items-center justify-center gap-3 mb-2">
+          <div className="h-px w-8 sm:w-12" style={{ background: "linear-gradient(to left, rgba(207,160,107,0.4), transparent)" }} />
+          <span style={{ color: ACCENT, fontSize: "7px", opacity: 0.7 }}>✦</span>
+          <div className="h-px w-8 sm:w-12" style={{ background: "linear-gradient(to right, rgba(207,160,107,0.4), transparent)" }} />
+        </div>
+
+        {/* Title */}
         <h2
-          className="lighten-regular text-[40px] sm:text-[50px] md:text-[60px] lg:text-[70px] xl:text-[80px] leading-tight mb-1 sm:mb-2 md:mb-3"
-          style={{ color: 'var(--color-motif-deep)' }}
+          className="gistesy"
+          style={{
+            fontSize: "clamp(2.4rem, 10vw, 5rem)",
+            color: DEEP,
+            lineHeight: 1.15,
+            overflow: "visible",
+            paddingTop: "0.15em",
+            marginBottom: "0.4rem",
+            textShadow: "0 2px 24px rgba(139,111,90,0.10)",
+          }}
         >
           Book of Guests
         </h2>
+
         <p
-          className={`${cormorant.className} text-[10px] sm:text-xs md:text-sm font-light max-w-lg mx-auto leading-relaxed px-2`}
-          style={{ color: BOOK_DARKER }}
+          className="garamond"
+          style={{
+            fontSize: "clamp(0.78rem, 2.8vw, 0.96rem)",
+            color: MEDIUM,
+            fontStyle: "italic",
+            lineHeight: 1.85,
+            maxWidth: "440px",
+            margin: "0 auto clamp(0.5rem, 1.5vw, 0.8rem)",
+          }}
         >
-          Meet the cherished souls joining us in celebration — your presence makes our day truly special
+          Meet the cherished souls joining us in blessing Niahna Celestine — your presence makes our day truly complete.
         </p>
-        <div className="flex items-center justify-center gap-1 sm:gap-1.5 mt-1.5 sm:mt-2.5 md:mt-3">
-          <div className="w-6 sm:w-10 md:w-12 h-px opacity-50" style={{ backgroundColor: BOOK_ACCENT }} />
-          <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full opacity-70" style={{ backgroundColor: BOOK_ACCENT }} />
-          <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full opacity-50" style={{ backgroundColor: BOOK_ACCENT }} />
-          <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full opacity-70" style={{ backgroundColor: BOOK_ACCENT }} />
-          <div className="w-6 sm:w-10 md:w-12 h-px opacity-50" style={{ backgroundColor: BOOK_ACCENT }} />
+
+        {/* Divider */}
+        <div className="flex items-center justify-center gap-3">
+          <div className="h-px w-10 sm:w-14" style={{ background: "linear-gradient(to left, rgba(207,160,107,0.45), transparent)" }} />
+          <span style={{ color: "#D4B896", fontSize: "5px" }}>◆</span>
+          <div className="h-px w-10 sm:w-14" style={{ background: "linear-gradient(to right, rgba(207,160,107,0.45), transparent)" }} />
         </div>
       </div>
 
-      {/* Guests content */}
-      <div className="relative">
-        {/* Stats card — cream card with warm brown accents */}
-        <div className="text-center mb-2.5 sm:mb-4 md:mb-6 px-2 sm:px-4 md:px-6">
-          <div className="relative max-w-3xl mx-auto">
-            <div
-              className="relative backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-5 md:p-6 shadow-lg border transition-all duration-300"
-              style={{
-                backgroundColor: 'color-mix(in srgb, var(--color-motif-cream) 93%, transparent)',
-                borderColor: 'color-mix(in srgb, var(--color-motif-deep) 25%, transparent)',
-                boxShadow: `0 4px 24px rgba(91,102,85,0.12), 0 0 0 1px color-mix(in srgb, var(--color-motif-deep) 13%, transparent)`,
-              }}
+      {/* ── Stats card ──────────────────────────────────────────────── */}
+      <div className="relative z-10 text-center mb-5 sm:mb-7 px-4 sm:px-6">
+        <div className="relative max-w-md mx-auto">
+          <div
+            className="relative rounded-xl sm:rounded-2xl p-4 sm:p-5 border"
+            style={{
+              background: "rgba(255,247,240,0.88)",
+              borderColor: `rgba(207,160,107,0.25)`,
+              boxShadow: `0 6px 28px rgba(139,111,90,0.10)`,
+            }}
+          >
+            {/* Refresh button */}
+            <button
+              onClick={() => fetchGuests(true)}
+              disabled={isRefreshing}
+              className="absolute top-2 right-2 p-1.5 rounded-full transition-all duration-300 disabled:opacity-50 hover:scale-110 group"
+              style={{ background: "rgba(207,160,107,0.10)" }}
+              title="Refresh"
             >
-              <button
-                onClick={() => fetchGuests(true)}
-                disabled={isRefreshing}
-                className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 p-1.5 sm:p-2 rounded-full transition-all duration-300 disabled:opacity-50 group z-10 hover:scale-110"
-                style={{ backgroundColor: 'color-mix(in srgb, var(--color-motif-deep) 8%, transparent)' }}
-                title="Refresh counts"
+              <RefreshCw
+                className={`h-3.5 w-3.5 transition-transform duration-500 ${isRefreshing ? "animate-spin" : "group-hover:rotate-180"}`}
+                style={{ color: ACCENT }}
+              />
+            </button>
+
+            {/* Count */}
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <span
+                className="amsterdam-one"
+                style={{
+                  fontSize: "clamp(2rem, 8vw, 3.2rem)",
+                  color: DEEP,
+                  lineHeight: 1,
+                  transition: "transform 0.3s",
+                  transform: showIncrease ? "scale(1.12)" : "scale(1)",
+                }}
               >
-                <RefreshCw className={`h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform duration-500 ${isRefreshing ? "animate-spin" : "group-hover:rotate-180"}`} style={{ color: BOOK_ACCENT }} />
-              </button>
-
-              <div className="mb-1.5 sm:mb-2.5">
-                <div className="flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap">
-                  <h3 className={`${cinzel.className} text-xl sm:text-3xl md:text-4xl font-bold transition-all duration-500 ${showIncrease ? "scale-110" : ""}`} style={{ color: BOOK_DARK }}>
-                    {totalGuests}
-                  </h3>
-                  {showIncrease && (
-                    <TrendingUp className="h-3.5 w-3.5 sm:h-5 sm:w-5 animate-bounce" style={{ color: BOOK_ACCENT }} />
-                  )}
-                  <p className={`${cormorant.className} text-sm sm:text-lg md:text-xl font-medium leading-tight`} style={{ color: BOOK_DARK }}>
-                    {totalGuests === 1 ? "Guest" : "Guests"} Celebrating With Us
-                  </p>
-                </div>
-              </div>
-
-              <p className={`${cormorant.className} text-xs sm:text-base mb-2 sm:mb-3`} style={{ color: BOOK_DARKER, opacity: 0.9 }}>
-                {rsvpCount} {rsvpCount === 1 ? "RSVP entry" : "RSVP entries"}
-              </p>
-              <p className={`${cormorant.className} text-[10px] sm:text-xs md:text-sm leading-tight`} style={{ color: BOOK_DARKER, opacity: 0.85 }}>
-                Thank you for confirming your RSVP! Your presence means the world to us.
+                {totalGuests}
+              </span>
+              {showIncrease && <TrendingUp className="h-5 w-5 animate-bounce" style={{ color: ACCENT }} />}
+              <p className="garamond" style={{ fontSize: "clamp(0.82rem, 2.8vw, 1rem)", color: DEEP, lineHeight: 1.3 }}>
+                {totalGuests === 1 ? "Guest" : "Guests"}<br />
+                <span style={{ fontSize: "0.85em", color: MEDIUM, fontStyle: "italic" }}>Celebrating With Us</span>
               </p>
             </div>
+
+            <p className="garamond" style={{ fontSize: "clamp(0.68rem, 2vw, 0.8rem)", color: MEDIUM, marginBottom: "0.25rem" }}>
+              {rsvpCount} {rsvpCount === 1 ? "RSVP entry" : "RSVP entries"}
+            </p>
+            <p className="garamond" style={{ fontSize: "clamp(0.65rem, 1.8vw, 0.76rem)", color: MEDIUM, fontStyle: "italic", opacity: 0.85 }}>
+              Thank you for confirming — your presence means the world to us.
+            </p>
           </div>
         </div>
+      </div>
 
-        {/* Guest List Display - 4 cards with carousel */}
-        {confirmedGuests.length > 0 && (
-          <div className="max-w-5xl mx-auto px-2 sm:px-4 md:px-6">
-            <div
-              className="relative overflow-hidden"
-              style={{
-                perspective: "1200px",
-                perspectiveOrigin: "center 85%",
-                transformStyle: "preserve-3d",
-              }}
-            >
+      {/* ── Guest Cards ─────────────────────────────────────────────── */}
+      {confirmedGuests.length > 0 && (
+        <div className="relative z-10 max-w-2xl mx-auto px-3 sm:px-5">
+          <div
+            className={`space-y-3 sm:space-y-4 ${isTransitioning ? "animate-guest-roll-out" : ""}`}
+            style={{ transformStyle: "preserve-3d" }}
+          >
+            {getVisibleGuests().map((guest, index) => (
               <div
-                className={`space-y-2 sm:space-y-3 md:space-y-4 ${isTransitioning ? "animate-guest-roll-out" : ""}`}
-                style={{ transformStyle: "preserve-3d" }}
+                key={`${guest.id}-${currentIndex}-${index}`}
+                className={`relative rounded-xl sm:rounded-2xl overflow-hidden border transition-all duration-300 hover:shadow-xl ${justEntered ? "animate-guest-roll-in" : ""}`}
+                style={{
+                  background: "rgba(255,247,240,0.92)",
+                  borderColor: `rgba(207,160,107,0.22)`,
+                  boxShadow: "0 3px 16px rgba(139,111,90,0.08)",
+                  ...(justEntered ? { animationDelay: `${index * 120}ms`, backfaceVisibility: "hidden" } : {}),
+                }}
               >
-                {getVisibleGuests().map((guest, index) => (
-                  <div
-                    key={`${guest.id}-${currentIndex}-${index}`}
-                    className={`relative group rounded-xl sm:rounded-2xl p-2.5 sm:p-4 md:p-6 transition-all duration-300 border hover:shadow-xl ${justEntered ? "animate-guest-roll-in" : ""}`}
-                    style={{
-                      backgroundColor: BOOK_CREAM,
-                      borderColor: 'color-mix(in srgb, var(--color-motif-deep) 19%, transparent)',
-                      boxShadow: "0 2px 12px rgba(91,102,85,0.06)",
-                      ...(justEntered
-                        ? {
-                            animationDelay: `${index * 120}ms`,
-                            backfaceVisibility: "hidden",
-                          }
-                        : {}),
-                    }}
-                  >
-                  <div className="flex items-start gap-2 sm:gap-3 md:gap-4 mb-2 sm:mb-2.5 md:mb-3">
+                {/* Soft top accent line */}
+                <div className="h-px w-full" style={{ background: `linear-gradient(to right, transparent, rgba(207,160,107,0.40), transparent)` }} />
+
+                <div className="p-3 sm:p-4 md:p-5">
+
+                  {/* ── Guest identity row ── */}
+                  <div className="flex items-center gap-2.5 sm:gap-3 mb-3 sm:mb-4">
+                    {/* Avatar */}
                     <div className="relative flex-shrink-0">
                       <div
-                        className="w-9 h-9 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-md ring-2 ring-white/60"
-                        style={{ backgroundColor: BOOK_ACCENT }}
+                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-md"
+                        style={{ background: `linear-gradient(135deg, ${ACCENT}, ${DEEP})` }}
                       >
-                        <span className="text-white font-semibold text-xs sm:text-base md:text-lg">
+                        <span className="garamond text-white font-semibold" style={{ fontSize: "clamp(0.72rem, 2.5vw, 0.88rem)" }}>
                           {getInitials(guest.name)}
                         </span>
                       </div>
                       {guest.isVip && (
-                        <div className="absolute -top-0.5 -right-0.5">
-                          <div className="flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full shadow-md border-2 border-white">
-                            <Crown className="h-2 w-2 sm:h-2.5 sm:w-2.5 md:h-3.5 md:w-3.5 text-white fill-current" />
-                          </div>
+                        <div className="absolute -top-0.5 -right-0.5 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow border-2 border-white">
+                          <Crown className="h-2 w-2 sm:h-2.5 sm:w-2.5 text-white fill-current" />
                         </div>
                       )}
                     </div>
 
+                    {/* Name + meta */}
                     <div className="flex-1 min-w-0">
-                      <div className="mb-1 sm:mb-1.5">
-                        <h3 className={`${cinzel.className} text-xs sm:text-base md:text-lg font-semibold sm:font-bold leading-tight mb-0.5`} style={{ color: BOOK_DARK }}>
-                          {guest.name}
-                        </h3>
-                        {guest.role && (
-                          <p className={`${cormorant.className} text-[9px] sm:text-[10px] md:text-xs font-medium opacity-80`} style={{ color: BOOK_DARK }}>
-                            {guest.role}
-                          </p>
-                        )}
-                      </div>
-
-                      {guest.email && (
-                        <div className="flex items-center gap-1 text-[9px] sm:text-[10px] md:text-xs mb-1.5 sm:mb-2 md:mb-3 opacity-75" style={{ color: BOOK_DARKER }}>
-                          <Mail className="h-2.5 w-2.5 sm:h-3 sm:w-3 flex-shrink-0" style={{ color: BOOK_DARK }} />
-                          <span className="truncate">{guest.email}</span>
-                        </div>
+                      <h3
+                        className="garamond leading-tight"
+                        style={{ fontSize: "clamp(0.85rem, 3vw, 1.05rem)", color: DEEP, fontWeight: 700 }}
+                      >
+                        {guest.name}
+                      </h3>
+                      {guest.role && (
+                        <p className="garamond" style={{ fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: MEDIUM, fontStyle: "italic" }}>
+                          {guest.role}
+                        </p>
                       )}
+                    </div>
 
-                      <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 md:gap-2 mb-1.5 sm:mb-2 md:mb-3">
-                        <div
-                          className="flex items-center gap-0.5 sm:gap-1 px-1.5 sm:px-2 md:px-2.5 py-0.5 sm:py-1 rounded-lg border"
-                          style={{ backgroundColor: 'color-mix(in srgb, var(--color-motif-deep) 7%, transparent)', borderColor: 'color-mix(in srgb, var(--color-motif-deep) 21%, transparent)' }}
-                        >
-                          <Users className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-3.5 md:w-3.5 flex-shrink-0" style={{ color: BOOK_ACCENT }} />
-                          <span className={`${cormorant.className} text-[9px] sm:text-[10px] md:text-xs font-semibold`} style={{ color: BOOK_DARK }}>
-                            {guest.allowedGuests} {guest.allowedGuests === 1 ? "Guest" : "Guests"}
-                          </span>
-                        </div>
-                        <div
-                          className="flex items-center gap-0.5 sm:gap-1 px-1.5 sm:px-2 md:px-2.5 py-0.5 sm:py-1 rounded-lg border"
-                          style={{ backgroundColor: 'color-mix(in srgb, var(--color-motif-deep) 7%, transparent)', borderColor: 'color-mix(in srgb, var(--color-motif-deep) 25%, transparent)' }}
-                        >
-                          <MapPin className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-3.5 md:w-3.5 flex-shrink-0" style={{ color: BOOK_ACCENT }} />
-                          <span className={`${cormorant.className} text-[9px] sm:text-[10px] md:text-xs font-semibold`} style={{ color: BOOK_DARK }}>
-                            {guest.tableNumber && guest.tableNumber.trim() !== "" ? (
-                              <>Table {guest.tableNumber}</>
-                            ) : (
-                              <span className="opacity-65">Not Assigned</span>
-                            )}
-                          </span>
-                        </div>
-                      </div>
-
-                      {guest.message && guest.message.trim() !== "" && (
-                        <div
-                          className="relative mb-1.5 sm:mb-2.5 md:mb-3 p-2 sm:p-3 md:p-5 rounded-lg md:rounded-xl border overflow-hidden"
-                          style={{ backgroundColor: 'color-mix(in srgb, var(--color-motif-cream) 90%, white)', borderColor: 'color-mix(in srgb, var(--color-motif-deep) 15%, transparent)' }}
-                        >
-                          <div className="absolute top-0 left-0 w-8 h-8 sm:w-12 sm:h-12 md:w-16 md:h-16 opacity-[0.06]" style={{ color: BOOK_ACCENT }}>
-                            <svg viewBox="0 0 100 100" fill="currentColor"><path d="M0,0 L100,0 L0,100 Z" /></svg>
-                          </div>
-                          <div className="absolute bottom-0 right-0 w-8 h-8 sm:w-12 sm:h-12 md:w-16 md:h-16 opacity-[0.06]" style={{ color: BOOK_ACCENT }}>
-                            <svg viewBox="0 0 100 100" fill="currentColor"><path d="M100,100 L0,100 L100,0 Z" /></svg>
-                          </div>
-                          <div className="absolute top-1 left-1 sm:top-1.5 sm:left-1.5 md:top-2 md:left-2 opacity-20" style={{ color: BOOK_ACCENT }}>
-                            <svg className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z" /></svg>
-                          </div>
-                          <div className="absolute bottom-1 right-1 sm:bottom-1.5 sm:right-1.5 md:bottom-2 md:right-2 opacity-20" style={{ color: BOOK_ACCENT }}>
-                            <svg className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18 7h-3l-2 4v6h6v-6h-3zm-8 0H7l-2 4v6h6v-6h-3z" /></svg>
-                          </div>
-                          <div className="relative px-0.5 sm:px-1">
-                            <p className={`${cormorant.className} text-[10px] sm:text-xs md:text-base leading-tight sm:leading-relaxed italic font-medium`} style={{ color: BOOK_DARKER }}>
-                              {guest.message}
-                            </p>
-                          </div>
-                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 sm:w-1 h-8 sm:h-12 md:h-16 rounded-r-full opacity-40" style={{ background: 'linear-gradient(to bottom, transparent, var(--color-motif-deep), transparent)' }} />
-                        </div>
-                      )}
-
-                      {guest.companions && guest.companions.length > 0 && (
-                        <div className="pt-1.5 sm:pt-2 md:pt-2.5 border-t" style={{ borderColor: 'color-mix(in srgb, var(--color-motif-deep) 15%, transparent)' }}>
-                          <div className="flex items-center gap-1 mb-1 sm:mb-1.5">
-                            <Users className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-3.5 md:w-3.5" style={{ color: BOOK_ACCENT }} />
-                            <span className={`${cormorant.className} text-[9px] sm:text-[10px] md:text-xs font-semibold`} style={{ color: BOOK_DARK }}>Companions</span>
-                          </div>
-                          <div className="flex flex-wrap gap-1 sm:gap-1.5">
-                            {guest.companions.map((companion, idx) => (
-                              <div
-                                key={idx}
-                                className="inline-flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 md:px-2.5 py-0.5 sm:py-1 rounded-lg border transition-colors hover:border-opacity-60"
-                                style={{ backgroundColor: 'color-mix(in srgb, var(--color-motif-cream) 80%, white)', borderColor: 'color-mix(in srgb, var(--color-motif-deep) 19%, transparent)' }}
-                              >
-                                <span className={`${cormorant.className} text-[9px] sm:text-[10px] md:text-xs font-medium whitespace-nowrap`} style={{ color: BOOK_DARK }}>{companion.name}</span>
-                                {companion.relationship && companion.relationship.trim() !== "" && (
-                                  <span className={`${cormorant.className} text-[8px] sm:text-[9px] md:text-[10px] font-medium px-1.5 sm:px-2 py-0.5 rounded-full border whitespace-nowrap`} style={{ color: BOOK_DARK, backgroundColor: 'color-mix(in srgb, var(--color-motif-deep) 8%, transparent)', borderColor: 'color-mix(in srgb, var(--color-motif-deep) 15%, transparent)' }}>
-                                    {companion.relationship}
-                                  </span>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="flex items-center gap-1 pt-1.5 sm:pt-2 md:pt-2.5 mt-1.5 sm:mt-2 md:mt-2.5 border-t" style={{ borderColor: 'color-mix(in srgb, var(--color-motif-deep) 13%, transparent)' }}>
-                        <Calendar className="h-2.5 w-2.5 sm:h-3 sm:w-3 opacity-70" style={{ color: BOOK_ACCENT }} />
-                        <span className={`${cormorant.className} text-[8px] sm:text-[9px] md:text-[10px] opacity-80`} style={{ color: BOOK_DARKER }}>
-                          Confirmed {formatDate(guest.updatedAt)}
-                        </span>
-                      </div>
+                    {/* Guest count badge */}
+                    <div
+                      className="flex items-center gap-1 px-2 py-0.5 rounded-full border flex-shrink-0"
+                      style={{ background: "rgba(207,160,107,0.10)", borderColor: "rgba(207,160,107,0.30)" }}
+                    >
+                      <Users className="h-2.5 w-2.5" style={{ color: ACCENT }} />
+                      <span className="garamond" style={{ fontSize: "clamp(0.6rem, 1.8vw, 0.7rem)", color: DEEP, fontWeight: 600 }}>
+                        {guest.allowedGuests}
+                      </span>
                     </div>
                   </div>
-                </div>
-              ))}
-              </div>
 
-              {/* Carousel indicators — warm brown */}
-              {confirmedGuests.length > CARDS_PER_VIEW && (
-                <div className="flex items-center justify-center gap-2 mt-4 sm:mt-6">
-                  {Array.from({ length: Math.ceil(confirmedGuests.length / CARDS_PER_VIEW) }).map((_, idx) => {
-                    const pageIndex = Math.floor(currentIndex / CARDS_PER_VIEW)
-                    const isActive = pageIndex === idx
-                    return (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => {
-                          setIsTransitioning(true)
-                          setTimeout(() => {
-                            setCurrentIndex(idx * CARDS_PER_VIEW)
-                            setIsTransitioning(false)
-                            setJustEntered(true)
-                            setTimeout(() => setJustEntered(false), 1100)
-                          }, 600)
-                        }}
-                        className="h-2 rounded-full transition-all duration-300 hover:opacity-90"
+                  {/* ── Message — focal point ── */}
+                  {guest.message && guest.message.trim() !== "" && (
+                    <div
+                      className="relative rounded-lg sm:rounded-xl mb-3 sm:mb-4 py-4 sm:py-5 px-4 sm:px-6 text-center overflow-hidden"
+                      style={{
+                        background: "linear-gradient(135deg, rgba(255,247,240,0.6) 0%, rgba(212,184,150,0.12) 50%, rgba(255,247,240,0.6) 100%)",
+                        border: `1px solid rgba(207,160,107,0.28)`,
+                      }}
+                    >
+                      {/* Large decorative opening quote */}
+                      <div
+                        className="absolute top-1 left-3 leading-none select-none pointer-events-none"
+                        style={{ fontSize: "clamp(2.5rem, 8vw, 4rem)", color: ACCENT, opacity: 0.18, fontFamily: "Georgia, serif", lineHeight: 1 }}
+                        aria-hidden
+                      >
+                        &#8220;
+                      </div>
+                      {/* Large decorative closing quote */}
+                      <div
+                        className="absolute bottom-0 right-3 leading-none select-none pointer-events-none"
+                        style={{ fontSize: "clamp(2.5rem, 8vw, 4rem)", color: ACCENT, opacity: 0.18, fontFamily: "Georgia, serif", lineHeight: 1 }}
+                        aria-hidden
+                      >
+                        &#8221;
+                      </div>
+
+                      {/* Message text */}
+                      <p
+                        className="garamond relative z-10"
                         style={{
-                          width: isActive ? "1.75rem" : "0.5rem",
-                          backgroundColor: isActive ? BOOK_ACCENT : 'color-mix(in srgb, var(--color-motif-deep) 31%, transparent)',
+                          fontSize: "clamp(0.85rem, 3.2vw, 1.08rem)",
+                          color: DEEP,
+                          fontStyle: "italic",
+                          lineHeight: 1.9,
+                          textAlign: "center",
+                          letterSpacing: "0.01em",
                         }}
-                        aria-label={`Go to page ${idx + 1}`}
-                      />
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+                      >
+                        {guest.message}
+                      </p>
 
-      </div>
+                      {/* Soft accent dot below */}
+                      <div className="flex justify-center mt-2.5">
+                        <span style={{ color: ACCENT, fontSize: "5px", opacity: 0.6 }}>◆</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ── Companions ── */}
+                  {guest.companions && guest.companions.length > 0 && (
+                    <div
+                      className="flex flex-wrap gap-1 sm:gap-1.5 mb-2.5 sm:mb-3"
+                    >
+                      <span className="garamond w-full" style={{ fontSize: "clamp(0.58rem, 1.6vw, 0.66rem)", color: MEDIUM, letterSpacing: "0.28em", textTransform: "uppercase", marginBottom: "0.2rem" }}>
+                        Companions
+                      </span>
+                      {guest.companions.map((c, i) => (
+                        <div
+                          key={i}
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border"
+                          style={{ background: "rgba(207,160,107,0.07)", borderColor: "rgba(207,160,107,0.25)" }}
+                        >
+                          <span className="garamond" style={{ fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: DEEP, fontWeight: 500 }}>{c.name}</span>
+                          {c.relationship && (
+                            <span className="garamond" style={{ fontSize: "clamp(0.56rem, 1.5vw, 0.64rem)", color: MEDIUM, fontStyle: "italic" }}>· {c.relationship}</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* ── Footer: date + heart ── */}
+                  <div className="flex items-center justify-between pt-2 sm:pt-2.5 border-t" style={{ borderColor: "rgba(207,160,107,0.18)" }}>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-2.5 w-2.5 opacity-60" style={{ color: ACCENT }} />
+                      <span className="garamond opacity-70" style={{ fontSize: "clamp(0.58rem, 1.6vw, 0.68rem)", color: MEDIUM }}>
+                        Confirmed {formatDate(guest.updatedAt)}
+                      </span>
+                    </div>
+                    <Heart className="h-2.5 w-2.5 sm:h-3 sm:w-3" style={{ color: ACCENT, opacity: 0.5 }} />
+                  </div>
+                </div>
+
+                {/* Bottom accent line */}
+                <div className="h-px w-full" style={{ background: `linear-gradient(to right, transparent, rgba(207,160,107,0.25), transparent)` }} />
+              </div>
+            ))}
+          </div>
+
+          {/* Carousel indicators */}
+          {confirmedGuests.length > CARDS_PER_VIEW && (
+            <div className="flex items-center justify-center gap-2 mt-5 sm:mt-6">
+              {Array.from({ length: Math.ceil(confirmedGuests.length / CARDS_PER_VIEW) }).map((_, idx) => {
+                const active = Math.floor(currentIndex / CARDS_PER_VIEW) === idx
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => {
+                      setIsTransitioning(true)
+                      setTimeout(() => {
+                        setCurrentIndex(idx * CARDS_PER_VIEW)
+                        setIsTransitioning(false)
+                        setJustEntered(true)
+                        setTimeout(() => setJustEntered(false), 1100)
+                      }, 600)
+                    }}
+                    className="h-1.5 sm:h-2 rounded-full transition-all duration-300"
+                    style={{
+                      width: active ? "1.75rem" : "0.5rem",
+                      background: active ? ACCENT : "rgba(207,160,107,0.30)",
+                    }}
+                    aria-label={`Page ${idx + 1}`}
+                  />
+                )
+              })}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

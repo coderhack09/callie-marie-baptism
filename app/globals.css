@@ -88,11 +88,12 @@
   --font-serif: "Great Vibes", "Great Vibes Fallback";
 
   /* ─── Motif palette — edit here, affects every component ─── */
-  --color-motif-deep:    #2F4F3E;  /* deep sage green - headings */
-  --color-motif-medium:  #5F7D6B;  /* classic sage - body text */
-  --color-motif-accent:  #A7BFA9;  /* light sage - highlights */
-  --color-motif-cream:   #F4F6F2;  /* soft watercolor background */
-  --color-motif-soft:    #DDE6DD;  /* pale sage - cards / sections */  /* secondary text */  /* muted silver text/icons */  /* cool neutral divider */  /* neutral divider */
+  --color-motif-deep:    #8B6F5A;  /* taupe - headings (strong but soft) */
+  --color-motif-medium:  #BFA07A;  /* khaki - body text */
+  --color-motif-accent:  #CFA06B;  /* camel - buttons/highlights */
+  --color-motif-cream:   #F5E6D3;  /* beige - main background */
+  --color-motif-soft:    #E8D2B5;  /* tan - sections/cards */
+  --color-motif-silver:  #EDE3D6;  /* sand - borders/dividers */ /* pale sage - cards / sections */  /* secondary text */  /* muted silver text/icons */  /* cool neutral divider */  /* neutral divider */
   /* ─────────────────────────────────────────────────────────── */
   --font-imperial-script: "Imperial Script", cursive;
   --color-background: var(--background);
@@ -233,6 +234,51 @@ html {
 
 .symphony-pro-regular {
   font-family: "SymphonyPro", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* ── Garamond font ── */
+@font-face {
+  font-family: "Garamond";
+  src: url("/fonts/Garamond.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+.garamond {
+  font-family: "Garamond", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* ── Amsterdam One font ── */
+@font-face {
+  font-family: "AmsterdamOne";
+  src: url("/fonts/AmsterdamOne-eZ12l.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+.amsterdam-one {
+  font-family: "AmsterdamOne", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* ── Gistesy font ── */
+@font-face {
+  font-family: "Gistesy";
+  src: url("/fonts/Gistesy.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+.gistesy {
+  font-family: "Gistesy", cursive;
   font-weight: 400;
   font-style: normal;
 }

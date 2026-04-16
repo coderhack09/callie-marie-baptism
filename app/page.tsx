@@ -23,6 +23,7 @@ import { Navbar } from "@/components/navbar"
 import { AppState } from "@/components/types"
 import { SnapShare } from "@/components/sections/snap-share"
 import { CoupleVideo } from "@/components/sections/couple-video"
+import { Celebration } from "@/components/sections/celebration"
 
 const Silk = dynamic(() => import("@/components/silk"), { ssr: false })
 const GuestList = dynamic(() => import("@/components/sections/guest-list").then(mod => ({ default: mod.GuestList })), { ssr: false })
@@ -76,7 +77,7 @@ export default function Home() {
             {enableDecor && (
               <div className="fixed inset-0 z-0 pointer-events-none">
                 <Suspense fallback={<div className="w-full h-full bg-gradient-to-b from-primary/10 to-secondary/5" />}>
-                  <Silk speed={5} scale={1.1} color="#2F4F3E" noiseIntensity={0.8} rotation={0.3} />
+                  <Silk speed={5} scale={1.1} color="#9B6A41" noiseIntensity={0.8} rotation={0.3} />
                 </Suspense>
               </div>
             )}
@@ -94,7 +95,7 @@ export default function Home() {
 
               <Details />
               {/* <GuestInformation /> */}
-              <WeddingTimeline />
+              {/* <WeddingTimeline /> */}
       
               <Entourage />
 
@@ -105,8 +106,9 @@ export default function Home() {
               {/* <PrincipalSponsors /> */}
               <FAQ />
 
-              <Registry />
+              {/* <Registry /> */}
               <SnapShare />
+              <Celebration />
 
               <Footer />
             </div>
