@@ -9,15 +9,15 @@ export const siteConfig = {
     backgroundMusic:"/background_music/For This Child - Baby Dedication Song - Ken Blount.mp3"
   },
   googleAPI:{
-    messageForm: "https://docs.google.com/forms/d/e/1FAIpQLSdIdbbjMODRyh7_s2dM9grIW2chcjoZV-RzQ5Fi_Xn6Wp8lAw/formResponse", //done
-    message: "https://script.google.com/macros/s/AKfycbwQSFuChJptz3DSUzyJxFdWquvBxhVUdcTa77WeaOW3GZRG4G-N9p7UrlPrsTNdCLjp/exec",   //dpme
-    guestList: "https://script.google.com/macros/s/AKfycbyfSSTnSzgMJfwViOVRzbIqJF3KP2hlmg-LEg2gXTzYg5Q5N3dqMX2KUfdazfqp81ks/exec",  //done
-    guestRequest: "https://script.google.com/macros/s/AKfycbzKgBHpTsZwEazYUzgPnhT2KLquB2gZbunvhxOW-4jJj1dSTbU57MyG5oOf4d2mVLXD/exec",  //done
-    entourage: "https://script.google.com/macros/s/AKfycbxVG5lfkbMsTjqXaUhFF9ggrSSgpunN8Vw_QxXkpr6g5livlhqo3_PtTfMyTcdTl6g/exec",  //done
-    sponsors: "https://script.google.com/macros/s/AKfycby8IFM324mgVtp47YoBrOwPstpSUidC2QZRUvSyzst-NTswOzBRLLgGO1uqzNI1R9dt/exec",  //done
-    weddingDetails: "https://script.google.com/macros/s/AKfycbzyfzPY1ILFNSi86c3OkU1Np-WJ5RpPlO7h7bL3HojH7ehFm__q3FyAPC4kECn8r3uj/exec",  
+    messageForm: "https://docs.google.com/forms/d/e/1FAIpQLSdvvqVz4UogSpGqztVb3YNgUmtQ9Ks18ASYhbeKgcFyJLZa6Q/formResponse", //done
+    message: "https://script.google.com/macros/s/AKfycbxLa1PZeFO0QQNIj35ZISc8_i1DuhIV1jyaDdqf15ImXgLN1AkBl14krK7q8F7K98Lg/exec",   //done
+    guestList: "https://script.google.com/macros/s/AKfycbxtvU0xTCpX219SzvbDZZuolgs-1cama0r5cTCQrW3qb-72gTNTZgA-cfxlgIjItKCe/exec",  //done
+    guestRequest: "https://script.google.com/macros/s/AKfycbzmlxa0d2eTeM1-resQR6X8b9tigpiLtV3qpgozVUEhx2j_R1idCVBStQZKUgt1-8nS/exec",  //done
+    entourage: "https://script.google.com/macros/s/AKfycby3ez5mUY48cugt1CO_bZqCMfds6RsI7QEJw_feUWliClQliTWEqXmt3gjUA-mDjc3h/exec",  //done
+    sponsors: "https://script.google.com/macros/s/AKfycbzuS-c77C9H8hSEEuDLUqHz6dHb_UJXMlaam_wWEI0gpan9yaccw5z65Qj__lIlCXO7/exec",  //done
+    weddingDetails: "https://script.google.com/macros/s/AKfycbw7Lbs75w80xVKYX4Vcr4nLbmiUuzB0CXsh2Vi4Cfj3Wt8LLa4YSAPFuhPcbxRnJHVJ/exec",  //done
 ////google share 
-    googleShare: "https://docs.google.com/spreadsheets/d/1vZ5A4SKlFNHqU02P52OczTzgcaCBOvkop6Oxe2hZ59U/edit?usp=sharing",
+    googleShare: "https://docs.google.com/spreadsheets/d/1j8FLrJHMaB9rrdwWVF2dvNQLhTs4pR6hRRz-a_mEEJ4/edit?usp=sharing", //done
   },
   wedding: {
     date: "May 31, 2026",
@@ -111,7 +111,7 @@ Now, as they prepare to say yes before God and the people they love most, Cather
     secondary: "#F5F5DC",
   },
   snapShare: {
-    googleDriveLink: "https://drive.google.com/drive/folders/1cCo5WtCNhquk86sm0zR6E8FNI3VzAnEv?usp=sharing",
+    googleDriveLink: "https://drive.google.com/drive/folders/1VOkvdD_1YhX3P-g4p7UbLiYFNQnNbcTH?usp=sharing",
     hashtag: ["#JezelAndRodel","#JezelAndRodelWedding"],
     instructions: "Please scan this QR Code, create a folder with your name and upload the photos and videos you have taken during our wedding reception. We are delighted to see your snaps too!",
   },
