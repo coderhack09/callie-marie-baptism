@@ -47,9 +47,9 @@ export const siteConfig = {
     venue: "Brgy. Mansilingan, Bacolod City",
     date: "May 31, 2026",
     day: "Sunday",
-    time: "8:00 AM",
-    entourageTime: "7:00 AM",
-    guestsTime: "7:30 AM",
+    time: "9:00 AM",
+    entourageTime: "8:00 AM",
+    guestsTime: "8:30 AM",
     image: "/Details/ceremony.png",
   },
   reception: {
@@ -72,7 +72,7 @@ export const siteConfig = {
     guests: {
       gents: "Guests are kindly requested to wear attire in any of the shades within our wedding palette.Color pallet and image to be followed. STRICTLY no shorts, maong jeans, t-shirts, or slippers.",
       ladies: "Guests are kindly requested to wear attire in any of the shades within our wedding palette.Color pallet and image to be followed. STRICTLY no shorts, maong jeans, t-shirts, or slippers.",
-      notes: "To complement our wedding motif, we respectfully request semi-formal attire in sage green or inspired tones for all guests",
+      notes: "To complement the elegance of our celebration, we kindly request our dear guests to dress in soft, warm neutrals inspired by our chosen palette.",
       photo: "/Details/guestAttire.png",
       palette: " #E8C699, #E0BA8D, #B59268, #B0835C,#CD9A61",
     },
