@@ -106,7 +106,7 @@ export default function Home() {
               {/* <PrincipalSponsors /> */}
               <FAQ />
 
-              {/* <Registry /> */}
+              <Registry />
               <SnapShare />
               <Celebration />
 

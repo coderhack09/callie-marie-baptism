@@ -5,6 +5,7 @@ import { useState, useEffect } from "react"
 import { QRCodeSVG } from "qrcode.react"
 import { siteConfig } from "@/content/site"
 import { CloudinaryImage } from "@/components/ui/cloudinary-image"
+import Image from "next/image"
 import {
   Shirt,
   Clock,
@@ -494,6 +495,100 @@ export function Details() {
               })}
             </div> */}
 
+            {/* Attire Guide */}
+            <div className="space-y-5 sm:space-y-6 md:space-y-8 mb-5 sm:mb-6">
+          {/* Guests Attire */}
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-br from-motif-silver/22 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-lg" />
+            
+            <div className="relative bg-motif-cream backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-7 lg:p-9 border hover:shadow-[0_20px_48px_rgba(0,0,0,0.24)] hover:border-motif-deep/70 transition-all duration-300">
+              <p
+                className="garamond text-center uppercase mb-1 sm:mb-2"
+                style={{ fontSize: "clamp(0.56rem, 2vw, 0.68rem)", letterSpacing: "0.42em", color: ACCENT, paddingRight: "0.42em" }}
+              >
+                Dress Code
+              </p>
+              <h4
+                className="gistesy text-center mb-4 sm:mb-5 md:mb-6 px-2"
+                style={{ fontSize: "clamp(1.5rem, 5.5vw, 2.3rem)", color: DEEP, lineHeight: 1.12, overflow: "visible", paddingTop: "0.08em" }}
+              >
+                Guest Attire
+              </h4>
+
+              {/* Copy: follow color palette */}
+              <p className="garamond text-center text-[0.82rem] sm:text-sm md:text-base lg:text-lg leading-relaxed mb-4 sm:mb-5 md:mb-6 max-w-xl mx-auto px-1 sm:px-3" style={{ color: `${DEEP}cc` }}>
+              Kindly follow the color palette below for your outfit.
+              </p>
+
+              {/* Principal sponsor attire image */}
+              <div className="relative w-full aspect-[5/4] sm:aspect-[4/3] md:aspect-[3/2] max-w-2xl mx-auto rounded-lg sm:rounded-xl overflow-hidden border border-motif-medium/30 mb-4 sm:mb-6 md:mb-8">
+                <Image
+                  src={siteConfig.dressCode.guests.photo}
+                  alt={siteConfig.dressCode.guests.notes}
+                  fill
+                  className="object-contain bg-[#FFF7F6]/50 p-1.5 sm:p-2.5 md:p-3"
+                  sizes="(max-width: 640px) 95vw, (max-width: 1024px) 85vw, 672px"
+                />
+              </div>
+
+              {/* Color palette for principal sponsors — keep explicit dress-code colors (not UI palette) */}
+              <div className="flex justify-center gap-2 sm:gap-3 md:gap-4 flex-wrap mb-5 sm:mb-6 md:mb-7 px-1 sm:px-2">
+                {siteConfig.dressCode.guests.palette.split(',').map((color) => (
+                  <div
+                    key={color.trim()}
+                    className="w-7.5 h-7.5 min-w-[1.875rem] min-h-[1.875rem] sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full shadow-md border border-white ring-2 ring-motif-silver/40 hover:scale-110 transition-transform duration-300"
+                    style={{ backgroundColor: color.trim() }}
+                    title={color.trim()}
+                  />
+                ))}
+              </div>
+              
+              {/* Guests Dress Code Text */}
+              <div className="text-center pt-3 sm:pt-4 border-t border-motif-silver/70 px-1 sm:px-4 mb-2 sm:mb-4">
+                <p className="garamond text-[0.86rem] sm:text-base md:text-lg leading-relaxed mb-2 sm:mb-3" style={{ color: `${DEEP}d9` }}>
+                  <span className="font-semibold">{siteConfig.dressCode.guests.notes}</span>
+                  <br />
+               
+                </p>
+                {/* <div className="mt-3 sm:mt-4 text-left max-w-2xl mx-auto">
+                  <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
+                    <span className="inline-flex h-2 w-2 rounded-full bg-motif-accent/80" aria-hidden="true" />
+                    <p className={`${cinzel.className} text-[11px] sm:text-xs tracking-[0.22em] uppercase text-motif-deep/80`}>
+                      Notes
+                    </p>
+                    <span className="hidden sm:block h-px flex-1 bg-motif-deep/15" aria-hidden="true" />
+                  </div>
+
+                  <ul className="space-y-2 sm:space-y-2.5">
+                    <li className="flex gap-3">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-motif-deep/40" aria-hidden="true" />
+                      <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] text-motif-deep/90 leading-relaxed">
+                        Ladies, we know you’d look beautiful in white—but let’s save that for the bride.
+                      </p>
+                    </li>
+                    <li className="flex gap-3">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-motif-deep/40" aria-hidden="true" />
+                      <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] text-motif-deep/90 leading-relaxed">
+                        We kindly encourage everyone to avoid casual attire such as jeans, shorts, slippers, and sando.
+                      </p>
+                    </li>
+                    <li className="flex gap-3">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-motif-deep/40" aria-hidden="true" />
+                      <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] text-motif-deep/90 leading-relaxed">
+                        We also gently discourage wearing all or predominantly black outfits to match the bright and joyful mood of our wedding celebration.
+                      </p>
+                    </li>
+                  </ul>
+                </div> */}
+                {/* <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] text-motif-deep leading-relaxed italic">
+                  {siteConfig.dressCode.note}
+                </p> */}
+              </div>
+            </div>
+          </div>
+
+        </div>
+
             {/* Title */}
             <p className="garamond text-center" style={{ fontSize: "clamp(0.56rem, 2.2vw, 0.72rem)", letterSpacing: "0.48em", textTransform: "uppercase", color: ACCENT, marginBottom: "0.4rem", paddingRight: "0.48em" }}>
               A Few Kind Notes
@@ -539,6 +634,27 @@ export function Details() {
                 </h4>
                 <p className="garamond" style={{ fontSize: "clamp(0.82rem, 2.8vw, 0.96rem)", color: `${DEEP}cc`, lineHeight: 1.85, textAlign: "center" }}>
                   To ensure this sacred celebration begins peacefully, we kindly ask that you arrive at least 30 minutes early. The ceremony begins at <span style={{ color: DEEP, fontWeight: 600 }}>{siteConfig.ceremony.time}</span>, so please plan to be seated by <span style={{ color: DEEP, fontWeight: 600 }}>{siteConfig.ceremony.guestsTime}</span>. Your timely presence allows everyone to share in the full blessing of this moment.
+                </p>
+              </div>
+
+              {/* Ninong and Ninang Church Fee */}
+              <div className="rounded-lg p-4 sm:p-5 md:p-6 border border-motif-accent/20 shadow-sm" style={{ background: "rgba(255,247,240,0.55)" }}>
+                <p className="garamond text-center" style={{ fontSize: "clamp(0.55rem, 1.8vw, 0.66rem)", letterSpacing: "0.38em", textTransform: "uppercase", color: ACCENT, marginBottom: "0.25rem", paddingRight: "0.38em" }}>
+                  Kind Request
+                </p>
+                <h4 className="gistesy text-center"
+                  style={{ fontSize: "clamp(1.4rem, 5vw, 2.2rem)", color: DEEP, lineHeight: 1.1, overflow: "visible", paddingTop: "0.1em", marginBottom: "0.75rem" }}
+                >
+                  Dear Ninongs and Ninangs
+                </h4>
+                <p className="garamond" style={{ fontSize: "clamp(0.82rem, 2.8vw, 0.96rem)", color: `${DEEP}cc`, lineHeight: 1.85, textAlign: "center" }}>
+                  We kindly ask for a <span style={{ color: DEEP, fontWeight: 600 }}>PHP 200 church fee</span> to help with the ceremony.
+                  <br />
+                  <br />
+                  You may send your payment via GCash (QR code available) for your convenience.
+                  <br />
+                  <br />
+                  Thank you so much for being part of this special day!
                 </p>
               </div>
             </div>

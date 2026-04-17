@@ -37,16 +37,16 @@ export const siteConfig = {
   giftRegistry: {
     QR_1:{
     id: "Gcash",
-    src: "/QR/Gcash.png",
+    src: "/QR/newGcash.png",
     label: "Gcash",
-    accountNumber: "Gcash: RO**L C.",
+    accountNumber: "Gcash: GE***L A** V.",
     },
   },
   ceremony: {
     location: "Our lady of Miraculous Medal Parish",
     venue: "Brgy. Mansilingan, Bacolod City",
     date: "May 31, 2026",
-    day: "Friday",
+    day: "Sunday",
     time: "8:00 AM",
     entourageTime: "7:00 AM",
     guestsTime: "7:30 AM",
@@ -54,9 +54,9 @@ export const siteConfig = {
   },
   reception: {
     location: "Nazareth Activity Hub",
-    venue: "Brgy. Mansilingan, Across Buanzon Cockpit, Bacolod City",
+    venue: "Brgy. Mansilingan, Across Guanzon Cockpit, Bacolod City",
     date: "May 22, 2026",
-    time: "12:00 PM",
+    time: "9:00 AM",
     image: ["/Details/reception1.png","/Details/reception2.png"],
   },                          
   dressCode: {
@@ -73,8 +73,8 @@ export const siteConfig = {
       gents: "Guests are kindly requested to wear attire in any of the shades within our wedding palette.Color pallet and image to be followed. STRICTLY no shorts, maong jeans, t-shirts, or slippers.",
       ladies: "Guests are kindly requested to wear attire in any of the shades within our wedding palette.Color pallet and image to be followed. STRICTLY no shorts, maong jeans, t-shirts, or slippers.",
       notes: "To complement our wedding motif, we respectfully request semi-formal attire in sage green or inspired tones for all guests",
-      photo: "/Details/Guest.png",
-      palette: " #2F4F3E, #5F7D6B, #A7BFA9, #F4F6F2",
+      photo: "/Details/guestAttire.png",
+      palette: " #E8C699, #E0BA8D, #B59268, #B0835C,#CD9A61",
     },
     entourage: {
       notes: "Ladies are requested to wear sage green dresses or gowns (or inspired shades), while gentlemen may wear a sage green coat and tie (or inspired tones).",

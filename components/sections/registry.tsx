@@ -39,7 +39,7 @@ export function Registry() {
         </h2>
         
         <p className="text-xs sm:text-sm md:text-base lg:text-lg text-motif-cream/90 font-light max-w-2xl mx-auto leading-relaxed px-2">
-        We truly appreciate your love and support. As we already share a home, we kindly request monetary gifts, which will help us toward our future together.
+        Your presence at Niahna Celestine’s christening is already a wonderful blessing to our family. Should you wish to further bless our precious daughter, a monetary gift would be truly appreciated and will be carefully saved for her future. Thank you for your love, kindness, and generous hearts as you celebrate this special day with us.
 
         </p>
         
