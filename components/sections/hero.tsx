@@ -15,7 +15,7 @@ const BABY_NAME_FIRST = "Niahna"
 const BABY_NAME_LAST  = "Celestine"
 const EVENT_LABEL     = "Christening Celebration"
 const TAGLINE         = "A Little Piece of Heaven"
-const EVENT_DATE      = "May 31 , 2026  |  8 AM"
+const EVENT_DATE      = "May 31 , 2026  |  9:00 AM"
 const EVENT_VENUE     = "Our Lady of Miraculous Medal Parish"
 
 // ── 3 polaroid cards with individual rotation ────────────────────────────────
