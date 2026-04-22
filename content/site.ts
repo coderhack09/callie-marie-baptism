@@ -56,7 +56,7 @@ export const siteConfig = {
     location: "Nazareth Activity Hub",
     venue: "Brgy. Mansilingan, Across Guanzon Cockpit, Bacolod City",
     date: "May 22, 2026",
-    time: "9:00 AM",
+    time: "11:30 AM",
     image: ["/Details/reception1.png","/Details/reception2.png"],
   },                          
   dressCode: {
