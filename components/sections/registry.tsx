@@ -108,7 +108,7 @@ export function Registry() {
         <p className="text-xs sm:text-sm text-motif-cream/90 italic text-center">
             With love,
             <br />
-            {siteConfig.couple.brideNickname} and {siteConfig.couple.groomNickname}
+            Niahna Celestine
           </p>
         </div>
       </div>
