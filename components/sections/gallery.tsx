@@ -26,7 +26,11 @@ const MEDIUM = "#BFA07A"
 const ACCENT = "#CFA06B"
 
 const galleryItems = [
-  { image: "/mobile_display/baby (1).jpg"  },
+  { image: "/gallery/baby (1).jpg"  },
+  { image: "/gallery/baby (2).jpg"  },
+  { image: "/gallery/baby (3).jpg"  },
+  { image: "/gallery/baby (4).jpg"  },
+  { image: "public/gallery/baby (1).jpg"  },
   { image: "/mobile_display/baby (3).jpg"  },
   { image: "/mobile_display/baby (4).jpg"  },
   { image: "/mobile_display/baby (5).jpg"  },
