@@ -8,33 +8,34 @@ interface LoadingScreenProps {
 }
 
 // ── Color palette — warm taupe/khaki (from globals.css motif) ───────────────
-const DEEP   = "#8B6F5A"   // taupe  — headings
-const MEDIUM = "#BFA07A"   // khaki  — body text
-const ACCENT = "#CFA06B"   // camel  — accents/highlights
-const CREAM  = "#F5E6D3"   // beige  — main background
-const SILVER = "#EDE3D6"   // sand   — borders/dividers
+const DEEP      = "#8B6F5A"   // taupe  — headings
+const MEDIUM    = "#BFA07A"   // khaki  — body text
+const ACCENT    = "#CFA06B"   // camel  — accents/highlights
+const CREAM     = "#F5E6D3"   // beige  — main background
+const SILVER    = "#EDE3D6"   // sand   — borders/dividers
+const BABY_BLUE = "#89CFF0"   // baby blue — monogram & event title
 
 // Baptism details — hardcoded for this event
-const BABY_NAME_FIRST = "Niahna"
-const BABY_NAME_LAST  = "Celestine"
+const BABY_NAME_FIRST = "Kaezar"
+const BABY_NAME_LAST  = "Isaiahnuel Galardo"
 const EVENT_LABEL     = "Christening Celebration"
 const TAGLINE         = "A Little Piece of Heaven"
-const EVENT_DATE      = "May 31 , 2026  |  9:00 AM"
-const EVENT_VENUE     = "Our Lady of Miraculous Medal Parish"
+const EVENT_DATE      = "July 4 , 2026  |  10:00 AM"
+const EVENT_VENUE     = "Cathedral of Our Lady of Arabia, Awali, Kingdom of Bahrain"
 
-const images = [
-  {
-    src: "/mobile_display/baby (9).jpg",
-    alt: "Baby photo 1",
-  },
-  {
-    src: "/mobile_display/baby (14).jpg",
-    alt: "Baby photo 2",
-  },
-]
+// const images = [
+//   {
+//     src: "/mobile_display/baby (9).jpg",
+//     alt: "Baby photo 1",
+//   },
+//   {
+//     src: "/mobile_display/baby (14).jpg",
+//     alt: "Baby photo 2",
+//   },
+// ]
 
 // Ghost watermark date segments (MM DD YY)
-const GHOST_NUMBERS = ["05", "28", "24"]
+const GHOST_NUMBERS = ["07", "04", "26"]
 
 // ── Canvas particle system ──────────────────────────────────────────────────
 
@@ -235,37 +236,37 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
 
       {/* ── Layer 5: Corner floral decorations ── */}
       <Image
-        src="/decoration/top-left.png"
+        src="/decoration/left-top-removebg-preview.png"
         alt=""
         width={280}
         height={280}
-        className="absolute top-0 left-0 pointer-events-none select-none w-36 sm:w-48 md:w-60 lg:w-64"
+        className="absolute top-0 left-0 pointer-events-none select-none w-24 sm:w-32 md:w-40 lg:w-44"
         aria-hidden
         priority
       />
       <Image
-        src="/decoration/top-right.png"
+        src="/decoration/right-top-removebg-preview.png"
         alt=""
         width={280}
         height={280}
-        className="absolute top-0 right-0 pointer-events-none select-none w-36 sm:w-48 md:w-60 lg:w-64"
+        className="absolute top-0 right-0 pointer-events-none select-none w-24 sm:w-32 md:w-40 lg:w-44"
         aria-hidden
         priority
       />
       <Image
-        src="/decoration/bottom-left.png"
+        src="/decoration/bottom-left-removebg-preview.png"
         alt=""
         width={280}
         height={280}
-        className="absolute bottom-0 left-0 pointer-events-none select-none w-36 sm:w-48 md:w-60 lg:w-64"
+        className="absolute bottom-0 left-0 pointer-events-none select-none w-24 sm:w-32 md:w-40 lg:w-44"
         aria-hidden
       />
       <Image
-        src="/decoration/right-bottom.png"
+        src="/decoration/bottom-right-removebg-preview.png"
         alt=""
         width={280}
         height={280}
-        className="absolute bottom-0 right-0 pointer-events-none select-none w-36 sm:w-48 md:w-60 lg:w-64"
+        className="absolute bottom-0 right-0 pointer-events-none select-none w-24 sm:w-32 md:w-40 lg:w-44"
         aria-hidden
       />
 
@@ -294,6 +295,22 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
       {/* ── Main content ── */}
       <div className="relative z-10 w-full max-w-sm mx-auto px-3 sm:px-6 md:px-8 text-center">
 
+        {/* Monogram */}
+        <div
+          className={`flex justify-center mb-3 ${vis(1)}`}
+          style={{ transitionDelay: "0ms" }}
+        >
+          <Image
+            src="/monogram/monogram.png"
+            alt="Monogram"
+            width={90}
+            height={90}
+            className="select-none"
+            style={{ filter: "brightness(0) saturate(100%) invert(81%) sepia(25%) saturate(600%) hue-rotate(180deg) brightness(95%) contrast(105%)", width: "clamp(56px, 14vw, 90px)", height: "auto" }}
+            priority
+          />
+        </div>
+
         {/* "JOIN US FOR" header */}
         <p
           className={`garamond ${vis(1)}`}
@@ -317,11 +334,11 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
             className="gistesy"
             style={{
               fontSize: "clamp(2.2rem, 9.5vw, 4.5rem)",
-              color: ACCENT,
+              color: BABY_BLUE,
               lineHeight: 1.15,
               display: "block",
               letterSpacing: "-0.01em",
-              textShadow: `0 2px 24px rgba(207,160,107,0.28)`,
+              textShadow: `0 2px 24px rgba(137,207,240,0.35)`,
             }}
           >
             {EVENT_LABEL}
@@ -356,7 +373,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
             }}
           >
             {/* Back photo — tilted left */}
-            <div
+            {/* <div
               style={{
                 position: "absolute",
                 top: "0px",
@@ -383,10 +400,10 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
                   priority
                 />
               </div>
-            </div>
+            </div> */}
 
             {/* Front photo — tilted right */}
-            <div
+            {/* <div
               style={{
                 position: "absolute",
                 top: "clamp(75px, 25vw, 105px)",
@@ -412,56 +429,53 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
                   className="object-cover object-center"
                 />
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Baby name — centred, IN FRONT of the images */}
           <h1
-            className={`flex justify-center ${vis(2)}`}
+            className={`flex flex-col items-center justify-center ${vis(2)}`}
             style={{ transitionDelay: "60ms", position: "relative", zIndex: 5, paddingTop: "clamp(3rem, 10vw, 4rem)" }}
           >
-            <div className="inline-block text-left" style={{ paddingLeft: "0.25rem", marginLeft: "-0.35rem" }}>
-              {/* N  +  iahna */}
-              <div className="amsterdam-one flex items-baseline" style={{ gap: "0.1rem" }}>
-                <span
-                  style={{
-                    fontSize: "clamp(4.8rem, 21vw, 8.5rem)",
-                    color: DEEP,
-                    lineHeight: 1,
-                    textShadow: `0 3px 28px rgba(139,111,90,0.18)`,
-                    display: "block",
-                    marginTop: "clamp(0.3rem, 1.5vw, 0.6rem)",
-                  }}
-                >
-                  {BABY_NAME_FIRST.charAt(0)}
-                </span>
-                <span
-                  style={{
-                    fontSize: "clamp(2.4rem, 10.5vw, 4.2rem)",
-                    color: DEEP,
-                    lineHeight: 1,
-                    textShadow: `0 2px 20px rgba(139,111,90,0.14)`,
-                  }}
-                >
-                  {BABY_NAME_FIRST.slice(1)}
-                </span>
-              </div>
-
-              {/* Celestine */}
+            {/* First name */}
+            <div className="coolvetica regular flex items-baseline justify-center" style={{ gap: "0.1rem" }}>
               <span
-                className="amsterdam-one block"
                 style={{
-                  fontSize: "clamp(1.8rem, 8vw, 3.2rem)",
+                  fontSize: "clamp(4.8rem, 21vw, 8.5rem)",
                   color: DEEP,
-                  lineHeight: 1.1,
-                  textShadow: `0 2px 20px rgba(139,111,90,0.14)`,
-                  paddingLeft: "clamp(4.4rem, 18vw, 8rem)",
-                  marginTop: "clamp(0.9rem, 4vw, 1.4rem)",
+                  lineHeight: 1,
+                  textShadow: `0 3px 28px rgba(139,111,90,0.18)`,
+                  marginTop: "clamp(0.3rem, 1.5vw, 0.6rem)",
                 }}
               >
-                {BABY_NAME_LAST}
+                {BABY_NAME_FIRST.charAt(0)}
+              </span>
+              <span
+                style={{
+                  fontSize: "clamp(2.4rem, 10.5vw, 4.2rem)",
+                  color: DEEP,
+                  lineHeight: 1,
+                  textShadow: `0 2px 20px rgba(139,111,90,0.14)`,
+                }}
+              >
+                {BABY_NAME_FIRST.slice(1)}
               </span>
             </div>
+
+            {/* Last name */}
+            <span
+              className="amsterdam-one"
+              style={{
+                fontSize: "clamp(1.8rem, 8vw, 3.2rem)",
+                color: DEEP,
+                lineHeight: 1.1,
+                textShadow: `0 2px 20px rgba(139,111,90,0.14)`,
+                marginTop: "clamp(0.9rem, 4vw, 1.4rem)",
+                textAlign: "center",
+              }}
+            >
+              {BABY_NAME_LAST}
+            </span>
           </h1>
         </div>
 

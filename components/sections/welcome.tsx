@@ -72,17 +72,46 @@ export function Welcome() {
 
             {/* ── Name ── */}
             <h2
-              className="gistesy"
-              style={{
-                fontSize: "clamp(2.6rem, 10.5vw, 5rem)",
-                color: ACCENT,
-                lineHeight: 1.05,
-                letterSpacing: "-0.01em",
-                textShadow: `0 3px 32px rgba(207,160,107,0.32)`,
-                marginBottom: "clamp(0.8rem, 2.5vw, 1.2rem)",
-              }}
+              className="flex flex-col items-center"
+              style={{ marginBottom: "clamp(0.8rem, 2.5vw, 1.2rem)", gap: "clamp(0.1rem, 0.8vw, 0.3rem)" }}
             >
-              Niahna Celestine
+              {/* First name */}
+              <span
+                className="lora-regular"
+                style={{
+                  fontSize: "clamp(3rem, 13vw, 6rem)",
+                  color: DEEP,
+                  lineHeight: 1,
+                  letterSpacing: "0.05em",
+                  textShadow: `0 3px 32px rgba(139,111,90,0.22)`,
+                  display: "block",
+                }}
+              >
+                Kaezar
+              </span>
+
+              {/* Thin inline rule */}
+              <span className="flex items-center gap-2" style={{ width: "clamp(120px, 35vw, 200px)", margin: "clamp(0.2rem, 1vw, 0.4rem) 0" }}>
+                {/* <span className="flex-1 h-px" style={{ background: `linear-gradient(to left, rgba(207,160,107,0.45), transparent)` }} />
+                <span style={{ color: ACCENT, fontSize: "0.42rem", letterSpacing: "0.2em" }}>◆</span>
+                <span className="flex-1 h-px" style={{ background: `linear-gradient(to right, rgba(207,160,107,0.45), transparent)` }} /> */}
+              </span>
+
+              {/* Last name */}
+              <span
+                className="lora-regular"
+                style={{
+                  fontSize: "clamp(1.1rem, 5vw, 2.1rem)",
+                  color: MEDIUM,
+                  lineHeight: 1.2,
+                  letterSpacing: "0.20em",
+                  textTransform: "uppercase",
+                  textShadow: `0 2px 18px rgba(139,111,90,0.14)`,
+                  display: "block",
+                }}
+              >
+                Isaiahnuel Galardo
+              </span>
             </h2>
 
             {/* ── Long ornamental divider ── */}
@@ -94,131 +123,165 @@ export function Welcome() {
 
             {/* ── Section heading ── */}
             <h3
-              className="garamond"
+              className="cinzel"
               style={{
-                fontSize: "clamp(1.05rem, 4.2vw, 1.55rem)",
+                fontSize: "clamp(0.9rem, 3.8vw, 1.35rem)",
                 fontWeight: 600,
                 color: DEEP,
-                letterSpacing: "0.01em",
-                lineHeight: 1.4,
+                letterSpacing: "0.08em",
+                lineHeight: 1.5,
                 marginBottom: "clamp(1rem, 3vw, 1.5rem)",
+                textTransform: "uppercase",
               }}
             >
               Welcome to this Blessed Beginning
             </h3>
 
-            {/* ── Bible verse block — centered ── */}
+            {/* ── Bible verse block ── */}
             <div
-              className="w-full mb-[clamp(1.2rem,3.5vw,2rem)]"
+              className="w-full mb-[clamp(1.4rem,4vw,2.2rem)] relative"
               style={{
-                background: `rgba(207,160,107,0.07)`,
-                border: `1px solid rgba(207,160,107,0.22)`,
-                borderRadius: "10px",
-                padding: "clamp(0.9rem, 3vw, 1.4rem) clamp(1rem, 4vw, 2rem)",
+                background: `linear-gradient(150deg, rgba(207,160,107,0.10) 0%, rgba(245,230,211,0.20) 50%, rgba(207,160,107,0.08) 100%)`,
+                border: `1px solid rgba(207,160,107,0.28)`,
+                borderRadius: "12px",
+                padding: "clamp(1rem, 3.5vw, 1.6rem) clamp(1.4rem, 5vw, 2.4rem)",
               }}
             >
+              <div
+                className="absolute left-0 top-4 bottom-4 w-[3px] rounded-full"
+                style={{ background: `linear-gradient(to bottom, transparent, ${ACCENT}, transparent)` }}
+              />
               <p
-                className="garamond"
+                className="lora-regular"
                 style={{
-                  fontSize: "clamp(0.82rem, 3.2vw, 1.05rem)",
+                  fontSize: "clamp(0.88rem, 3.4vw, 1.08rem)",
                   color: DEEP,
                   fontStyle: "italic",
-                  lineHeight: 1.8,
-                  marginBottom: "0.5rem",
+                  lineHeight: 2,
+                  marginBottom: "0.6rem",
                   letterSpacing: "0.01em",
                 }}
               >
-                "Children are a heritage from the Lord,<br />
-                offspring a reward from Him."
+                &ldquo;When the time is right, I, the Lord, will make it happen.&rdquo;
               </p>
               <p
-                className="garamond"
+                className="cinzel"
                 style={{
-                  fontSize: "clamp(0.6rem, 2vw, 0.74rem)",
+                  fontSize: "clamp(0.52rem, 1.8vw, 0.68rem)",
                   color: ACCENT,
-                  letterSpacing: "0.14em",
+                  letterSpacing: "0.22em",
                   textTransform: "uppercase",
                   fontWeight: 600,
                 }}
               >
-                — Psalm 127:3
+                — Isaiah 60:22
               </p>
             </div>
 
             {/* ── Body paragraphs ── */}
             <div
               className="w-full flex flex-col"
-              style={{ gap: "clamp(0.9rem, 3vw, 1.3rem)", marginBottom: "clamp(1.4rem, 4.5vw, 2.4rem)" }}
+              style={{ gap: "clamp(1rem, 3.2vw, 1.5rem)", marginBottom: "clamp(1.6rem, 5vw, 2.6rem)" }}
             >
-              {[
-                {
-                  text: "With hearts full of gratitude and joy, we invite you to witness and celebrate the Christening of our beloved daughter,",
-                  highlight: "Niahna Celestine.",
-                },
-                {
-                  text: "This sacred moment marks the beginning of her spiritual journey — welcoming her into God's loving embrace and the Christian faith. It is a day of blessing, hope, and thanksgiving as we entrust her life to His guidance and grace.",
-                  highlight: null,
-                },
-                {
-                  text: "We are deeply thankful for the love and support that surround our family. Your presence, prayers, and shared joy mean so much to us, and it would truly be a blessing to have you with us as we celebrate this meaningful milestone.",
-                  highlight: null,
-                },
-                {
-                  text: "As you prepare to join us, please feel free to explore the details and reminders for the day. We look forward to celebrating this beautiful occasion together.",
-                  highlight: null,
-                },
-              ].map((item, i) => (
-                <p
-                  key={i}
-                  className="garamond"
-                  style={{
-                    fontSize: "clamp(0.78rem, 2.9vw, 0.97rem)",
-                    color: DEEP,
-                    lineHeight: 1.9,
-                    textAlign: "center",
-                    opacity: 0.9,
-                  }}
-                >
-                  {item.text}{" "}
-                  {item.highlight && (
-                    <span style={{ color: ACCENT, fontStyle: "italic" }}>{item.highlight}</span>
-                  )}
-                </p>
-              ))}
+              <p
+                className="lora-regular"
+                style={{
+                  fontSize: "clamp(0.82rem, 3vw, 1rem)",
+                  color: DEEP,
+                  lineHeight: 2,
+                  textAlign: "center",
+                  letterSpacing: "0.01em",
+                }}
+              >
+                With hearts full of gratitude and joy, we invite you to witness
+                and celebrate the Christening of our beloved son,{" "}
+                <span style={{ color: ACCENT, fontStyle: "italic", fontWeight: 700 }}>
+                  Kaezar Isaiahnuel Galardo.
+                </span>
+              </p>
+
+              <p
+                className="lora-regular"
+                style={{
+                  fontSize: "clamp(0.82rem, 3vw, 1rem)",
+                  color: MEDIUM,
+                  lineHeight: 2,
+                  textAlign: "center",
+                  letterSpacing: "0.01em",
+                }}
+              >
+                This sacred moment marks the beginning of his spiritual journey —
+                welcoming him into God&apos;s loving embrace and the Christian faith.
+                It is a day of blessing, hope, and thanksgiving as we entrust his
+                life to His guidance and grace.
+              </p>
+
+              <p
+                className="lora-regular"
+                style={{
+                  fontSize: "clamp(0.82rem, 3vw, 1rem)",
+                  color: DEEP,
+                  lineHeight: 2,
+                  textAlign: "center",
+                  letterSpacing: "0.01em",
+                  opacity: 0.88,
+                }}
+              >
+                We are deeply thankful for the love and support that surround
+                our family. Your presence, prayers, and shared joy mean so much
+                to us — it would truly be a blessing to have you with us as we
+                celebrate this meaningful milestone.
+              </p>
+
+              <p
+                className="lora-regular"
+                style={{
+                  fontSize: "clamp(0.82rem, 3vw, 1rem)",
+                  color: MEDIUM,
+                  lineHeight: 2,
+                  textAlign: "center",
+                  letterSpacing: "0.01em",
+                  opacity: 0.85,
+                }}
+              >
+                As you prepare to join us, please feel free to explore the
+                details and reminders for the day. We look forward to
+                celebrating this beautiful occasion together.
+              </p>
             </div>
 
             {/* ── Rule before sign-off ── */}
-            <div className="flex items-center justify-center gap-2 w-full max-w-[180px] mb-[clamp(0.8rem,2.5vw,1.2rem)]">
-              <div className="h-px flex-1" style={{ background: `linear-gradient(to left, rgba(139,111,90,0.28), transparent)` }} />
-              <span style={{ color: "#D4B896", fontSize: "5px" }}>◆</span>
-              <div className="h-px flex-1" style={{ background: `linear-gradient(to right, rgba(139,111,90,0.28), transparent)` }} />
+            <div className="flex items-center justify-center gap-3 w-full max-w-[200px] mb-[clamp(0.9rem,2.8vw,1.4rem)]">
+              <div className="h-px flex-1" style={{ background: `linear-gradient(to left, rgba(207,160,107,0.42), transparent)` }} />
+              <span style={{ color: ACCENT, fontSize: "5px", letterSpacing: "0.2em" }}>◆</span>
+              <div className="h-px flex-1" style={{ background: `linear-gradient(to right, rgba(207,160,107,0.42), transparent)` }} />
             </div>
 
             {/* ── Sign-off ── */}
             <p
-              className="garamond"
+              className="cinzel"
               style={{
-                fontSize: "clamp(0.58rem, 2vw, 0.72rem)",
-                letterSpacing: "0.3em",
+                fontSize: "clamp(0.52rem, 1.9vw, 0.68rem)",
+                letterSpacing: "0.38em",
                 textTransform: "uppercase",
                 color: MEDIUM,
-                marginBottom: "0.2rem",
-                paddingRight: "0.3em",
+                marginBottom: "0.4rem",
+                paddingRight: "0.38em",
               }}
             >
               With love,
             </p>
             <p
-              className="gistesy"
+              className="lora-regular"
               style={{
-                fontSize: "clamp(1.9rem, 7.5vw, 3.2rem)",
-                color: ACCENT,
-                lineHeight: 1.15,
-                letterSpacing: "-0.01em",
-                textShadow: `0 3px 24px rgba(207,160,107,0.25)`,
+                fontSize: "clamp(1.5rem, 6vw, 2.6rem)",
+                color: DEEP,
+                lineHeight: 1.2,
+                letterSpacing: "0.04em",
+                textShadow: `0 3px 24px rgba(139,111,90,0.18)`,
               }}
             >
-              Niahna Celestine
+              The Galardo Family
             </p>
 
           </div>

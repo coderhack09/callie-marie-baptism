@@ -8,18 +8,18 @@ import { ClientLayout } from "@/components/client-layout"
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://niahna-celestine.weddinginvitationrsvp.com/"
 const canonicalUrl = siteUrl.replace(/\/$/, "")
-const desktopHero = "/Details/LinkPreview.png"
-const mobileHero = "/Details/LinkPreview.png"
+const desktopHero = "/background_music/LinkPreview.png"
+const mobileHero = "/background_music/LinkPreview.png"
 const eventImageUrl = `${canonicalUrl}${desktopHero}`
 
-const coupleNames = `Niahna Celestine`
+const coupleNames = `Kaezar Isaiahnuel`
 const eventTitle = `${coupleNames} - Wedding Invitation`
-const eventDescription = `Celebrate the Christening of Niahna Celestine on ${siteConfig.wedding.date} at ${siteConfig.ceremony.venue}. RSVP, explore their story, and find everything you need to join the celebration.`
+const eventDescription = `Celebrate the Christening of Kaezar Isaiahnuel on ${siteConfig.wedding.date} at ${siteConfig.ceremony.venue}. RSVP, explore their story, and find everything you need to join the celebration.`
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Event",
-  name: `Niahna Celestine - Christening Celebration`,
+  name: `Kaezar Isaiahnuel - Christening Celebration`,
   startDate: "2026-03-21T09:30:00+08:00",
   endDate: "2026-03-21T21:30:00+08:00",
   eventStatus: "https://schema.org/EventScheduled",
@@ -50,12 +50,12 @@ const jsonLd = {
   ],
   image: [eventImageUrl],
   description:
-    `You're invited to celebrate the Christening of Niahna Celestine. Discover ceremony and reception details, RSVP, and explore their story.`,
+        `You're invited to celebrate the Christening of Kaezar Isaiahnuel. Discover ceremony and reception details, RSVP, and explore their story.`,
   organizer: {
     "@type": "Person",
     name: coupleNames,
   },
-  eventHashtag: `#NiahnaCelestine`,
+  eventHashtag: `#KaezarIsaiahnuelChristening`,
 }
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
@@ -71,10 +71,10 @@ export const metadata: Metadata = {
   },
   description: eventDescription,
   keywords:
-    `Niahna Celestine, Christening Celebration, ${siteConfig.ceremony.venue} Christening, ${siteConfig.reception.venue} Christening, Christening Invitation, RSVP, Christening Gallery, Message Wall, Love Story, #NiahnaCelestine`,
+    `Kaezar Isaiahnuel, Christening Celebration, ${siteConfig.ceremony.venue} Christening, ${siteConfig.reception.venue} Christening, Christening Invitation, RSVP, Christening Gallery, Message Wall, Love Story, #KaezarIsaiahnuelChristening`,
   applicationName: `${coupleNames} Wedding Invitation`,
   authors: [
-    { name: "Niahna Celestine" },
+    { name: "Kaezar Isaiahnuel" },
   ],
   creator: coupleNames,
   publisher: coupleNames,
@@ -101,9 +101,9 @@ export const metadata: Metadata = {
   },
   manifest: "/favicon_io/site.webmanifest",
   openGraph: {
-    title: `Niahna Celestine - Christening Celebration`,
+    title: `Kaezar Isaiahnuel - Christening Celebration`,
     description:
-      `Celebrate the Christening of Niahna Celestine on ${siteConfig.wedding.date}. Discover their story, RSVP, and find important details for the ceremony and reception.`,
+      `Celebrate the Christening of Kaezar Isaiahnuel on ${siteConfig.wedding.date}. Discover their story, RSVP, and find important details for the ceremony and reception.`,
     url: canonicalUrl,
     siteName: `${coupleNames} Wedding`,
     locale: "en_PH",
@@ -115,18 +115,18 @@ export const metadata: Metadata = {
         width: 1200,
         height: 630,
         type: "image/jpeg",
-        alt: `Niahna Celestine - Christening Celebration`,
+        alt: `Kaezar Isaiahnuel - Christening Celebration`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `Niahna Celestine - Christening Celebration`,
+    title: `Kaezar Isaiahnuel - Christening Celebration`,
     description:
-      `You're invited to the Christening of Niahna Celestine on ${siteConfig.wedding.date}. RSVP, explore their story, and get all the details for the big day! #NiahnaCelestine`,
+      `You're invited to the Christening of Kaezar Isaiahnuel on ${siteConfig.wedding.date}. RSVP, explore their story, and get all the details for the big day! #KaezarIsaiahnuelChristening`,
     images: [eventImageUrl],
-    creator: `@NiahnaCelestine`,
-    site: `@NiahnaCelestine`,
+    creator: `@KaezarIsaiahnuel`,
+    site: `@KaezarIsaiahnuel`,
   },
   robots: {
     index: true,

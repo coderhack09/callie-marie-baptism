@@ -5,25 +5,26 @@ import Image from "next/image"
 import { motion } from "motion/react"
 
 // ── Color palette — matching LoadingScreen motif ─────────────────────────────
-const DEEP   = "#8B6F5A"
-const MEDIUM = "#BFA07A"
-const ACCENT = "#CFA06B"
-const CREAM  = "#F5E6D3"
+const DEEP      = "#8B6F5A"
+const MEDIUM    = "#BFA07A"
+const ACCENT    = "#CFA06B"
+const CREAM     = "#F5E6D3"
+const BABY_BLUE = "#89CFF0"
 
 // ── Baptism details — matching LoadingScreen constants ───────────────────────
-const BABY_NAME_FIRST = "Niahna"
-const BABY_NAME_LAST  = "Celestine"
+const BABY_NAME_FIRST = "Kaezar"
+const BABY_NAME_LAST  = "Isaiahnuel Galardo"
 const EVENT_LABEL     = "Christening Celebration"
 const TAGLINE         = "A Little Piece of Heaven"
-const EVENT_DATE      = "May 31 , 2026  |  9:00 AM"
-const EVENT_VENUE     = "Our Lady of Miraculous Medal Parish"
+const EVENT_DATE      = "July 4 , 2026  |  10:00 AM"
+const EVENT_VENUE     = "Cathedral of Our Lady of Arabia, Awali, Kingdom of Bahrain"
 
 // ── 3 polaroid cards with individual rotation ────────────────────────────────
-const heroPhotos = [
-  { src: "/mobile_display/baby (4).jpg",  alt: "Baby Niahna",           rotate: -13, shiftY: 14 },
-  { src: "/mobile_display/baby (11).jpg", alt: "Baby Niahna Celestine", rotate:   2, shiftY:  0 },
-  { src: "/mobile_display/baby (17).jpg", alt: "Baby Celestine",        rotate:  11, shiftY: 10 },
-]
+// const heroPhotos = [
+//   { src: "/mobile_display/baby (4).jpg",  alt: "Baby Niahna",           rotate: -13, shiftY: 14 },
+//   { src: "/mobile_display/baby (11).jpg", alt: "Baby Niahna Celestine", rotate:   2, shiftY:  0 },
+//   { src: "/mobile_display/baby (17).jpg", alt: "Baby Celestine",        rotate:  11, shiftY: 10 },
+// ]
 
 export function Hero() {
   const [mounted, setMounted] = useState(false)
@@ -56,7 +57,7 @@ export function Hero() {
 
       {/* ── Corner floral decorations ── */}
       <Image
-        src="/decoration/top-left.png"
+        src="/decoration/left-top-removebg-preview.png"
         alt=""
         width={280}
         height={280}
@@ -65,7 +66,7 @@ export function Hero() {
         priority
       />
       <Image
-        src="/decoration/top-right.png"
+        src="/decoration/right-top-removebg-preview.png"
         alt=""
         width={280}
         height={280}
@@ -74,7 +75,7 @@ export function Hero() {
         priority
       />
       <Image
-        src="/decoration/bottom-left.png"
+        src="/decoration/bottom-left-removebg-preview.png"
         alt=""
         width={280}
         height={280}
@@ -82,7 +83,7 @@ export function Hero() {
         aria-hidden
       />
       <Image
-        src="/decoration/right-bottom.png"
+        src="/decoration/bottom-right-removebg-preview.png"
         alt=""
         width={280}
         height={280}
@@ -92,6 +93,50 @@ export function Hero() {
 
       {/* ── Main content ── */}
       <div className="relative z-10 flex flex-col items-center justify-center w-full px-4 py-20 sm:py-24">
+
+        {/* Monogram — very top */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={mounted ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          style={{
+            marginBottom: "clamp(0.8rem, 2.5vw, 1.4rem)",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: `radial-gradient(ellipse 80% 80% at 50% 50%, rgba(207,160,107,0.13) 0%, transparent 75%)`,
+            borderRadius: "50%",
+            padding: "clamp(8px, 2vw, 14px)",
+          }}
+        >
+          {/* Hidden Image for Next.js preload & priority hint */}
+          <Image
+            src="/monogram/monogram.png"
+            alt="Monogram"
+            width={80}
+            height={80}
+            priority
+            className="sr-only"
+          />
+          {/* Gradient-tinted monogram via CSS mask */}
+          <div
+            role="img"
+            aria-label="Monogram"
+            style={{
+              width: "clamp(52px, 12vw, 80px)",
+              height: "clamp(52px, 12vw, 80px)",
+              background: "linear-gradient(135deg, #B8E4F9 0%, #89CFF0 35%, #4FC3F7 65%, #0ea5e9 100%)",
+              WebkitMaskImage: "url(/monogram/monogram.png)",
+              WebkitMaskSize: "contain",
+              WebkitMaskRepeat: "no-repeat",
+              WebkitMaskPosition: "center",
+              maskImage: "url(/monogram/monogram.png)",
+              maskSize: "contain",
+              maskRepeat: "no-repeat",
+              maskPosition: "center",
+            }}
+          />
+        </motion.div>
 
         {/* "JOIN US FOR" label */}
         <motion.p
@@ -121,11 +166,11 @@ export function Hero() {
             className="gistesy"
             style={{
               fontSize: "clamp(2.2rem, 10vw, 5rem)",
-              color: ACCENT,
+              color: BABY_BLUE,
               lineHeight: 1.15,
               display: "block",
               letterSpacing: "-0.01em",
-              textShadow: `0 2px 28px rgba(207,160,107,0.30)`,
+              textShadow: `0 2px 28px rgba(137,207,240,0.35)`,
             }}
           >
             {EVENT_LABEL}
@@ -139,151 +184,80 @@ export function Hero() {
           animate={mounted ? { opacity: 1 } : {}}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <div className="h-px flex-1" style={{ background: `linear-gradient(to left, rgba(207,160,107,0.4), transparent)` }} />
+          {/* <div className="h-px flex-1" style={{ background: `linear-gradient(to left, rgba(207,160,107,0.4), transparent)` }} />
           <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: `rgba(207,160,107,0.5)` }} />
-          <div className="h-px flex-1" style={{ background: `linear-gradient(to right, rgba(207,160,107,0.4), transparent)` }} />
+          <div className="h-px flex-1" style={{ background: `linear-gradient(to right, rgba(207,160,107,0.4), transparent)` }} /> */}
         </motion.div>
 
-        {/* ── Cards + Name: single layered composition ── */}
-        {/*
-          The name block uses a negative marginTop to pull itself up over the
-          bottom edge of the polaroids (z-index superior effect). A soft cream
-          radial halo sits behind the name so it reads cleanly against the cards.
-        */}
-        <div className="relative w-full flex flex-col items-center">
-
-          {/* 3 Polaroid Cards */}
-          <motion.div
-            className="flex items-end justify-center"
-            style={{ gap: "clamp(8px, 2.5vw, 20px)", position: "relative", zIndex: 5 }}
-            initial={{ opacity: 0, y: 28 }}
-            animate={mounted ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
+        {/* ── Name composition ── */}
+        <motion.div
+          className="relative flex flex-col items-center w-full"
+          initial={{ opacity: 0, y: 20 }}
+          animate={mounted ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.95, delay: 0.32, ease: "easeOut" }}
+        >
+          {/* Top ornament rule */}
+          <div
+            className="flex items-center gap-3 justify-center mb-5"
+            style={{ width: "clamp(200px, 60vw, 320px)" }}
           >
-            {heroPhotos.map((photo, i) => {
-              const isCenter = i === 1
-              return (
-                <motion.div
-                  key={i}
-                  whileHover={{ scale: 1.05, zIndex: 30 }}
-                  transition={{ type: "spring", stiffness: 280, damping: 20 }}
-                  style={{
-                    background: "#fff",
-                    padding: "clamp(5px, 1.5vw, 9px)",
-                    paddingBottom: "clamp(28px, 7vw, 44px)",
-                    boxShadow: isCenter
-                      ? "0 16px 48px rgba(139,111,90,0.28), 0 4px 14px rgba(139,111,90,0.14)"
-                      : "0 8px 28px rgba(139,111,90,0.20)",
-                    transform: `rotate(${photo.rotate}deg) translateY(${photo.shiftY}px)`,
-                    borderRadius: "3px",
-                    zIndex: isCenter ? 10 : 5,
-                    position: "relative",
-                    width: isCenter
-                      ? "clamp(118px, 28vw, 182px)"
-                      : "clamp(100px, 24vw, 152px)",
-                    flexShrink: 0,
-                    cursor: "default",
-                  }}
-                >
-                  <div
-                    style={{
-                      position: "relative",
-                      width: "100%",
-                      paddingBottom: "128%",
-                      overflow: "hidden",
-                      borderRadius: "1px",
-                      background: CREAM,
-                    }}
-                  >
-                    <Image
-                      src={photo.src}
-                      alt={photo.alt}
-                      fill
-                      sizes="(max-width: 640px) 28vw, (max-width: 1024px) 24vw, 182px"
-                      className="object-cover object-top"
-                      priority={isCenter}
-                    />
-                  </div>
-                </motion.div>
-              )
-            })}
-          </motion.div>
+            {/* <div className="h-px flex-1" style={{ background: `linear-gradient(to left, rgba(207,160,107,0.45), transparent)` }} />
+            <div style={{ width: 4, height: 4, borderRadius: "50%", background: `rgba(207,160,107,0.55)`, flexShrink: 0 }} />
+            <div className="h-px flex-1" style={{ background: `linear-gradient(to right, rgba(207,160,107,0.45), transparent)` }} /> */}
+          </div>
 
-          {/* Baby Name — floats above bottom edge of cards */}
-          <motion.div
-            className="relative flex flex-col items-center w-full"
-            initial={{ opacity: 0, y: 16 }}
-            animate={mounted ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.9, delay: 0.52, ease: "easeOut" }}
+          {/* First name */}
+          <div
+            className="lora-regular"
             style={{
-              marginTop: "clamp(-2rem, -5.5vw, -3.2rem)",
-              zIndex: 20,
+              fontSize: "clamp(3.8rem, 17vw, 7.5rem)",
+              color: DEEP,
+              lineHeight: 1,
+              letterSpacing: "0.04em",
+              textAlign: "center",
+              textShadow: `0 3px 32px rgba(139,111,90,0.22)`,
             }}
           >
-            {/* Cream halo — lets name read over the card edges */}
-            <div
-              aria-hidden
-              style={{
-                position: "absolute",
-                top: "0",
-                left: "50%",
-                transform: "translateX(-50%)",
-                width: "clamp(260px, 80vw, 480px)",
-                height: "clamp(90px, 22vw, 160px)",
-                pointerEvents: "none",
-                zIndex: -1,
-              }}
-            />
+            {BABY_NAME_FIRST}
+          </div>
 
-            {/* FIRST name — shifted left */}
-            <span
-              className="amsterdam-one mt-10 sm:mt-0"
-              style={{
-                fontSize: "clamp(4rem, 19vw, 8.8rem)",
-                color: DEEP,
-                lineHeight: 0.9,
-                display: "block",
-                letterSpacing: "-0.01em",
-                textShadow: `0 4px 36px rgba(139,111,90,0.20)`,
-                transform: "translateX(-11%)",
-                alignSelf: "center",
-              }}
-            >
-              {BABY_NAME_FIRST}
-            </span>
+          {/* Thin spacer with inline flourish */}
+          <div
+            className="flex items-center gap-2 justify-center"
+            style={{ margin: "clamp(0.3rem, 1.5vw, 0.65rem) 0", width: "clamp(140px, 40vw, 220px)" }}
+          >
+            {/* <div className="h-px flex-1" style={{ background: `linear-gradient(to left, rgba(139,111,90,0.20), transparent)` }} />
+            <span style={{ color: ACCENT, fontSize: "0.45rem", letterSpacing: "0.3em" }}>◆</span>
+            <div className="h-px flex-1" style={{ background: `linear-gradient(to right, rgba(139,111,90,0.20), transparent)` }} /> */}
+          </div>
 
-            {/* LAST name — shifted right */}
-            <span
-              className="amsterdam-one mt-5 ml-8 sm:mt-0 sm:ml-0"
-              style={{
-                fontSize: "clamp(2.2rem, 10.5vw, 4.8rem)",
-                color: DEEP,
-                lineHeight: 1.05,
-                display: "block",
-                letterSpacing: "0.01em",
-                textShadow: `0 2px 24px rgba(139,111,90,0.15)`,
-                transform: "translateX(13%)",
-                alignSelf: "center",
-              }}
-            >
-              {BABY_NAME_LAST}
-            </span>
-          </motion.div>
+          {/* Last name */}
+          <div
+            className="lora-regular"
+            style={{
+              fontSize: "clamp(1.3rem, 6vw, 2.6rem)",
+              color: DEEP,
+              lineHeight: 1.2,
+              letterSpacing: "0.18em",
+              textTransform: "uppercase",
+              textAlign: "center",
+              textShadow: `0 2px 20px rgba(139,111,90,0.16)`,
+            }}
+          >
+            {BABY_NAME_LAST}
+          </div>
 
-        </div>{/* end layered composition */}
+          {/* Bottom ornament rule */}
+          <div
+            className="flex items-center gap-3 justify-center mt-5"
+            style={{ width: "clamp(200px, 60vw, 320px)" }}
+          >
+            <div className="h-px flex-1" style={{ background: `linear-gradient(to left, rgba(207,160,107,0.45), transparent)` }} />
+            <div style={{ width: 4, height: 4, borderRadius: "50%", background: `rgba(207,160,107,0.55)`, flexShrink: 0 }} />
+            <div className="h-px flex-1" style={{ background: `linear-gradient(to right, rgba(207,160,107,0.45), transparent)` }} />
+          </div>
 
-        {/* Thin ornamental rule below name */}
-        <motion.div
-          className="flex items-center gap-3 justify-center w-full max-w-[260px]"
-          style={{ marginTop: "clamp(1rem, 3vw, 1.5rem)", marginBottom: "clamp(0.4rem, 1.5vw, 0.75rem)" }}
-          initial={{ opacity: 0 }}
-          animate={mounted ? { opacity: 1 } : {}}
-          transition={{ duration: 0.8, delay: 0.66 }}
-        >
-          <div className="h-px flex-1" style={{ background: `linear-gradient(to left, rgba(139,111,90,0.22), transparent)` }} />
-          <span style={{ color: "#D4B896", fontSize: "5px", letterSpacing: "0.2em" }}>◆</span>
-          <div className="h-px flex-1" style={{ background: `linear-gradient(to right, rgba(139,111,90,0.22), transparent)` }} />
-        </motion.div>
+        </motion.div>{/* end name composition */}
 
         {/* Tagline */}
         <motion.p
@@ -292,6 +266,7 @@ export function Hero() {
           animate={mounted ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.72, ease: "easeOut" }}
           style={{
+            marginTop: "clamp(1rem, 3vw, 1.6rem)",
             fontSize: "clamp(0.82rem, 3.2vw, 1.15rem)",
             color: DEEP,
             letterSpacing: "0.04em",

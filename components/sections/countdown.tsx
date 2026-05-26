@@ -5,12 +5,14 @@ import { Section } from "@/components/section"
 import { motion } from "motion/react"
 import { siteConfig } from "@/content/site"
 import Counter from "@/components/Counter"
-import { CloudinaryImage } from "@/components/ui/cloudinary-image"
 import Image from "next/image"
 
 // ── Motif palette ─────────────────────────────────────────────────────────────
-const DEEP   = "#8B6F5A"
-const ACCENT = "#CFA06B"
+const DEEP      = "#3D2810"
+const MEDIUM    = "#8C6035"
+const ACCENT    = "#B8822A"
+const BABY_BLUE = "#3FA3C8"
+const IVORY     = "#FEF9F3"
 
 interface TimeLeft {
   days: number
@@ -21,11 +23,11 @@ interface TimeLeft {
 
 // ── Floating background orbs ──────────────────────────────────────────────────
 const ORBS = [
-  { left: "6%",  top: "12%", size: 220, dur: 22, delay: 0,   dy: 28, color: "rgba(207,160,107,0.13)" },
-  { left: "85%", top: "55%", size: 280, dur: 28, delay: 4,   dy: 22, color: "rgba(191,160,122,0.09)" },
-  { left: "50%", top: "8%",  size: 160, dur: 18, delay: 7,   dy: 18, color: "rgba(207,160,107,0.10)" },
-  { left: "22%", top: "80%", size: 190, dur: 25, delay: 2,   dy: 24, color: "rgba(139,111,90,0.07)"  },
-  { left: "70%", top: "20%", size: 140, dur: 20, delay: 10,  dy: 16, color: "rgba(207,160,107,0.08)" },
+  { left: "6%",  top: "12%", size: 260, dur: 22, delay: 0,   dy: 28, color: "rgba(63,163,200,0.13)"  },
+  { left: "85%", top: "55%", size: 300, dur: 28, delay: 4,   dy: 22, color: "rgba(184,130,42,0.09)"  },
+  { left: "50%", top: "8%",  size: 180, dur: 18, delay: 7,   dy: 18, color: "rgba(63,163,200,0.10)"  },
+  { left: "22%", top: "80%", size: 210, dur: 25, delay: 2,   dy: 24, color: "rgba(238,212,188,0.11)" },
+  { left: "70%", top: "20%", size: 160, dur: 20, delay: 10,  dy: 16, color: "rgba(63,163,200,0.08)"  },
 ]
 
 // ── Canvas particle system (warm golden dust) ─────────────────────────────────
@@ -75,9 +77,9 @@ function ParticleCanvas() {
         const alpha   = p.opacity * (0.25 + twinkle * 0.75)
         const r       = p.radius * 3.5
         const g       = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r)
-        g.addColorStop(0,   `rgba(207,160,107,${alpha})`)
-        g.addColorStop(0.5, `rgba(207,160,107,${alpha * 0.4})`)
-        g.addColorStop(1,   `rgba(207,160,107,0)`)
+        g.addColorStop(0,   `rgba(63,163,200,${alpha})`)
+        g.addColorStop(0.5, `rgba(63,163,200,${alpha * 0.4})`)
+        g.addColorStop(1,   `rgba(63,163,200,0)`)
         ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI * 2)
         ctx.fillStyle = g; ctx.fill()
         p.x += p.vx; p.y += p.vy
@@ -124,9 +126,9 @@ function CountdownUnit({
           <motion.div
             className="absolute inset-0 rounded-lg pointer-events-none"
             animate={{ boxShadow: [
-              "0 0 0px 0px rgba(207,160,107,0)",
-              "0 0 0px 4px rgba(207,160,107,0.28)",
-              "0 0 0px 0px rgba(207,160,107,0)",
+              "0 0 0px 0px rgba(63,163,200,0)",
+              "0 0 0px 4px rgba(63,163,200,0.35)",
+              "0 0 0px 0px rgba(63,163,200,0)",
             ]}}
             transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
           />
@@ -134,16 +136,17 @@ function CountdownUnit({
 
         <div
           style={{
-            background: `linear-gradient(145deg, rgba(255,252,248,0.95) 0%, rgba(245,230,211,0.80) 100%)`,
-            border: `1px solid rgba(207,160,107,0.28)`,
-            borderRadius: "10px",
+            background: `linear-gradient(145deg, rgba(255,255,255,0.94) 0%, rgba(213,238,248,0.70) 100%)`,
+            border: `1px solid rgba(63,163,200,0.25)`,
+            borderRadius: "12px",
             padding: "clamp(8px, 2.5vw, 14px) clamp(10px, 3vw, 20px)",
             minWidth: "clamp(64px, 16vw, 104px)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            boxShadow: `0 6px 28px rgba(139,111,90,0.14), 0 1px 4px rgba(139,111,90,0.08), inset 0 1px 0 rgba(255,255,255,0.8)`,
-            backdropFilter: "blur(8px)",
+            boxShadow: `0 8px 32px rgba(63,163,200,0.14), 0 2px 6px rgba(63,163,200,0.08), inset 0 1px 0 rgba(255,255,255,0.95)`,
+            backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
           }}
         >
           <Counter
@@ -171,13 +174,14 @@ function CountdownUnit({
       </motion.div>
 
       <span
-        className="garamond"
+        className="cinzel"
         style={{
-          fontSize: "clamp(0.52rem, 1.8vw, 0.7rem)",
-          letterSpacing: "0.4em",
+          fontSize: "clamp(0.48rem, 1.7vw, 0.65rem)",
+          letterSpacing: "0.38em",
           textTransform: "uppercase",
-          color: `rgba(139,111,90,0.60)`,
-          paddingRight: "0.4em",
+          color: BABY_BLUE,
+          paddingRight: "0.38em",
+          opacity: 0.85,
         }}
       >
         {label}
@@ -246,10 +250,58 @@ export function Countdown() {
   return (
     <Section
       id="countdown"
-      className="relative py-10 sm:py-14 md:py-20 overflow-hidden bg-motif-cream"
+      className="relative py-10 sm:py-14 md:py-20 overflow-hidden"
+      bgColor="none"
     >
+      {/* ── Solid ivory base ── */}
+      <div className="absolute inset-0 -z-10" style={{ background: IVORY }} />
 
-      {/* ── Layer 1: Canvas golden-dust particles ── */}
+      {/* Multi-stop vertical gradient */}
+      <div className="absolute inset-0 -z-10 pointer-events-none" style={{
+        background: `
+          linear-gradient(180deg,
+            rgba(215,237,248,0.55) 0%,
+            rgba(251,244,234,0.0)  22%,
+            rgba(213,238,248,0.35) 52%,
+            rgba(251,244,234,0.0)  75%,
+            rgba(238,212,188,0.38) 100%
+          )
+        `,
+      }} />
+
+      {/* Horizontal warmth wash */}
+      <div className="absolute inset-0 -z-10 pointer-events-none" style={{
+        background: `linear-gradient(100deg, rgba(238,212,188,0.20) 0%, transparent 38%, rgba(213,238,248,0.22) 100%)`,
+      }} />
+
+      {/* Fine diagonal shimmer */}
+      <div className="absolute inset-0 -z-10 pointer-events-none" style={{
+        background: `repeating-linear-gradient(
+          125deg,
+          transparent 0px,
+          transparent 160px,
+          rgba(255,255,255,0.22) 160px,
+          rgba(255,255,255,0.22) 162px
+        )`,
+      }} />
+
+      {/* Dot grid */}
+      <div className="absolute inset-0 -z-10 pointer-events-none" style={{
+        backgroundImage: `radial-gradient(circle, rgba(63,163,200,0.10) 1px, transparent 1px)`,
+        backgroundSize: "28px 28px",
+      }} />
+
+      {/* Corner radial glow accents */}
+      <div className="absolute inset-0 pointer-events-none z-0" aria-hidden style={{
+        background: `
+          radial-gradient(ellipse 55% 40% at 0%   0%,   rgba(213,238,248,0.35) 0%, transparent 60%),
+          radial-gradient(ellipse 45% 35% at 100% 0%,   rgba(238,212,188,0.28) 0%, transparent 55%),
+          radial-gradient(ellipse 50% 40% at 0%   100%, rgba(238,212,188,0.25) 0%, transparent 55%),
+          radial-gradient(ellipse 45% 35% at 100% 100%, rgba(213,238,248,0.30) 0%, transparent 55%)
+        `,
+      }} />
+
+      {/* ── Layer 1: Canvas blue-dust particles ── */}
       <ParticleCanvas />
 
       {/* ── Layer 2: Floating bokeh orbs ── */}
@@ -285,7 +337,7 @@ export function Countdown() {
         animate={{ opacity: [0.5, 1, 0.5] }}
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
         style={{
-          background: `radial-gradient(ellipse 70% 55% at 50% 50%, rgba(207,160,107,0.12) 0%, transparent 70%)`,
+          background: `radial-gradient(ellipse 70% 55% at 50% 50%, rgba(63,163,200,0.12) 0%, transparent 70%)`,
           zIndex: 0,
         }}
       />
@@ -321,19 +373,22 @@ export function Countdown() {
               animate={{ opacity: [0.4, 0.85, 0.4] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
               style={{
-                background: `radial-gradient(circle, rgba(207,160,107,0.14) 0%, transparent 65%)`,
+                background: `radial-gradient(circle, rgba(63,163,200,0.16) 0%, transparent 65%)`,
                 filter: "blur(20px)",
                 zIndex: -1,
               }}
             />
             <div className="relative w-48 h-48 sm:w-64 sm:h-64 md:w-[20rem] md:h-[20rem] lg:w-[26rem] lg:h-[26rem] opacity-75">
-              <CloudinaryImage
-                src={siteConfig.couple.monogram}
-                alt="Niahna Celestine Monogram"
+              <Image
+                src="/monogram/monogram.png"
+                alt="Kaezar Isaiahnuel Monogram"
                 fill
                 className="object-contain"
-              priority={false}
-            />
+                priority={false}
+                style={{
+                  filter: "brightness(0) saturate(100%) invert(55%) sepia(30%) saturate(650%) hue-rotate(165deg) brightness(100%)",
+                }}
+              />
             </div>
           </motion.div>
         </motion.div>
@@ -344,20 +399,20 @@ export function Countdown() {
 
         {/* Eyebrow */}
         <motion.p
-          className="garamond"
+          className="cinzel"
           initial={{ opacity: 0, y: 10 }}
           animate={mounted ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: "easeOut" }}
           style={{
-            fontSize: "clamp(0.52rem, 1.9vw, 0.7rem)",
-            letterSpacing: "0.5em",
+            fontSize: "clamp(0.48rem, 1.8vw, 0.66rem)",
+            letterSpacing: "0.48em",
             textTransform: "uppercase",
             color: ACCENT,
             marginBottom: "0.55rem",
-            paddingRight: "0.5em",
+            paddingRight: "0.48em",
           }}
         >
-          Niahna Celestine&apos;s Christening
+          Kaezar Isaiahnuel&apos;s Christening
         </motion.p>
 
         {/* Ornament */}
@@ -367,27 +422,27 @@ export function Countdown() {
           animate={mounted ? { opacity: 1, scaleX: 1 } : {}}
           transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
         >
-          <div className="h-px w-8 sm:w-14" style={{ background: `linear-gradient(to left, rgba(207,160,107,0.45), transparent)` }} />
+          <div className="h-px w-8 sm:w-14" style={{ background: `linear-gradient(to left, rgba(63,163,200,0.50), transparent)` }} />
           <motion.span
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            style={{ color: ACCENT, fontSize: "7px" }}
-          >✦</motion.span>
-          <div className="h-px w-8 sm:w-14" style={{ background: `linear-gradient(to right, rgba(207,160,107,0.45), transparent)` }} />
+            style={{ color: BABY_BLUE, fontSize: "6px" }}
+          >◆</motion.span>
+          <div className="h-px w-8 sm:w-14" style={{ background: `linear-gradient(to right, rgba(63,163,200,0.50), transparent)` }} />
         </motion.div>
 
         {/* Main heading */}
         <motion.h2
-          className="gistesy"
+          className="lora-regular"
           initial={{ opacity: 0, y: 20 }}
           animate={mounted ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.9, delay: 0.18, ease: "easeOut" }}
-          style={{
-            fontSize: "clamp(2.2rem, 9.5vw, 4.8rem)",
+            style={{
+            fontSize: "clamp(2rem, 9vw, 4.4rem)",
             color: DEEP,
             lineHeight: 1.1,
-            letterSpacing: "-0.01em",
-            textShadow: `0 3px 32px rgba(139,111,90,0.15)`,
+            letterSpacing: "0.02em",
+            textShadow: `0 3px 32px rgba(61,40,16,0.12)`,
             marginBottom: "0.4rem",
           }}
         >
@@ -396,15 +451,16 @@ export function Countdown() {
 
         {/* Tagline */}
         <motion.p
-          className="garamond"
+          className="lora-regular"
           initial={{ opacity: 0 }}
           animate={mounted ? { opacity: 1 } : {}}
           transition={{ duration: 0.8, delay: 0.3 }}
-          style={{
+            style={{
             fontSize: "clamp(0.7rem, 2.8vw, 0.94rem)",
-            color: `rgba(139,111,90,0.68)`,
+            color: MEDIUM,
             fontStyle: "italic",
             letterSpacing: "0.02em",
+            opacity: 0.85,
           }}
         >
           A sacred moment of grace, faith, and gratitude
@@ -432,13 +488,13 @@ export function Countdown() {
 
           {/* Month */}
           <p
-            className="garamond"
+            className="cinzel"
             style={{
-              fontSize: "clamp(0.58rem, 2.1vw, 0.76rem)",
+              fontSize: "clamp(0.55rem, 2vw, 0.74rem)",
               letterSpacing: "0.6em",
               textTransform: "uppercase",
               color: ACCENT,
-              opacity: 0.8,
+              opacity: 0.85,
               paddingRight: "0.6em",
             }}
           >
@@ -449,28 +505,29 @@ export function Countdown() {
           <div className="flex w-full items-center gap-2 sm:gap-4">
 
             <div className="flex flex-1 items-center justify-end gap-1.5 sm:gap-2.5">
-              <div className="h-px flex-1" style={{ background: `linear-gradient(to left, rgba(139,111,90,0.22), transparent)` }} />
+              <div className="h-px flex-1" style={{ background: `linear-gradient(to left, rgba(63,163,200,0.30), transparent)` }} />
               <span
-                className="garamond"
+                className="cinzel"
                 style={{
-                  fontSize: "clamp(0.52rem, 1.9vw, 0.7rem)",
+                  fontSize: "clamp(0.5rem, 1.8vw, 0.68rem)",
                   letterSpacing: "0.32em",
                   textTransform: "uppercase",
-                  color: `rgba(139,111,90,0.55)`,
+                  color: BABY_BLUE,
+                  opacity: 0.75,
                 }}
               >
                 {ceremonyDayShort}
               </span>
-              <div className="h-px w-5 sm:w-8" style={{ background: `rgba(139,111,90,0.15)` }} />
+              <div className="h-px w-5 sm:w-8" style={{ background: `rgba(63,163,200,0.18)` }} />
             </div>
 
             {/* Big day number — soft pulse */}
             <motion.span
-              className="LoraBold"
+              className="lora-bold"
               animate={{ textShadow: [
-                "0 4px 28px rgba(139,111,90,0.10)",
-                "0 6px 40px rgba(139,111,90,0.22)",
-                "0 4px 28px rgba(139,111,90,0.10)",
+                "0 4px 28px rgba(63,163,200,0.12)",
+                "0 6px 40px rgba(63,163,200,0.28)",
+                "0 4px 28px rgba(63,163,200,0.12)",
               ]}}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               style={{
@@ -484,31 +541,32 @@ export function Countdown() {
             </motion.span>
 
             <div className="flex flex-1 items-center gap-1.5 sm:gap-2.5">
-              <div className="h-px w-5 sm:w-8" style={{ background: `rgba(139,111,90,0.15)` }} />
+              <div className="h-px w-5 sm:w-8" style={{ background: `rgba(63,163,200,0.18)` }} />
               <span
-                className="garamond"
+                className="cinzel"
                 style={{
-                  fontSize: "clamp(0.52rem, 1.9vw, 0.7rem)",
-                  letterSpacing: "0.32em",
+                  fontSize: "clamp(0.5rem, 1.8vw, 0.68rem)",
+                  letterSpacing: "0.28em",
                   textTransform: "uppercase",
-                  color: `rgba(139,111,90,0.55)`,
+                  color: BABY_BLUE,
+                  opacity: 0.75,
                 }}
               >
                 {ceremonyTimeDisplay.split(",")[0]}
               </span>
-              <div className="h-px flex-1" style={{ background: `linear-gradient(to right, rgba(139,111,90,0.22), transparent)` }} />
+              <div className="h-px flex-1" style={{ background: `linear-gradient(to right, rgba(63,163,200,0.30), transparent)` }} />
             </div>
           </div>
 
           {/* Year */}
           <p
-            className="garamond"
+            className="cinzel"
             style={{
-              fontSize: "clamp(0.58rem, 2.1vw, 0.76rem)",
+              fontSize: "clamp(0.55rem, 2vw, 0.74rem)",
               letterSpacing: "0.6em",
               textTransform: "uppercase",
               color: ACCENT,
-              opacity: 0.8,
+              opacity: 0.85,
               paddingRight: "0.6em",
             }}
           >
@@ -517,28 +575,30 @@ export function Countdown() {
 
           {/* Rule */}
           <div className="flex items-center justify-center gap-2 mt-1 w-full max-w-[220px]">
-            <div className="h-px flex-1" style={{ background: `linear-gradient(to left, rgba(139,111,90,0.25), transparent)` }} />
+            <div className="h-px flex-1" style={{ background: `linear-gradient(to left, rgba(63,163,200,0.35), transparent)` }} />
             <motion.span
               animate={{ opacity: [0.4, 0.9, 0.4] }}
               transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-              style={{ color: ACCENT, fontSize: "5px" }}
+              style={{ color: BABY_BLUE, fontSize: "5px" }}
             >◆</motion.span>
-            <div className="h-px flex-1" style={{ background: `linear-gradient(to right, rgba(139,111,90,0.25), transparent)` }} />
+            <div className="h-px flex-1" style={{ background: `linear-gradient(to right, rgba(63,163,200,0.35), transparent)` }} />
           </div>
 
           {/* Venue */}
           <p
-            className="garamond"
+            className="lora-regular"
             style={{
-              fontSize: "clamp(0.58rem, 2.1vw, 0.74rem)",
-              letterSpacing: "0.05em",
-              color: `rgba(139,111,90,0.58)`,
+              fontSize: "clamp(0.6rem, 2.2vw, 0.78rem)",
+              letterSpacing: "0.03em",
+              color: MEDIUM,
               textAlign: "center",
               fontStyle: "italic",
-              marginTop: "0.15rem",
+              marginTop: "0.2rem",
+              maxWidth: "360px",
+              opacity: 0.75,
             }}
           >
-            {siteConfig.ceremony.location}
+            {siteConfig.ceremony.venue}
           </p>
 
         </div>

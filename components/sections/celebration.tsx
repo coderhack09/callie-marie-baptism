@@ -6,12 +6,12 @@ import Image from "next/image"
 
 const desktopImages = [
 
-  "/desktop_background/baby (3).jpg",
+  "/desktop_background/image00005.jpeg",
 
 ]
 
 const mobileImages = [
-  "/mobile_display/baby (13).jpg",
+  "/desktop_background/image00005.jpeg",
 
 ]
 

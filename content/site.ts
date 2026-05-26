@@ -4,60 +4,73 @@ export const siteConfig = {
     brideNickname: "Macy",
     groom: "Kenneth Erwin Brucelo Jose",
     groomNickname: "Kenneth",
-    child: "Niahna Celestine",
-    monogram:"/monogram/monogram_niana-removebg-preview.png" ,//Ltryl
+    child: "Kaezar Isaiahnuel Galardo",
+    childNickname: "King",
+    monogram:"/monogram/monogram.png" ,//Ltryl
     backgroundMusic:"/background_music/For This Child - Baby Dedication Song - Ken Blount.mp3"
   },
   googleAPI:{
-    messageForm: "https://docs.google.com/forms/d/e/1FAIpQLSdvvqVz4UogSpGqztVb3YNgUmtQ9Ks18ASYhbeKgcFyJLZa6Q/formResponse", //done
-    message: "https://script.google.com/macros/s/AKfycbxLa1PZeFO0QQNIj35ZISc8_i1DuhIV1jyaDdqf15ImXgLN1AkBl14krK7q8F7K98Lg/exec",   //done
-    guestList: "https://script.google.com/macros/s/AKfycbxtvU0xTCpX219SzvbDZZuolgs-1cama0r5cTCQrW3qb-72gTNTZgA-cfxlgIjItKCe/exec",  //done
-    guestRequest: "https://script.google.com/macros/s/AKfycbzmlxa0d2eTeM1-resQR6X8b9tigpiLtV3qpgozVUEhx2j_R1idCVBStQZKUgt1-8nS/exec",  //done
-    entourage: "https://script.google.com/macros/s/AKfycby3ez5mUY48cugt1CO_bZqCMfds6RsI7QEJw_feUWliClQliTWEqXmt3gjUA-mDjc3h/exec",  //done
-    sponsors: "https://script.google.com/macros/s/AKfycbzuS-c77C9H8hSEEuDLUqHz6dHb_UJXMlaam_wWEI0gpan9yaccw5z65Qj__lIlCXO7/exec",  //done
-    weddingDetails: "https://script.google.com/macros/s/AKfycbw7Lbs75w80xVKYX4Vcr4nLbmiUuzB0CXsh2Vi4Cfj3Wt8LLa4YSAPFuhPcbxRnJHVJ/exec",  //done
+    messageForm: "https://docs.google.com/forms/d/e/1FAIpQLSf2Fcojdr0e_YGsDJ57o18TCLorKbikJ9nYHxP4YoYZxwZCVA/formResponse", //done
+    message: "https://script.google.com/macros/s/AKfycbySmBAbDJxdKkOZgZmyXeLFUAFXwIvSaS977jpXpln55QqEFgB_JMQ4dYnUcoju6_61/exec",  //done
+    guestList: "https://script.google.com/macros/s/AKfycbwmdvcrI3ncACz2Q4o3nJ_ID0k1SzypIoTNy1kpoIxHazv_U_LrWc0y0lFfJNaBWDLs/exec",  //done
+    guestRequest: "https://script.google.com/macros/s/AKfycbzjdlkPc7YbvE61eVpHJLfEQOHzk5XvMUdybT7FBu6TSeWXHQbUYOaq3IKgf3RxFYsJ/exec",  //done
+    entourage: "https://script.google.com/macros/s/AKfycby5xxc-ROzVmY0H3XzTeocqhHKWqbEJ2ztAqSWq3pFGR6WeP2UxUdSCDQcGPV1GDOkS/exec", ///done
+    sponsors: "https://script.google.com/macros/s/AKfycbyUQ0oKOH_krrt7fAhS-sTZtz3xCqeaPNPblKRbiY002yC_UGeIpqT5f4jOAOen0ahc/exec",  //donee
+    weddingDetails: "https://script.google.com/macros/s/AKfycbzTqnFT9QwM1erY_wU2AgPBds0IZ87RLM-srVgIBqhlbEuYl9o4eONgqxqj2TCb9hYV/exec",  //done
 ////google share 
-    googleShare: "https://docs.google.com/spreadsheets/d/1j8FLrJHMaB9rrdwWVF2dvNQLhTs4pR6hRRz-a_mEEJ4/edit?usp=sharing", //done
+    googleShare: "https://docs.google.com/spreadsheets/d/1SBfQNHq4k9d3QlsDpjUa1SxSSHEm-ZG2fwcvCZA3w5I/edit?usp=sharing", //done
   },
   wedding: {
-    date: "May 31, 2026",
-    time: "8:00 AM",
-    venue: "Our lady of miraculous medal parish and shrine",
+    date: "July 4, 2026",
+    time: "10:00 AM",
+    venue: "Cathedral of Our Lady of Arabia, Awali, Kingdom of Bahrain",
     tagline: "are getting married!",
     theme: "Our wedding palette is inspired by timeless elegance and warmth.Motif Colors: Champagne Gold, Soft Beige, Warm Soft Brown",
     motif: "#001F4B, #04396D, #015B97, #6497B2, #B2CDE0",
   },
   details: {
     rsvp: {
-      deadline: "MAY 31, 2026",
-      contact: "Niahna Celestine",
-      phone: "0917 888 8888",
+      deadline: "JULY 4, 2026",
+      contact: "Kaezar Isaiahnuel Galardo",
+      phone: "+973 3999 9999",
     },
   },
   giftRegistry: {
-    QR_1:{
-    id: "Gcash",
-    src: "/QR/newGcash.png",
-    label: "Gcash",
-    accountNumber: "Gcash: GE***L A** V.",
+    QR_1: {
+      id: "Gcash",
+      src: "/QR/newGcash.png",
+      label: "GCash",
+      accountNumber: "GCash: GE***L A** V.",
+    },
+    QR_2: {
+      id: "PNB",
+      src: "/desktop_background/image00003.jpeg",
+      label: "PNB",
+      accountNumber: "PNB Account",
+    },
+    QR_3: {
+      id: "BenefitPay",
+      src: "/desktop_background/image00002.jpeg",
+      label: "BenefitPay Transfer",
+      accountNumber: "BenefitPay",
     },
   },
   ceremony: {
-    location: "Our lady of Miraculous Medal Parish",
-    venue: "Brgy. Mansilingan, Bacolod City",
-    date: "May 31, 2026",
+    location: "Cathedral of Our Lady of Arabia, Awali, Kingdom of Bahrain",
+    venue: "Cathedral of Our Lady of Arabia, Awali, Kingdom of Bahrain",
+    date: "July 4, 2026",
     day: "Sunday",
-    time: "9:00 AM",
+    time: "10:00 AM",
     entourageTime: "8:00 AM",
     guestsTime: "8:30 AM",
     image: "/Details/ceremony.png",
   },
   reception: {
-    location: "Nazareth Activity Hub",
-    venue: "Brgy. Mansilingan, Across Guanzon Cockpit, Bacolod City",
-    date: "May 22, 2026",
-    time: "11:30 AM",
-    image: ["/Details/reception1.png","/Details/reception2.png"],
+    location: "Pinoy Turo Party Hall, UmAlhassam, Kingdom of Bahrain",
+    venue: "Pinoy Turo Party Hall, UmAlhassam, Kingdom of Bahrain",
+    date: "July 4, 2026",
+    time: "11:00 AM",
+    image: ["/Details/reception.png","/Details/reception2.png"],
   },                          
   dressCode: {
       theme: "SEMI-FORMAL",
@@ -111,8 +124,8 @@ Now, as they prepare to say yes before God and the people they love most, Cather
     secondary: "#F5F5DC",
   },
   snapShare: {
-    googleDriveLink: "https://drive.google.com/drive/folders/1VOkvdD_1YhX3P-g4p7UbLiYFNQnNbcTH?usp=sharing",
-    hashtag: ["#NiahnaCelestine","#NiahnaCelestineChristening"],
+    googleDriveLink: "https://drive.google.com/drive/folders/1afJ-_8usKnZq41lE9GKq3H-fh5Hb_BxH?usp=sharing",
+    hashtag: ["#KaezarIsaiahnuelChristening","#KaezarIsaiahnuelChristeningCelebration"],
     instructions: "Please scan this QR Code, create a folder with your name and upload the photos and videos you have taken during our wedding reception. We are delighted to see your snaps too!",
   },
 }

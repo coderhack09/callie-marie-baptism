@@ -1,15 +1,13 @@
 "use client"
 
 import { Section } from "@/components/section"
-import { useState, useEffect } from "react"
+import { useState, useEffect, type ReactNode } from "react"
+import { motion } from "motion/react"
 import { QRCodeSVG } from "qrcode.react"
 import { siteConfig } from "@/content/site"
-import { CloudinaryImage } from "@/components/ui/cloudinary-image"
 import Image from "next/image"
 import {
-  Shirt,
   Clock,
-  Utensils,
   Copy,
   Check,
   Navigation,
@@ -17,854 +15,897 @@ import {
   Camera,
   X,
   MapPin,
+  CalendarPlus,
+  Sparkles,
+  Shirt,
+  Gift,
+  ShieldCheck,
+  Mail,
+  Baby,
 } from "lucide-react"
 
-// ── Motif palette ─────────────────────────────────────────────────────────────
-const DEEP   = "#8B6F5A"
-const MEDIUM = "#BFA07A"
-const ACCENT = "#CFA06B"
+// ── Palette ───────────────────────────────────────────────────────────────────
+const DEEP      = "#3D2810"
+const MEDIUM    = "#8C6035"
+const ACCENT    = "#B8822A"
+const BABY_BLUE = "#3FA3C8"
+const BLUE_MID  = "#7BBEDD"
+const GOLD      = "#B8822A"
+const BLUSH     = "#EED4BC"
+const IVORY     = "#FEF9F3"
 
+const childName    = siteConfig.couple.child
+const pnbQr        = siteConfig.giftRegistry.QR_2
+const benefitPayQr = siteConfig.giftRegistry.QR_3
+
+const fadeUp = {
+  hidden:  { opacity: 0, y: 24 },
+  visible: (i: number) => ({
+    opacity: 1, y: 0,
+    transition: { duration: 0.6, delay: i * 0.1, ease: "easeOut" as const },
+  }),
+}
+
+// ── Shared sub-components ─────────────────────────────────────────────────────
+function OrnamentDivider({ blue = false }: { blue?: boolean }) {
+  const color = blue ? BABY_BLUE : ACCENT
+  const grad  = blue ? "rgba(126,200,227,0.4)" : "rgba(207,160,107,0.4)"
+  return (
+    <div className="flex items-center justify-center gap-3">
+      <div className="h-px w-8 sm:w-12" style={{ background: `linear-gradient(to left, ${grad}, transparent)` }} />
+      <span style={{ color, fontSize: "7px", opacity: 0.75 }}>✦</span>
+      <div className="h-px w-8 sm:w-12" style={{ background: `linear-gradient(to right, ${grad}, transparent)` }} />
+    </div>
+  )
+}
+
+function SectionLabel({ text }: { text: string }) {
+  return (
+    <p className="garamond" style={{ fontSize: "clamp(0.54rem, 2vw, 0.7rem)", letterSpacing: "0.48em", textTransform: "uppercase", color: BABY_BLUE, marginBottom: "0.4rem", paddingRight: "0.48em" }}>
+      {text}
+    </p>
+  )
+}
+
+function SectionTitle({ children }: { children: ReactNode }) {
+  return (
+    <h3 className="gistesy mt-2" style={{ fontSize: "clamp(2rem, 9vw, 4rem)", color: DEEP, lineHeight: 1.15, overflow: "visible", paddingTop: "0.1em" }}>
+      {children}
+    </h3>
+  )
+}
+
+interface ReminderCardProps {
+  eyebrow: string
+  title: string
+  icon: ReactNode
+  children: ReactNode
+  index: number
+}
+
+function ReminderCard({ eyebrow, title, icon, children, index }: ReminderCardProps) {
+  return (
+    <motion.div
+      custom={index} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-40px" }}
+      className="rounded-3xl p-5 sm:p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+      style={{
+        background: "rgba(254,249,243,0.85)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        border: "1px solid rgba(184,130,42,0.16)",
+        boxShadow: "0 6px 28px rgba(61,40,16,0.09), 0 2px 8px rgba(61,40,16,0.05)",
+      }}
+    >
+      <div className="flex flex-col items-center mb-4">
+        <div className="w-11 h-11 rounded-full flex items-center justify-center mb-2.5 shadow-sm"
+          style={{ background: "rgba(63,163,200,0.12)", border: `1.5px solid rgba(123,190,221,0.45)` }}>
+          {icon}
+        </div>
+        <p className="garamond text-center" style={{ fontSize: "clamp(0.54rem, 1.8vw, 0.64rem)", letterSpacing: "0.38em", textTransform: "uppercase", color: BABY_BLUE, marginBottom: "0.2rem", paddingRight: "0.38em" }}>
+          {eyebrow}
+        </p>
+        <h4 className="gistesy text-center" style={{ fontSize: "clamp(1.4rem, 5vw, 2rem)", color: DEEP, lineHeight: 1.1, paddingTop: "0.1em" }}>
+          {title}
+        </h4>
+      </div>
+      {children}
+    </motion.div>
+  )
+}
+
+// ── Calendar helper ───────────────────────────────────────────────────────────
+function buildGoogleCalendarUrl(title: string, dateStr: string, timeStr: string, location: string) {
+  const start = new Date(`${dateStr} ${timeStr}`)
+  const end   = new Date(start.getTime() + 2 * 60 * 60 * 1000)
+  const fmt   = (d: Date) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "")
+  const params = new URLSearchParams({
+    action: "TEMPLATE", text: title,
+    dates: `${fmt(start)}/${fmt(end)}`,
+    details: `Join us for ${title}`,
+    location,
+  })
+  return `https://calendar.google.com/calendar/render?${params.toString()}`
+}
+
+// ── QR Card ───────────────────────────────────────────────────────────────────
+function QrCard({ src, label, accountNumber, onExpand }: {
+  src: string; label: string; accountNumber: string; onExpand?: () => void
+}) {
+  return (
+    <div className="flex flex-col items-center gap-2.5 w-full">
+      <div
+        className="relative w-36 h-36 sm:w-40 sm:h-40 rounded-2xl overflow-hidden border-2 shadow-md transition-all duration-300 group-hover:scale-[1.03] group-hover:shadow-lg"
+        style={{ background: "#fff", borderColor: BLUE_MID }}
+      >
+        <Image src={src} alt={`${label} QR code`} fill className="object-contain p-2" sizes="160px" />
+        {onExpand && (
+          <div className="absolute inset-0 flex items-end justify-center pb-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            style={{ background: "linear-gradient(to top, rgba(0,0,0,0.18), transparent)" }}>
+            <span className="garamond px-3 py-0.5 rounded-full text-white" style={{ fontSize: "0.6rem", letterSpacing: "0.06em", background: "rgba(0,0,0,0.38)" }}>
+              tap to enlarge
+            </span>
+          </div>
+        )}
+      </div>
+      <div className="text-center">
+        <p className="garamond font-semibold" style={{ fontSize: "clamp(0.82rem, 2.5vw, 0.95rem)", color: DEEP }}>{label}</p>
+        <p className="garamond mt-0.5" style={{ fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: `${DEEP}88` }}>{accountNumber}</p>
+        {onExpand && (
+          <p className="garamond mt-1" style={{ fontSize: "clamp(0.58rem, 1.6vw, 0.66rem)", color: BABY_BLUE, opacity: 0.75, letterSpacing: "0.06em" }}>
+            ↑ tap to scan
+          </p>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ── Floating bokeh orbs ───────────────────────────────────────────────────────
+function BokehOrbs() {
+  const orbs = [
+    { w: 380, h: 380, top: "5%",  left: "2%",  color: BABY_BLUE, opacity: 0.09, blur: 100 },
+    { w: 260, h: 260, top: "20%", left: "70%", color: GOLD,      opacity: 0.09, blur: 80  },
+    { w: 300, h: 300, top: "52%", left: "10%", color: BLUSH,     opacity: 0.12, blur: 90  },
+    { w: 220, h: 220, top: "68%", left: "74%", color: BABY_BLUE, opacity: 0.09, blur: 70  },
+    { w: 180, h: 180, top: "38%", left: "44%", color: GOLD,      opacity: 0.07, blur: 60  },
+  ]
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden>
+      {orbs.map((o, i) => (
+        <div
+          key={i}
+          className="absolute rounded-full"
+          style={{
+            width: o.w,
+            height: o.h,
+            top: o.top,
+            left: o.left,
+            background: o.color,
+            opacity: o.opacity,
+            filter: `blur(${o.blur}px)`,
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
+// ── Main Component ────────────────────────────────────────────────────────────
 export function Details() {
   const [copiedItems, setCopiedItems] = useState<Set<string>>(new Set())
   const [currentReceptionImageIndex, setCurrentReceptionImageIndex] = useState(0)
-  const [showImageModal, setShowImageModal] = useState<string | null>(null)
+  const [showQrModal, setShowQrModal] = useState<{ src: string; label: string; accountNumber: string } | null>(null)
   const receptionImages = siteConfig.reception.image
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentReceptionImageIndex((prev) => (prev + 1) % receptionImages.length)
-    }, 3000)
+    if (receptionImages.length <= 1) return
+    const timer = setInterval(() => setCurrentReceptionImageIndex((p) => (p + 1) % receptionImages.length), 3000)
     return () => clearInterval(timer)
-  }, [])
+  }, [receptionImages.length])
+
+  useEffect(() => {
+    if (!showQrModal) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setShowQrModal(null) }
+    document.addEventListener("keydown", onKey)
+    document.body.style.overflow = "hidden"
+    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = "" }
+  }, [showQrModal])
 
   const copyToClipboard = async (text: string, itemId: string) => {
     try {
       await navigator.clipboard.writeText(text)
-      setCopiedItems(prev => new Set(prev).add(itemId))
-      setTimeout(() => {
-        setCopiedItems(prev => {
-          const newSet = new Set(prev)
-          newSet.delete(itemId)
-          return newSet
-        })
-      }, 2000)
-    } catch (err) {
-      console.error('Failed to copy text: ', err)
-    }
+      setCopiedItems((prev) => new Set(prev).add(itemId))
+      setTimeout(() => setCopiedItems((prev) => { const s = new Set(prev); s.delete(itemId); return s }), 2000)
+    } catch (err) { console.error("Failed to copy text: ", err) }
   }
 
-  // Venue information from site config
-  const ceremonyVenueName = siteConfig.ceremony.location
-  const ceremonyAddress = siteConfig.ceremony.venue
-  const ceremonyVenue = `${ceremonyVenueName}, ${ceremonyAddress}`
-  const ceremonyMapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ceremonyVenue)}`
-
+  const ceremonyVenueName  = siteConfig.ceremony.location
+  const ceremonyAddress    = siteConfig.ceremony.venue
+  const ceremonyVenue      = `${ceremonyVenueName}, ${ceremonyAddress}`
+  const ceremonyMapsLink   = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ceremonyVenue)}`
   const receptionVenueName = siteConfig.reception.location
-  const receptionAddress = siteConfig.reception.venue
-  const receptionVenue = `${receptionVenueName}, ${receptionAddress}`
-  const receptionMapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(receptionVenue)}`
+  const receptionAddress   = siteConfig.reception.venue
+  const receptionVenue     = `${receptionVenueName}, ${receptionAddress}`
+  const receptionMapsLink  = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(receptionVenue)}`
+  const ceremonyCalendarUrl = buildGoogleCalendarUrl(`${childName}'s Christening`, siteConfig.ceremony.date, siteConfig.ceremony.time, ceremonyVenue)
 
-  const ceremonyLocation = ceremonyVenue
-  const receptionLocation = receptionVenue
-  const formattedCeremonyDate = siteConfig.ceremony.date
-  const formattedReceptionDate = siteConfig.ceremony.date // reception follows ceremony on same day
+  const openInMaps = (link: string) => window.open(link, "_blank", "noopener,noreferrer")
 
-  const openInMaps = (link: string) => {
-    window.open(link, '_blank', 'noopener,noreferrer')
-  }
+  // ── Date block ──────────────────────────────────────────────────────────────
+  const renderDateBlock = (dateStr: string, dayLabel: string, timeLabel: string) => (
+    <div className="text-center mb-6 sm:mb-8">
+      <p className="garamond" style={{ fontSize: "clamp(0.58rem, 2vw, 0.72rem)", letterSpacing: "0.4em", textTransform: "uppercase", color: BABY_BLUE, marginBottom: "0.4rem", paddingRight: "0.4em" }}>
+        {dayLabel}
+      </p>
+      <p className="gistesy" style={{ fontSize: "clamp(2rem, 8vw, 3.6rem)", color: MEDIUM, lineHeight: 1.1, paddingTop: "0.1em" }}>
+        {new Date(dateStr).toLocaleString("default", { month: "long" })}
+      </p>
+      <div className="flex items-center justify-center gap-3 sm:gap-4 my-3">
+        <p className="amsterdam-one" style={{ fontSize: "clamp(2.5rem, 10vw, 5rem)", color: DEEP, lineHeight: 1 }}>
+          {new Date(dateStr).getDate()}
+        </p>
+        <div className="h-10 sm:h-14 w-px" style={{ background: `linear-gradient(to bottom, transparent, ${BABY_BLUE}, transparent)` }} />
+        <p className="garamond" style={{ fontSize: "clamp(1.2rem, 4vw, 2rem)", color: DEEP, lineHeight: 1, fontWeight: 300 }}>
+          {new Date(dateStr).getFullYear()}
+        </p>
+      </div>
+      <OrnamentDivider blue />
+      <p className="garamond mt-3" style={{ fontSize: "clamp(0.9rem, 3vw, 1.1rem)", color: DEEP, letterSpacing: "0.1em" }}>
+        {timeLabel}
+      </p>
+    </div>
+  )
 
+  // ── Location block ───────────────────────────────────────────────────────────
+  const renderLocationBlock = (venueName: string, address: string, mapsLink: string, copyId: string, fullVenue: string) => (
+    <div
+      className="rounded-2xl p-3 sm:p-4 mb-4 sm:mb-5"
+      style={{
+        background: "rgba(213,238,248,0.45)",
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
+        border: "1px solid rgba(123,190,221,0.40)",
+        boxShadow: "0 3px 14px rgba(63,163,200,0.08)",
+      }}
+    >
+      <div className="flex items-start gap-3">
+        <MapPin className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 flex-shrink-0" style={{ color: BABY_BLUE }} />
+        <div className="flex-1 min-w-0">
+          <p className="garamond" style={{ fontSize: "clamp(0.58rem, 1.8vw, 0.68rem)", letterSpacing: "0.32em", textTransform: "uppercase", color: BABY_BLUE, marginBottom: "0.3rem", paddingRight: "0.32em" }}>
+            Location
+          </p>
+          <p className="garamond" style={{ fontSize: "clamp(0.82rem, 2.8vw, 1rem)", color: DEEP, lineHeight: 1.5 }}>{venueName}</p>
+          <p className="garamond" style={{ fontSize: "clamp(0.7rem, 2.2vw, 0.84rem)", color: `${DEEP}99`, lineHeight: 1.5 }}>{address}</p>
+        </div>
+        <div className="flex flex-col items-center gap-1.5 flex-shrink-0">
+          <div className="p-1.5 sm:p-2 rounded-lg border shadow-sm" style={{ background: "#fff", borderColor: BLUE_MID }}>
+            <QRCodeSVG value={mapsLink} size={72} level="M" includeMargin={false} fgColor={DEEP} bgColor="#ffffff" />
+          </div>
+          <p className="garamond text-center" style={{ fontSize: "clamp(0.58rem, 1.6vw, 0.66rem)", color: `${DEEP}80`, fontStyle: "italic", maxWidth: "72px" }}>
+            Scan for map
+          </p>
+        </div>
+      </div>
+      <div className="flex flex-col sm:flex-row gap-2 mt-4">
+        <button onClick={() => openInMaps(mapsLink)}
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg transition-all duration-300 hover:opacity-90 hover:scale-[1.01] active:scale-[0.98]"
+          style={{ background: BABY_BLUE, color: "#fff" }}>
+          <Navigation className="w-3.5 h-3.5 flex-shrink-0" />
+          <span className="garamond" style={{ fontSize: "clamp(0.75rem, 2.5vw, 0.88rem)", letterSpacing: "0.05em" }}>Get Directions</span>
+        </button>
+        <button onClick={() => copyToClipboard(fullVenue, copyId)}
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border transition-all duration-300 hover:scale-[1.01] active:scale-[0.98]"
+          style={{ background: "#fff", borderColor: BLUE_MID, color: DEEP }}>
+          {copiedItems.has(copyId) ? <Check className="w-3.5 h-3.5 flex-shrink-0" /> : <Copy className="w-3.5 h-3.5 flex-shrink-0" />}
+          <span className="garamond" style={{ fontSize: "clamp(0.75rem, 2.5vw, 0.88rem)", letterSpacing: "0.05em" }}>
+            {copiedItems.has(copyId) ? "Copied!" : "Copy Address"}
+          </span>
+        </button>
+      </div>
+    </div>
+  )
 
   return (
-    <Section
-      id="details"
-      className="relative py-16 sm:py-20 md:py-24 lg:py-28 overflow-hidden bg-motif-cream"
-    >
-      {/* Semi-transparent overlay for better text readability */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div
-          className="absolute inset-0 opacity-[0.25]"
-          style={{
-            background: 'linear-gradient(165deg, var(--color-motif-cream) 0%, color-mix(in srgb, var(--color-motif-silver) 14%, transparent) 35%, color-mix(in srgb, var(--color-motif-medium) 6%, transparent) 70%, color-mix(in srgb, var(--color-motif-deep) 3%, transparent) 100%)',
-          }}
-        />
-        <div
-          className="absolute inset-0 opacity-[0.08]"
-          style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 15%, var(--color-motif-silver) 0%, transparent 55%)' }}
-        />
+    <Section id="details" className="relative py-16 sm:py-20 md:py-24 overflow-hidden" bgColor="none">
+
+      {/* ── Solid base ── */}
+      <div className="absolute inset-0 -z-10" style={{ background: IVORY }} />
+
+      {/* Soft tinted gradient layer */}
+      <div className="absolute inset-0 -z-10 pointer-events-none" style={{
+        background: `
+          linear-gradient(180deg,
+            rgba(215,237,248,0.45) 0%,
+            rgba(251,244,234,0.0)  25%,
+            rgba(213,238,248,0.30) 50%,
+            rgba(251,244,234,0.0)  75%,
+            rgba(238,212,188,0.35) 100%
+          )
+        `,
+      }} />
+
+      {/* Fine diagonal shimmer */}
+      <div className="absolute inset-0 -z-10 pointer-events-none" style={{
+        background: `repeating-linear-gradient(
+          125deg,
+          transparent 0px,
+          transparent 160px,
+          rgba(255,255,255,0.22) 160px,
+          rgba(255,255,255,0.22) 162px
+        )`,
+      }} />
+
+      <BokehOrbs />
+
+      {/* Center radial glow */}
+      <div className="absolute inset-0 pointer-events-none z-0" aria-hidden>
+        <div className="absolute inset-0" style={{
+          background: `
+            radial-gradient(ellipse 50% 40% at 50% 28%, rgba(63,163,200,0.10) 0%, transparent 70%),
+            radial-gradient(ellipse 38% 32% at 50% 78%, rgba(184,130,42,0.08) 0%, transparent 65%)
+          `,
+        }} />
       </div>
 
-      {/* Flower decoration - left bottom corner */}
-      <div className="absolute left-0 bottom-0 z-0 pointer-events-none">
-        <CloudinaryImage
-          src="/decoration/balloons-half.png"
-          alt=""
-          width={300}
-          height={300}
-          className="w-auto h-auto max-w-[160px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[280px] opacity-65"
-          // style={{ filter: DECO_FILTER }}
-          priority={false}
-        />
+      {/* Balloon decorations */}
+      {/* <div className="absolute left-0 bottom-0 z-0 pointer-events-none">
+        <Image src="/decoration/balloons-half.png" alt="" width={300} height={300}
+          className="w-auto h-auto max-w-[140px] sm:max-w-[190px] md:max-w-[230px] opacity-60" priority={false} />
       </div>
-
-      {/* Flower decoration - right bottom corner */}
       <div className="absolute right-0 bottom-0 z-0 pointer-events-none">
-        <CloudinaryImage
-          src="/decoration/balloons-half.png"
-          alt=""
-          width={300}
-          height={300}
-          className="w-auto h-auto max-w-[160px] sm:max-w-[200px] md:max-w-[240px] lg:max-w-[280px] opacity-65 scale-x-[-1]"
-          // style={{ filter: DECO_FILTER }}
-          priority={false}
-        />
+        <Image src="/decoration/balloons-half.png" alt="" width={300} height={300}
+          className="w-auto h-auto max-w-[140px] sm:max-w-[190px] md:max-w-[230px] opacity-60 scale-x-[-1]" priority={false} />
+      </div> */}
+
+      {/* Corner florals */}
+      <div className="absolute inset-0 pointer-events-none z-[1]">
+        <Image src="/decoration/left-top-removebg-preview.png"    alt="" width={200} height={200} aria-hidden className="absolute top-0 left-0  w-auto h-auto max-w-[110px] sm:max-w-[155px] md:max-w-[200px] opacity-45" />
+        <Image src="/decoration/right-top-removebg-preview.png"   alt="" width={200} height={200} aria-hidden className="absolute top-0 right-0 w-auto h-auto max-w-[110px] sm:max-w-[155px] md:max-w-[200px] opacity-45" />
+        <Image src="/decoration/bottom-left-removebg-preview.png"  alt="" width={200} height={200} aria-hidden className="absolute bottom-0 left-0  w-auto h-auto max-w-[110px] sm:max-w-[155px] md:max-w-[200px] opacity-45" />
+        <Image src="/decoration/bottom-right-removebg-preview.png" alt="" width={200} height={200} aria-hidden className="absolute bottom-0 right-0 w-auto h-auto max-w-[110px] sm:max-w-[155px] md:max-w-[200px] opacity-45" />
       </div>
 
-      {/* Header */}
-      <div className="relative z-10 text-center mb-12 sm:mb-16 md:mb-20 px-4 sm:px-6">
-
-        {/* Eyebrow */}
-        <p
-          className="garamond"
-          style={{
-            fontSize: "clamp(0.56rem, 2.2vw, 0.72rem)",
-            letterSpacing: "0.48em",
-            textTransform: "uppercase",
-            color: ACCENT,
-            marginBottom: "0.5rem",
-            paddingRight: "0.48em",
-          }}
-        >
-          All You Need to Know
-        </p>
-
-        {/* Ornament */}
+      {/* ══════════════════════════════════════════════════════════════
+          SECTION HEADER
+      ══════════════════════════════════════════════════════════════ */}
+      <motion.div className="relative z-10 text-center mb-14 sm:mb-18 px-4 sm:px-6"
+        initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
+        <SectionLabel text="All You Need to Know" />
         <div className="flex items-center justify-center gap-3 mb-2">
-          <div className="h-px w-8 sm:w-12" style={{ background: `linear-gradient(to left, rgba(207,160,107,0.4), transparent)` }} />
-          <span style={{ color: ACCENT, fontSize: "7px", opacity: 0.7 }}>✦</span>
-          <div className="h-px w-8 sm:w-12" style={{ background: `linear-gradient(to right, rgba(207,160,107,0.4), transparent)` }} />
+          <div className="h-px w-10 sm:w-16" style={{ background: `linear-gradient(to left, ${GOLD}88, transparent)` }} />
+          <span style={{ color: GOLD, fontSize: "8px", opacity: 0.9 }}>✦</span>
+          <div className="h-px w-10 sm:w-16" style={{ background: `linear-gradient(to right, ${GOLD}88, transparent)` }} />
         </div>
-
-        {/* Title */}
-        <h2
-          className="gistesy"
-          style={{
-            fontSize: "clamp(2.6rem, 11vw, 5.5rem)",
-            color: DEEP,
-            lineHeight: 1.15,
-            letterSpacing: "-0.01em",
-            textShadow: `0 2px 24px rgba(139,111,90,0.10)`,
-            marginBottom: "0.6rem",
-            overflow: "visible",
-            paddingTop: "0.15em",
-          }}
-        >
+        <h2 className="gistesy mt-1" style={{ fontSize: "clamp(2.6rem, 11vw, 5.5rem)", color: DEEP, lineHeight: 1.1, overflow: "visible", paddingTop: "0.1em", marginBottom: "0.5rem" }}>
           Day of Grace
         </h2>
-
-        {/* Subtitle */}
-        <p
-          className="garamond"
-          style={{
-            fontSize: "clamp(0.78rem, 2.8vw, 0.96rem)",
-            color: MEDIUM,
-            fontStyle: "italic",
-            lineHeight: 1.85,
-            maxWidth: "460px",
-            margin: "0 auto clamp(0.6rem, 2vw, 1rem)",
-          }}
-        >
-          Every sacred detail, lovingly prepared for this blessed celebration
-          of Niahna Celestine's Christening.
-        </p>
-
-        {/* Divider */}
-        <div className="flex items-center justify-center gap-3">
-          <div className="h-px w-10 sm:w-14" style={{ background: `linear-gradient(to left, rgba(207,160,107,0.45), transparent)` }} />
-          <span style={{ color: "#D4B896", fontSize: "5px" }}>◆</span>
-          <div className="h-px w-10 sm:w-14" style={{ background: `linear-gradient(to right, rgba(207,160,107,0.45), transparent)` }} />
+        <div className="flex items-center justify-center gap-2 mb-3">
+          <div className="h-px w-6 sm:w-10" style={{ background: `linear-gradient(to left, ${BLUE_MID}cc, transparent)` }} />
+          <span style={{ color: BLUE_MID, fontSize: "4px" }}>◆◆◆</span>
+          <div className="h-px w-6 sm:w-10" style={{ background: `linear-gradient(to right, ${BLUE_MID}cc, transparent)` }} />
         </div>
-      </div>
+        <p className="garamond" style={{ fontSize: "clamp(0.78rem, 2.8vw, 0.96rem)", color: MEDIUM, fontStyle: "italic", lineHeight: 1.9, maxWidth: "460px", margin: "0 auto" }}>
+          Every sacred detail, lovingly prepared for the blessed celebration of {childName}&apos;s Christening.
+        </p>
+      </motion.div>
 
-      {/* Venue and Event Information */}
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 mb-8 sm:mb-12 md:mb-16 space-y-6 sm:space-y-10 md:space-y-14">
-        
-        {/* Ceremony Card */}
-        <div className="relative group">
-          {/* Subtle champagne glow on hover */}
-          <div className="absolute -inset-1 bg-gradient-to-br from-motif-silver/22 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-lg" />
-          
-          {/* Main card */}
-          <div className="relative bg-motif-cream rounded-xl sm:rounded-2xl overflow-hidden border border-motif-deep/20  shadow-[0_16px_40px_rgba(0,0,0,0.18)] hover:shadow-[0_20px_48px_rgba(0,0,0,0.24)] hover:border-motif-deep/80 transition-all duration-300">
-            {/* Venue Image */}
-            <div className="relative w-full h-64 sm:h-72 md:h-80 lg:h-96 xl:h-[30rem] overflow-hidden">
-              <CloudinaryImage
-                src={siteConfig.ceremony.image}
-                alt={siteConfig.ceremony.location}
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1280px"
-                priority
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-              
-              {/* Venue name overlay with warm gold accent */}
-              <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 md:bottom-6 md:left-6 right-3 sm:right-4 md:right-6">
-                <p className="garamond" style={{ fontSize: "clamp(0.55rem, 2vw, 0.7rem)", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgba(255,247,240,0.75)", marginBottom: "0.25rem" }}>
-                  Christening Venue
-                </p>
-                <h3 className="gistesy" style={{ fontSize: "clamp(1.6rem, 6vw, 3rem)", color: "var(--color-motif-cream)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.1em" }}>
-                  {siteConfig.ceremony.location}
-                </h3>
-                <p className="garamond" style={{ fontSize: "clamp(0.7rem, 2.5vw, 0.88rem)", color: "rgba(255,247,240,0.85)", letterSpacing: "0.04em", marginTop: "0.2rem" }}>
-                  {siteConfig.ceremony.venue}
-                </p>
-              </div>
-            </div>
+      {/* ══════════════════════════════════════════════════════════════
+          VENUE CARDS
+      ══════════════════════════════════════════════════════════════ */}
+      <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 mb-12 sm:mb-16 space-y-8 sm:space-y-12">
 
-            {/* Event Details Content */}
-            <div className="p-3 sm:p-5 md:p-7 lg:p-9">
-              {/* Date Section */}
-              <div className="text-center mb-5 sm:mb-8 md:mb-10">
-                {/* Day name */}
-                <p className="garamond" style={{ fontSize: "clamp(0.6rem, 2.2vw, 0.75rem)", letterSpacing: "0.38em", textTransform: "uppercase", color: ACCENT, marginBottom: "0.4rem", paddingRight: "0.38em" }}>
-                  {siteConfig.ceremony.day}
-                </p>
-
-                {/* Month */}
-                <div className="mb-2 sm:mb-4">
-                  <p className="gistesy" style={{ fontSize: "clamp(2rem, 8vw, 4rem)", color: MEDIUM, lineHeight: 1.1, overflow: "visible", paddingTop: "0.1em" }}>
-                    {new Date(siteConfig.ceremony.date).toLocaleString('default', { month: 'long' })}
-                  </p>
-                </div>
-
-                {/* Day and Year */}
-                <div className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6 md:mb-7">
-                  <p className="amsterdam-one" style={{ fontSize: "clamp(2.5rem, 10vw, 5rem)", color: DEEP, lineHeight: 1 }}>
-                    {new Date(siteConfig.ceremony.date).getDate()}
-                  </p>
-                  <div className="h-10 sm:h-12 md:h-16 w-[1px]" style={{ background: `linear-gradient(to bottom, transparent, ${ACCENT}, transparent)` }} />
-                  <p className="garamond" style={{ fontSize: "clamp(1.2rem, 4vw, 2rem)", color: DEEP, lineHeight: 1, fontWeight: 300 }}>
-                    {new Date(siteConfig.ceremony.date).getFullYear()}
-                  </p>
-                </div>
-
-                {/* Ornament */}
-                <div className="flex items-center justify-center gap-3 mb-3 sm:mb-4">
-                  <div className="h-px w-8 sm:w-12" style={{ background: `linear-gradient(to left, rgba(207,160,107,0.4), transparent)` }} />
-                  <span style={{ color: ACCENT, fontSize: "6px", opacity: 0.65 }}>✦</span>
-                  <div className="h-px w-8 sm:w-12" style={{ background: `linear-gradient(to right, rgba(207,160,107,0.4), transparent)` }} />
-                </div>
-
-                {/* Time */}
-                <p className="garamond" style={{ fontSize: "clamp(0.9rem, 3vw, 1.15rem)", color: DEEP, letterSpacing: "0.1em" }}>
-                  {siteConfig.ceremony.time}
-                </p>
-              </div>
-
-              {/* Location Details */}
-              <div className="bg-gradient-to-br from-motif-cream/40 to-motif-cream rounded-xl p-3 sm:p-4 md:p-5 mb-4 sm:mb-6 border border-motif-deep/15">
-                <div className="flex items-start gap-2 sm:gap-3 md:gap-4">
-                  <MapPin className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-motif-deep mt-0.5 flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="garamond" style={{ fontSize: "clamp(0.6rem, 2vw, 0.72rem)", letterSpacing: "0.32em", textTransform: "uppercase", color: ACCENT, marginBottom: "0.4rem", paddingRight: "0.32em" }}>
-                      Location
-                    </p>
-                    <p className="garamond" style={{ fontSize: "clamp(0.82rem, 2.8vw, 1rem)", color: DEEP, lineHeight: 1.5 }}>
-                      {ceremonyVenueName}
-                    </p>
-                    <p className="garamond" style={{ fontSize: "clamp(0.7rem, 2.2vw, 0.84rem)", color: `${DEEP}b0`, lineHeight: 1.5 }}>
-                      {ceremonyAddress}
-                    </p>
-                  </div>
-                  {/* QR Code for Ceremony - Right side */}
-                  <div className="flex flex-col items-center gap-1.5 sm:gap-2 flex-shrink-0">
-                    <div className="bg-motif-cream p-1.5 sm:p-2 md:p-2.5 rounded-lg border border-motif-deep/20 shadow-sm">
-                      <QRCodeSVG
-                        value={ceremonyMapsLink}
-                        size={80}
-                        level="M"
-                        includeMargin={false}
-                        fgColor="var(--color-motif-deep)"
-                        bgColor="var(--color-motif-cream)"
-                      />
-                    </div>
-                    <p className="garamond" style={{ fontSize: "clamp(0.6rem, 1.8vw, 0.7rem)", color: `${DEEP}90`, fontStyle: "italic", textAlign: "center", maxWidth: "80px" }}>
-                      Scan for directions
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 md:gap-4">
-                <button
-                  onClick={() => openInMaps(ceremonyMapsLink)}
-                  className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 md:py-3 rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-                  style={{ background: DEEP, color: "var(--color-motif-cream)" }}
-                  aria-label="Get directions to ceremony venue"
-                >
-                  <Navigation className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                  <span className="garamond" style={{ fontSize: "clamp(0.75rem, 2.5vw, 0.9rem)", letterSpacing: "0.06em" }}>Get Directions</span>
-                </button>
-                <button
-                  onClick={() => copyToClipboard(ceremonyVenue, 'ceremony')}
-                  className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 md:py-3 bg-motif-cream border border-motif-deep/25 hover:border-motif-deep/45 rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-                  style={{ color: DEEP }}
-                  aria-label="Copy ceremony venue address"
-                >
-                  {copiedItems.has('ceremony') ? (
-                    <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                  ) : (
-                    <Copy className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                  )}
-                  <span className="garamond" style={{ fontSize: "clamp(0.75rem, 2.5vw, 0.9rem)", letterSpacing: "0.06em" }}>{copiedItems.has('ceremony') ? 'Copied!' : 'Copy Address'}</span>
-                </button>
-              </div>
+        {/* Ceremony */}
+        <motion.div custom={0} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }}
+          className="relative group rounded-3xl overflow-hidden transition-all duration-300"
+          style={{
+            background: "rgba(254,249,243,0.88)",
+            backdropFilter: "blur(14px)",
+            WebkitBackdropFilter: "blur(14px)",
+            border: "1px solid rgba(184,130,42,0.20)",
+            boxShadow: "0 16px 52px rgba(61,40,16,0.13), 0 4px 14px rgba(61,40,16,0.07)",
+          }}>
+          <div className="relative w-full h-56 sm:h-64 md:h-80 overflow-hidden">
+            <Image src={siteConfig.ceremony.image} alt={siteConfig.ceremony.location} fill
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 768px" priority />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+            <div className="absolute bottom-4 left-4 md:bottom-5 md:left-5 right-4">
+              <p className="garamond" style={{ fontSize: "clamp(0.52rem, 1.8vw, 0.66rem)", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgba(255,247,240,0.72)", marginBottom: "0.2rem" }}>
+                Christening Venue
+              </p>
+              <h3 className="gistesy" style={{ fontSize: "clamp(1.5rem, 5.5vw, 2.6rem)", color: "#FEF9F3", lineHeight: 1.1, overflow: "visible", paddingTop: "0.1em" }}>
+                {siteConfig.ceremony.location}
+              </h3>
+              <p className="garamond" style={{ fontSize: "clamp(0.68rem, 2.3vw, 0.84rem)", color: "rgba(255,247,240,0.82)", marginTop: "0.15rem" }}>
+                {siteConfig.ceremony.venue}
+              </p>
             </div>
           </div>
-        </div>
-
-        {/* Reception Card */}
-        <div className="relative group">
-          <div className="absolute -inset-1 bg-gradient-to-br from-motif-silver/22 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-lg" />
-
-          <div className="relative elegant-card bg-motif-cream rounded-xl sm:rounded-2xl overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.18)] border border-motif-deep/25 premium-shadow hover:border-motif-deep/45 transition-all duration-300">
-       
-            <div className="relative w-full h-64 sm:h-72 md:h-80 lg:h-96 xl:h-[30rem] overflow-hidden">
-              {receptionImages.map((src, index) => (
-                <div
-                  key={src}
-                  className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                    index === currentReceptionImageIndex ? "opacity-100" : "opacity-0"
-                  }`}
-                >
-                  <CloudinaryImage
-                    src={src}
-                    alt={siteConfig.reception.venue}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1280px"
-                    priority={index === 0}
-                  />
+          <div
+            className="p-4 sm:p-6 md:p-8"
+            style={{
+              background: "rgba(254,249,243,0.92)",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+            }}
+          >
+            {renderDateBlock(siteConfig.ceremony.date, siteConfig.ceremony.day, siteConfig.ceremony.time)}
+            {/* <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-5 -mt-2">
+              {[
+                { icon: Users,    label: "Guests arrive",   time: siteConfig.ceremony.guestsTime },
+                { icon: Sparkles, label: "Ceremony starts", time: siteConfig.ceremony.time },
+              ].map(({ icon: Icon, label, time }) => (
+                <div key={label} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(213,238,248,0.55)", border: `1px solid rgba(123,190,221,0.45)` }}>
+                  <Icon className="w-3.5 h-3.5 flex-shrink-0" style={{ color: BABY_BLUE }} />
+                  <span className="garamond text-[0.72rem] sm:text-sm" style={{ color: `${DEEP}bb` }}>{label}</span>
+                  <span className="garamond text-[0.72rem] sm:text-sm font-semibold" style={{ color: DEEP }}>{time}</span>
                 </div>
               ))}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent z-10" />
-              
-          
-              <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 md:bottom-6 md:left-6 right-3 sm:right-4 md:right-6 z-20">
-                <p className="garamond" style={{ fontSize: "clamp(0.55rem, 2vw, 0.7rem)", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgba(255,247,240,0.75)", marginBottom: "0.25rem" }}>
-                  Reception Venue
-                </p>
-                <h3 className="gistesy" style={{ fontSize: "clamp(1.6rem, 6vw, 3rem)", color: "var(--color-motif-cream)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.1em" }}>
-                  {siteConfig.reception.location}
-                </h3>
-                <p className="garamond" style={{ fontSize: "clamp(0.7rem, 2.5vw, 0.88rem)", color: "rgba(255,247,240,0.85)", letterSpacing: "0.04em", marginTop: "0.2rem" }}>
-                  {siteConfig.reception.venue}
-                </p>
-              </div>
-            </div>
-
-            <div className="p-3 sm:p-5 md:p-7 lg:p-9">
-         
-              <div className="text-center mb-5 sm:mb-8">
-                {siteConfig.reception.time === "To follow after the ceremony" ? (
-                  <p className="garamond" style={{ fontSize: "clamp(0.9rem, 3vw, 1.1rem)", color: DEEP, fontStyle: "italic", letterSpacing: "0.04em" }}>
-                    To follow after the ceremony
-                  </p>
-                ) : (
-                  <>
-                    <p className="garamond" style={{ fontSize: "clamp(0.6rem, 2.2vw, 0.75rem)", letterSpacing: "0.38em", textTransform: "uppercase", color: ACCENT, marginBottom: "0.4rem", paddingRight: "0.38em" }}>
-                      {siteConfig.reception.time === "After ceremony" ? "Starts" : "Starts at"}
-                    </p>
-                    <p className="garamond" style={{ fontSize: "clamp(0.9rem, 3vw, 1.1rem)", color: DEEP, letterSpacing: "0.08em" }}>
-                      {siteConfig.reception.time}
-                    </p>
-                  </>
-                )}
-              </div>
-
-        
-              <div className="bg-gradient-to-br from-motif-cream/40 to-motif-cream rounded-xl p-3 sm:p-4 md:p-5 mb-4 sm:mb-6 border border-motif-deep/15">
-                <div className="flex items-start gap-2 sm:gap-3 md:gap-4">
-                  <MapPin className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-motif-deep mt-0.5 flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="garamond" style={{ fontSize: "clamp(0.6rem, 2vw, 0.72rem)", letterSpacing: "0.32em", textTransform: "uppercase", color: ACCENT, marginBottom: "0.4rem", paddingRight: "0.32em" }}>
-                      Location
-                    </p>
-                    <p className="garamond" style={{ fontSize: "clamp(0.82rem, 2.8vw, 1rem)", color: DEEP, lineHeight: 1.5 }}>
-                      {receptionVenueName}
-                    </p>
-                    <p className="garamond" style={{ fontSize: "clamp(0.7rem, 2.2vw, 0.84rem)", color: `${DEEP}b0`, lineHeight: 1.5 }}>
-                      {receptionAddress}
-                    </p>
-                  </div>
-              
-                  <div className="flex flex-col items-center gap-1.5 sm:gap-2 flex-shrink-0">
-                  <div className="bg-motif-cream p-1.5 sm:p-2 md:p-2.5 rounded-lg border border-motif-deep/20 shadow-sm">
-                      <QRCodeSVG
-                        value={receptionMapsLink}
-                        size={80}
-                        level="M"
-                        includeMargin={false}
-                        fgColor="var(--color-motif-deep)"
-                        bgColor="var(--color-motif-cream)"
-                      />
-                    </div>
-                    <p className="garamond" style={{ fontSize: "clamp(0.6rem, 1.8vw, 0.7rem)", color: `${DEEP}90`, fontStyle: "italic", textAlign: "center", maxWidth: "80px" }}>
-                      Scan for directions
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 md:gap-4">
-                <button
-                  onClick={() => openInMaps(receptionMapsLink)}
-                  className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 md:py-3 rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-                  style={{ background: DEEP, color: "var(--color-motif-cream)" }}
-                  aria-label="Get directions to reception venue"
-                >
-                  <Navigation className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                  <span className="garamond" style={{ fontSize: "clamp(0.75rem, 2.5vw, 0.9rem)", letterSpacing: "0.06em" }}>Get Directions</span>
-                </button>
-                <button
-                  onClick={() => copyToClipboard(receptionVenue, 'reception')}
-                  className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 md:py-3 bg-motif-cream border border-motif-deep/25 hover:border-motif-deep/45 rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-                  style={{ color: DEEP }}
-                  aria-label="Copy reception venue address"
-                >
-                  {copiedItems.has('reception') ? (
-                    <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                  ) : (
-                    <Copy className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                  )}
-                  <span className="garamond" style={{ fontSize: "clamp(0.75rem, 2.5vw, 0.9rem)", letterSpacing: "0.06em" }}>{copiedItems.has('reception') ? 'Copied!' : 'Copy Address'}</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Attire Information */}
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6">
-        {/* Section Header */}
-
-
-
-
-        
-
-     {/* Gentle Reminders Container */}
-     <div className="relative z-10 max-w-4xl mx-auto px-3 sm:px-5 mt-8 sm:mt-12 md:mt-16">
-        <div className="relative overflow-hidden rounded-xl sm:rounded-2xl border border-motif-cream/40 bg-motif-cream backdrop-blur-lg shadow-[0_18px_40px_color-mix(in_srgb,var(--color-motif-cream)_15%,transparent)]">
-          {/* Content */}
-          <div className="relative z-10 px-4 sm:px-6 md:px-8 py-6 sm:py-8 md:py-10">
-            {/* Animated couple photos carousel */}
-            {/* <div className="flex justify-center gap-2 sm:gap-3 md:gap-4 mb-6 sm:mb-8">
-              {coupleImages.map((image, index) => {
-                const isActive = index === currentImageIndex
-                // Alternate rotation: -5deg, 5deg, -3deg, 3deg for variety
-                const baseRotation = index === 0 ? -5 : index === 1 ? 5 : index === 2 ? -3 : 3
-                // Add gentle rotation animation for active image
-                const currentRotation = isActive 
-                  ? baseRotation + Math.sin(rotationOffset * Math.PI / 180) * 2 
-                  : baseRotation
-                
-                return (
-                  <div
-                    key={index}
-                    className={`relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-lg overflow-hidden border-2 border-motif-deep/30 shadow-lg transition-all duration-700 ease-in-out ${
-                      isActive ? 'scale-110 z-10' : 'scale-100 opacity-70'
-                    }`}
-                    style={{
-                      transform: `rotate(${currentRotation}deg) ${isActive ? 'scale(1.1)' : 'scale(1)'}`,
-                    }}
-                  >
-                    <CloudinaryImage
-                      src={image}
-                      alt={`Wedding couple ${index + 1}`}
-                      fill
-                      className={`object-cover transition-opacity duration-500 ${
-                        isActive ? 'opacity-100' : 'opacity-70'
-                      }`}
-                      sizes="(max-width: 640px) 64px, (max-width: 768px) 80px, 96px"
-                    />
-                  </div>
-                )
-              })}
             </div> */}
+            {renderLocationBlock(ceremonyVenueName, ceremonyAddress, ceremonyMapsLink, "ceremony", ceremonyVenue)}
+            <button onClick={() => window.open(ceremonyCalendarUrl, "_blank", "noopener,noreferrer")}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 hover:scale-[1.01] active:scale-[0.98]"
+              style={{ background: "rgba(213,238,248,0.55)", border: `1px solid rgba(123,190,221,0.45)`, color: DEEP }}>
+              <CalendarPlus className="w-4 h-4 flex-shrink-0" style={{ color: BABY_BLUE }} />
+              <span className="garamond" style={{ fontSize: "clamp(0.75rem, 2.5vw, 0.88rem)", letterSpacing: "0.05em" }}>Add to Calendar</span>
+            </button>
+          </div>
+        </motion.div>
 
-            {/* Attire Guide */}
-            <div className="space-y-5 sm:space-y-6 md:space-y-8 mb-5 sm:mb-6">
-          {/* Guests Attire */}
-          <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-br from-motif-silver/22 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-lg" />
-            
-            <div className="relative bg-motif-cream backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-7 lg:p-9 border hover:shadow-[0_20px_48px_rgba(0,0,0,0.24)] hover:border-motif-deep/70 transition-all duration-300">
-              <p
-                className="garamond text-center uppercase mb-1 sm:mb-2"
-                style={{ fontSize: "clamp(0.56rem, 2vw, 0.68rem)", letterSpacing: "0.42em", color: ACCENT, paddingRight: "0.42em" }}
-              >
-                Dress Code
-              </p>
-              <h4
-                className="gistesy text-center mb-4 sm:mb-5 md:mb-6 px-2"
-                style={{ fontSize: "clamp(1.5rem, 5.5vw, 2.3rem)", color: DEEP, lineHeight: 1.12, overflow: "visible", paddingTop: "0.08em" }}
-              >
-                Guest Attire
-              </h4>
-
-              {/* Copy: follow color palette */}
-              <p className="garamond text-center text-[0.82rem] sm:text-sm md:text-base lg:text-lg leading-relaxed mb-4 sm:mb-5 md:mb-6 max-w-xl mx-auto px-1 sm:px-3" style={{ color: `${DEEP}cc` }}>
-              Kindly follow the color palette below for your outfit.
-              </p>
-
-              {/* Principal sponsor attire image */}
-              <div className="relative w-full aspect-[5/4] sm:aspect-[4/3] md:aspect-[3/2] max-w-2xl mx-auto rounded-lg sm:rounded-xl overflow-hidden border border-motif-medium/30 mb-4 sm:mb-6 md:mb-8">
-                <Image
-                  src={siteConfig.dressCode.guests.photo}
-                  alt={siteConfig.dressCode.guests.notes}
-                  fill
-                  className="object-contain bg-[#FFF7F6]/50 p-1.5 sm:p-2.5 md:p-3"
-                  sizes="(max-width: 640px) 95vw, (max-width: 1024px) 85vw, 672px"
-                />
+        {/* Reception */}
+        <motion.div custom={1} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }}
+          className="relative group rounded-3xl overflow-hidden transition-all duration-300"
+          style={{
+            background: "rgba(254,249,243,0.88)",
+            backdropFilter: "blur(14px)",
+            WebkitBackdropFilter: "blur(14px)",
+            border: "1px solid rgba(184,130,42,0.20)",
+            boxShadow: "0 16px 52px rgba(61,40,16,0.13), 0 4px 14px rgba(61,40,16,0.07)",
+          }}>
+          <div className="relative w-full h-56 sm:h-64 md:h-80 overflow-hidden">
+            {receptionImages.map((src, idx) => (
+              <div key={src} className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === currentReceptionImageIndex ? "opacity-100" : "opacity-0"}`}>
+                <Image src={src} alt={siteConfig.reception.venue} fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 768px" priority={idx === 0} />
               </div>
-
-              {/* Color palette for principal sponsors — keep explicit dress-code colors (not UI palette) */}
-              <div className="flex justify-center gap-2 sm:gap-3 md:gap-4 flex-wrap mb-5 sm:mb-6 md:mb-7 px-1 sm:px-2">
-                {siteConfig.dressCode.guests.palette.split(',').map((color) => (
-                  <div
-                    key={color.trim()}
-                    className="w-7.5 h-7.5 min-w-[1.875rem] min-h-[1.875rem] sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full shadow-md border border-white ring-2 ring-motif-silver/40 hover:scale-110 transition-transform duration-300"
-                    style={{ backgroundColor: color.trim() }}
-                    title={color.trim()}
-                  />
+            ))}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent z-10" />
+            {receptionImages.length > 1 && (
+              <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 flex gap-1.5">
+                {receptionImages.map((_, idx) => (
+                  <span key={idx} className={`block h-1.5 rounded-full transition-all duration-300 ${idx === currentReceptionImageIndex ? "w-5 bg-white" : "w-1.5 bg-white/50"}`} />
                 ))}
               </div>
-              
-              {/* Guests Dress Code Text */}
-              <div className="text-center pt-3 sm:pt-4 border-t border-motif-silver/70 px-1 sm:px-4 mb-2 sm:mb-4">
-                <p className="garamond text-[0.86rem] sm:text-base md:text-lg leading-relaxed mb-2 sm:mb-3" style={{ color: `${DEEP}d9` }}>
-                  <span className="font-semibold">{siteConfig.dressCode.guests.notes}</span>
-                  <br />
-               
-                </p>
-                {/* <div className="mt-3 sm:mt-4 text-left max-w-2xl mx-auto">
-                  <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
-                    <span className="inline-flex h-2 w-2 rounded-full bg-motif-accent/80" aria-hidden="true" />
-                    <p className={`${cinzel.className} text-[11px] sm:text-xs tracking-[0.22em] uppercase text-motif-deep/80`}>
-                      Notes
-                    </p>
-                    <span className="hidden sm:block h-px flex-1 bg-motif-deep/15" aria-hidden="true" />
-                  </div>
-
-                  <ul className="space-y-2 sm:space-y-2.5">
-                    <li className="flex gap-3">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-motif-deep/40" aria-hidden="true" />
-                      <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] text-motif-deep/90 leading-relaxed">
-                        Ladies, we know you’d look beautiful in white—but let’s save that for the bride.
-                      </p>
-                    </li>
-                    <li className="flex gap-3">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-motif-deep/40" aria-hidden="true" />
-                      <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] text-motif-deep/90 leading-relaxed">
-                        We kindly encourage everyone to avoid casual attire such as jeans, shorts, slippers, and sando.
-                      </p>
-                    </li>
-                    <li className="flex gap-3">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-motif-deep/40" aria-hidden="true" />
-                      <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] text-motif-deep/90 leading-relaxed">
-                        We also gently discourage wearing all or predominantly black outfits to match the bright and joyful mood of our wedding celebration.
-                      </p>
-                    </li>
-                  </ul>
-                </div> */}
-                {/* <p className="text-xs sm:text-sm md:text-base font-[family-name:var(--font-crimson)] text-motif-deep leading-relaxed italic">
-                  {siteConfig.dressCode.note}
-                </p> */}
-              </div>
+            )}
+            <div className="absolute bottom-4 left-4 md:bottom-5 md:left-5 right-4 z-20">
+              <p className="garamond" style={{ fontSize: "clamp(0.52rem, 1.8vw, 0.66rem)", letterSpacing: "0.4em", textTransform: "uppercase", color: "rgba(255,247,240,0.72)", marginBottom: "0.2rem" }}>
+                Reception Venue
+              </p>
+              <h3 className="gistesy" style={{ fontSize: "clamp(1.5rem, 5.5vw, 2.6rem)", color: "#FEF9F3", lineHeight: 1.1, overflow: "visible", paddingTop: "0.1em" }}>
+                {siteConfig.reception.location}
+              </h3>
+              <p className="garamond" style={{ fontSize: "clamp(0.68rem, 2.3vw, 0.84rem)", color: "rgba(255,247,240,0.82)", marginTop: "0.15rem" }}>
+                {siteConfig.reception.venue}
+              </p>
             </div>
           </div>
+          <div
+            className="p-4 sm:p-6 md:p-8"
+            style={{
+              background: "rgba(254,249,243,0.92)",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+            }}
+          >
+            <div className="text-center mb-5">
+              <p className="garamond" style={{ fontSize: "clamp(0.58rem, 2vw, 0.72rem)", letterSpacing: "0.4em", textTransform: "uppercase", color: BABY_BLUE, marginBottom: "0.3rem", paddingRight: "0.4em" }}>
+                Starts at
+              </p>
+              <p className="garamond" style={{ fontSize: "clamp(0.9rem, 3vw, 1.1rem)", color: DEEP, letterSpacing: "0.1em" }}>
+                {siteConfig.reception.time}
+              </p>
+            </div>
+            {renderLocationBlock(receptionVenueName, receptionAddress, receptionMapsLink, "reception", receptionVenue)}
+          </div>
+        </motion.div>
+      </div>
 
+      {/* ══════════════════════════════════════════════════════════════
+          DRESS CODE
+      ══════════════════════════════════════════════════════════════ */}
+      <motion.div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 mb-12 sm:mb-16"
+        custom={2} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-40px" }}>
+        <div className="text-center mb-6">
+          <SectionLabel text="What to Wear" />
+          <OrnamentDivider blue />
+          <SectionTitle>Guest Attire</SectionTitle>
         </div>
 
-            {/* Title */}
-            <p className="garamond text-center" style={{ fontSize: "clamp(0.56rem, 2.2vw, 0.72rem)", letterSpacing: "0.48em", textTransform: "uppercase", color: ACCENT, marginBottom: "0.4rem", paddingRight: "0.48em" }}>
-              A Few Kind Notes
-            </p>
-            <div className="flex items-center justify-center gap-3 mb-2">
-              <div className="h-px w-8 sm:w-12" style={{ background: `linear-gradient(to left, rgba(207, 160, 107, 0), transparent)` }} />
-              <span style={{ color: ACCENT, fontSize: "7px", opacity: 0.7 }}>✦</span>
-              <div className="h-px w-8 sm:w-12" style={{ background: `linear-gradient(to right, rgba(207, 160, 107, 0), transparent)` }} />
-            </div>
-            <h3
-              className="gistesy text-center"
-              style={{ fontSize: "clamp(2rem, 9vw, 4.5rem)", color: DEEP, lineHeight: 1.15, overflow: "visible", paddingTop: "0.1em", marginBottom: "clamp(1rem, 3vw, 1.5rem)" }}
+        <div
+          className="rounded-3xl overflow-hidden"
+          style={{
+            background: "rgba(254,249,243,0.85)",
+            backdropFilter: "blur(14px)",
+            WebkitBackdropFilter: "blur(14px)",
+            border: "1px solid rgba(184,130,42,0.18)",
+            boxShadow: "0 12px 40px rgba(61,40,16,0.10), 0 3px 10px rgba(61,40,16,0.05)",
+          }}
+        >
+          {/* Gold+blue accent top stripe */}
+          {/* <div className="h-[3px] w-full" style={{ background: `linear-gradient(to right, ${GOLD}, ${BABY_BLUE}, ${BLUE_MID})` }} /> */}
+
+          {/* Two role cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2">
+            {/* Godparents */}
+            <div
+              className="p-5 sm:p-6 flex flex-col items-center text-center gap-3 border-b sm:border-b-0 sm:border-r"
+              style={{ background: "rgba(254,252,248,0.70)", borderColor: "rgba(184,130,42,0.12)" }}
             >
-              Gentle Reminders
-            </h3>
+              <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 shadow-sm" style={{ background: "rgba(255,255,255,0.95)", borderColor: "rgba(184,130,42,0.25)" }}>
+                <Shirt className="w-5 h-5" style={{ color: GOLD }} />
+              </div>
+              <div>
+                <p className="garamond uppercase mb-1" style={{ fontSize: "clamp(0.52rem, 1.8vw, 0.62rem)", letterSpacing: "0.42em", color: BABY_BLUE }}>Godparents</p>
+                <h4 className="gistesy" style={{ fontSize: "clamp(1.3rem, 4.5vw, 1.8rem)", color: DEEP, lineHeight: 1.1 }}>Semi-Formal</h4>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(184,130,42,0.20)" }}>
+                <div className="w-4 h-4 rounded-full border shadow-sm" style={{ backgroundColor: "#FFFFFF", borderColor: "rgba(184,130,42,0.30)" }} />
+                <span className="garamond" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.92rem)", color: DEEP }}>White attire</span>
+              </div>
+              <p className="garamond" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: MEDIUM, lineHeight: 1.7 }}>
+                Godparents are kindly requested to wear semi-formal attire in white.
+              </p>
+            </div>
 
-            {/* Reminders List */}
-            <div className="space-y-4 sm:space-y-5 md:space-y-6 max-w-2xl mx-auto">
-              {/* Unplugged Christening */}
-              <div className="rounded-lg p-4 sm:p-5 md:p-6 border border-motif-accent/20 shadow-sm" style={{ background: "rgba(255,247,240,0.55)" }}>
-                <p className="garamond text-center" style={{ fontSize: "clamp(0.55rem, 1.8vw, 0.66rem)", letterSpacing: "0.38em", textTransform: "uppercase", color: ACCENT, marginBottom: "0.25rem", paddingRight: "0.38em" }}>
-                  A Sacred Moment
+            {/* Guests */}
+            <div
+              className="p-5 sm:p-6 flex flex-col items-center text-center gap-3"
+              style={{ background: "rgba(213,238,248,0.35)" }}
+            >
+              <div className="w-12 h-12 rounded-full flex items-center justify-center border-2 shadow-sm" style={{ background: "rgba(63,163,200,0.12)", borderColor: "rgba(123,190,221,0.5)" }}>
+                <Shirt className="w-5 h-5" style={{ color: BABY_BLUE }} />
+              </div>
+              <div>
+                <p className="garamond uppercase mb-1" style={{ fontSize: "clamp(0.52rem, 1.8vw, 0.62rem)", letterSpacing: "0.42em", color: BABY_BLUE }}>Guests</p>
+                <h4 className="gistesy" style={{ fontSize: "clamp(1.3rem, 4.5vw, 1.8rem)", color: DEEP, lineHeight: 1.1 }}>Any Shade of Blue</h4>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap justify-center">
+                {["#B8DFF0", "#7EC8E3", "#4CA9D0", "#2E86AB", "#1A6B9A"].map((c) => (
+                  <div key={c} className="w-6 h-6 rounded-full border-2 border-white shadow-sm ring-1 ring-sky-200" style={{ backgroundColor: c }} />
+                ))}
+              </div>
+              <p className="garamond" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: MEDIUM, lineHeight: 1.7 }}>
+                Guests are warmly invited to wear any shade of blue.
+              </p>
+            </div>
+          </div>
+
+          {/* Attire palette image */}
+          <div
+            className="p-4 sm:p-6 border-t"
+            style={{ background: "rgba(213,238,248,0.28)", borderColor: "rgba(123,190,221,0.30)" }}
+          >
+            {/* <div className="flex items-center justify-center gap-2 mb-4">
+              <p className="garamond uppercase" style={{ fontSize: "clamp(0.52rem, 1.8vw, 0.64rem)", letterSpacing: "0.42em", color: BABY_BLUE }}>Color Reference</p>
+            </div> */}
+            {/* <div className="relative w-full aspect-[5/4] sm:aspect-[4/3] max-w-xl mx-auto rounded-xl overflow-hidden border" style={{ borderColor: BLUE_MID }}>
+              <Image src={siteConfig.dressCode.guests.photo} alt="Guest attire palette" fill
+                className="object-contain bg-white/60 p-2 sm:p-3"
+                sizes="(max-width: 640px) 95vw, (max-width: 1024px) 85vw, 672px" />
+            </div> */}
+            {/* <p className="garamond text-center mt-4 leading-relaxed max-w-lg mx-auto" style={{ fontSize: "clamp(0.8rem, 2.5vw, 0.95rem)", color: `${DEEP}bb` }}>
+              {siteConfig.dressCode.guests.notes}
+            </p> */}
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ══════════════════════════════════════════════════════════════
+          GIFT NOTE
+      ══════════════════════════════════════════════════════════════ */}
+      <motion.div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 mb-12 sm:mb-16"
+        custom={3} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-40px" }}>
+        <div className="text-center mb-6">
+          <SectionLabel text="A Loving Thought" />
+          <OrnamentDivider blue />
+          <SectionTitle>Gift Note</SectionTitle>
+        </div>
+
+        <div
+          className="rounded-3xl overflow-hidden"
+          style={{
+            background: "rgba(254,249,243,0.88)",
+            backdropFilter: "blur(18px)",
+            WebkitBackdropFilter: "blur(18px)",
+            border: "1px solid rgba(184,130,42,0.20)",
+            boxShadow: "0 16px 48px rgba(61,40,16,0.12), 0 4px 12px rgba(61,40,16,0.06)",
+          }}
+        >
+
+          {/* Message */}
+          <div className="relative p-6 sm:p-9 text-center overflow-hidden" style={{ background: "rgba(213,238,248,0.30)" }}>
+            {/* Decorative oversized quote marks */}
+            <span className="absolute top-3 left-5 select-none pointer-events-none"
+              style={{ fontSize: "5rem", lineHeight: 1, color: BABY_BLUE, opacity: 0.07, fontFamily: "Georgia, serif" }}>
+              &#8220;
+            </span>
+            <span className="absolute bottom-3 right-5 select-none pointer-events-none"
+              style={{ fontSize: "5rem", lineHeight: 1, color: BABY_BLUE, opacity: 0.07, fontFamily: "Georgia, serif" }}>
+              &#8221;
+            </span>
+
+            {/* Gift icon with glow */}
+            <div
+              className="w-14 h-14 rounded-full flex items-center justify-center shadow-md mx-auto mb-5"
+              style={{
+                background: "rgba(63,163,200,0.12)",
+                border: "2px solid rgba(123,190,221,0.55)",
+                boxShadow: "0 0 22px rgba(63,163,200,0.18), 0 2px 8px rgba(63,163,200,0.10)",
+              }}
+            >
+              <Gift className="w-6 h-6" style={{ color: BABY_BLUE }} />
+            </div>
+
+            <p className="garamond leading-relaxed mb-3 max-w-xl mx-auto" style={{ fontSize: "clamp(0.92rem, 2.8vw, 1.05rem)", color: DEEP, lineHeight: 1.95, fontStyle: "italic" }}>
+              "Your love, prayers, and presence are the greatest gifts I could ever receive."
+            </p>
+            <p className="garamond leading-relaxed max-w-xl mx-auto" style={{ fontSize: "clamp(0.84rem, 2.6vw, 0.98rem)", color: `${DEEP}bb`, lineHeight: 1.9 }}>
+              Should you wish to bless me with something more, Mommy and Daddy would sincerely appreciate a small contribution toward my future and the many adventures waiting for me ahead.
+            </p>
+          </div>
+
+          {/* Ways to bless */}
+          <div className="p-5 sm:p-7 border-t" style={{ background: "rgba(254,249,243,0.82)", borderColor: "rgba(184,130,42,0.14)" }}>
+            {/* Section label with side lines */}
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="h-px flex-1" style={{ background: `linear-gradient(to right, transparent, rgba(63,163,200,0.35))` }} />
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-3 h-3" style={{ color: BABY_BLUE, opacity: 0.7 }} />
+                <p className="garamond uppercase" style={{ fontSize: "clamp(0.52rem, 1.8vw, 0.66rem)", letterSpacing: "0.44em", color: BABY_BLUE }}>
+                  Ways to Bless Me
                 </p>
-                <h4 className="gistesy text-center"
-                  style={{ fontSize: "clamp(1.4rem, 5vw, 2.2rem)", color: DEEP, lineHeight: 1.1, overflow: "visible", paddingTop: "0.1em", marginBottom: "0.75rem" }}
+                <Sparkles className="w-3 h-3" style={{ color: BABY_BLUE, opacity: 0.7 }} />
+              </div>
+              <div className="h-px flex-1" style={{ background: `linear-gradient(to left, transparent, rgba(63,163,200,0.35))` }} />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
+              {/* Envelope */}
+              <div
+                className="flex flex-col items-center gap-3 p-5 rounded-2xl text-center"
+                style={{ background: "rgba(213,238,248,0.38)", border: "1px solid rgba(123,190,221,0.38)" }}
+              >
+                <div
+                  className="w-36 h-36 sm:w-40 sm:h-40 rounded-2xl border-2 flex flex-col items-center justify-center gap-2"
+                  style={{ borderColor: "rgba(123,190,221,0.50)", background: "rgba(255,255,255,0.92)" }}
                 >
-                  Unplugged Christening
-                </h4>
-                <p className="garamond" style={{ fontSize: "clamp(0.82rem, 2.8vw, 0.96rem)", color: `${DEEP}cc`, lineHeight: 1.85, textAlign: "center" }}>
-                  We are hosting a mostly unplugged christening. You are welcome to take a few photos, but we kindly ask that it be kept minimal. Please refrain from blocking our official photographer so every precious moment is beautifully captured. We hope you will be fully present with us — professional photos will be shared with you after the celebration. Thank you for your grace and understanding.
-                </p>
+                  <Mail className="w-9 h-9" style={{ color: BABY_BLUE, opacity: 0.75 }} />
+                  <p className="garamond" style={{ fontSize: "clamp(0.60rem, 1.6vw, 0.68rem)", color: `${DEEP}88`, letterSpacing: "0.06em" }}>on the day</p>
+                </div>
+                <div className="text-center">
+                  <p className="garamond font-semibold" style={{ fontSize: "clamp(0.82rem, 2.5vw, 0.95rem)", color: DEEP }}>Envelope</p>
+                  <p className="garamond mt-1" style={{ fontSize: "clamp(0.72rem, 2.2vw, 0.84rem)", color: `${DEEP}99`, lineHeight: 1.6 }}>
+                    A little envelope shared personally on my special day
+                  </p>
+                </div>
               </div>
 
-              {/* Arrival */}
-              <div className="rounded-lg p-4 sm:p-5 md:p-6 border border-motif-accent/20 shadow-sm" style={{ background: "rgba(255,247,240,0.55)" }}>
-                <p className="garamond text-center" style={{ fontSize: "clamp(0.55rem, 1.8vw, 0.66rem)", letterSpacing: "0.38em", textTransform: "uppercase", color: ACCENT, marginBottom: "0.25rem", paddingRight: "0.38em" }}>
-                  Be On Time
-                </p>
-                <h4 className="gistesy text-center"
-                  style={{ fontSize: "clamp(1.4rem, 5vw, 2.2rem)", color: DEEP, lineHeight: 1.1, overflow: "visible", paddingTop: "0.1em", marginBottom: "0.75rem" }}
-                >
-                  Arrival
-                </h4>
-                <p className="garamond" style={{ fontSize: "clamp(0.82rem, 2.8vw, 0.96rem)", color: `${DEEP}cc`, lineHeight: 1.85, textAlign: "center" }}>
-                  To ensure this sacred celebration begins peacefully, we kindly ask that you arrive at least 30 minutes early. The ceremony begins at <span style={{ color: DEEP, fontWeight: 600 }}>{siteConfig.ceremony.time}</span>, so please plan to be seated by <span style={{ color: DEEP, fontWeight: 600 }}>{siteConfig.ceremony.guestsTime}</span>. Your timely presence allows everyone to share in the full blessing of this moment.
-                </p>
+              {/* PNB */}
+              <div
+                className="group flex flex-col items-center gap-3 p-5 rounded-2xl text-center cursor-pointer transition-all duration-300 hover:shadow-md"
+                style={{ background: "rgba(213,238,248,0.38)", border: "1px solid rgba(123,190,221,0.38)" }}
+                onClick={() => setShowQrModal({ src: pnbQr.src, label: pnbQr.label, accountNumber: pnbQr.accountNumber })}
+              >
+                <QrCard src={pnbQr.src} label={pnbQr.label} accountNumber={pnbQr.accountNumber}
+                  onExpand={() => setShowQrModal({ src: pnbQr.src, label: pnbQr.label, accountNumber: pnbQr.accountNumber })} />
               </div>
 
-              {/* Ninong and Ninang Church Fee */}
-              <div className="rounded-lg p-4 sm:p-5 md:p-6 border border-motif-accent/20 shadow-sm" style={{ background: "rgba(255,247,240,0.55)" }}>
-                <p className="garamond text-center" style={{ fontSize: "clamp(0.55rem, 1.8vw, 0.66rem)", letterSpacing: "0.38em", textTransform: "uppercase", color: ACCENT, marginBottom: "0.25rem", paddingRight: "0.38em" }}>
-                  Kind Request
-                </p>
-                <h4 className="gistesy text-center"
-                  style={{ fontSize: "clamp(1.4rem, 5vw, 2.2rem)", color: DEEP, lineHeight: 1.1, overflow: "visible", paddingTop: "0.1em", marginBottom: "0.75rem" }}
-                >
-                  Dear Ninongs and Ninangs
-                </h4>
-                <p className="garamond" style={{ fontSize: "clamp(0.82rem, 2.8vw, 0.96rem)", color: `${DEEP}cc`, lineHeight: 1.85, textAlign: "center" }}>
-                  We kindly ask for a <span style={{ color: DEEP, fontWeight: 600 }}>PHP 200 church fee</span> to help with the ceremony.
-                  <br />
-                  <br />
-                  You may send your payment via GCash (QR code available) for your convenience.
-                  <br />
-                  <br />
-                  Thank you so much for being part of this special day!
-                </p>
+              {/* BenefitPay */}
+              <div
+                className="group flex flex-col items-center gap-3 p-5 rounded-2xl text-center cursor-pointer transition-all duration-300 hover:shadow-md"
+                style={{ background: "rgba(213,238,248,0.38)", border: "1px solid rgba(123,190,221,0.38)" }}
+                onClick={() => setShowQrModal({ src: benefitPayQr.src, label: benefitPayQr.label, accountNumber: benefitPayQr.accountNumber })}
+              >
+                <QrCard src={benefitPayQr.src} label={benefitPayQr.label} accountNumber={benefitPayQr.accountNumber}
+                  onExpand={() => setShowQrModal({ src: benefitPayQr.src, label: benefitPayQr.label, accountNumber: benefitPayQr.accountNumber })} />
               </div>
             </div>
           </div>
+
+          {/* Thank you note */}
+          <div className="px-5 sm:px-8 py-5 text-center border-t" style={{ background: "rgba(213,238,248,0.28)", borderColor: "rgba(123,190,221,0.30)" }}>
+            <div className="flex items-center justify-center gap-1.5 mb-2">
+              {[0.45, 0.65, 0.85].map((op, i) => (
+                <Heart key={i} className="w-3 h-3" fill={BABY_BLUE} style={{ color: BABY_BLUE, opacity: op }} />
+              ))}
+            </div>
+            <p className="garamond" style={{ fontSize: "clamp(0.82rem, 2.5vw, 0.95rem)", color: `${DEEP}cc`, fontStyle: "italic", lineHeight: 1.8 }}>
+              Thank you for your kindness, love, and generosity toward my future adventures.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ══════════════════════════════════════════════════════════════
+          GENTLE REMINDERS
+      ══════════════════════════════════════════════════════════════ */}
+      <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 mb-12 sm:mb-16">
+        <div className="text-center mb-6 sm:mb-8">
+          <SectionLabel text="A Few Kind Notes" />
+          <OrnamentDivider blue />
+          <SectionTitle>Gentle Reminders</SectionTitle>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+          <ReminderCard eyebrow="A Sacred Moment" title="Unplugged Christening"
+            icon={<Camera className="w-5 h-5" style={{ color: BABY_BLUE }} />} index={0}>
+            <p className="garamond text-center" style={{ fontSize: "clamp(0.82rem, 2.8vw, 0.95rem)", color: `${DEEP}cc`, lineHeight: 1.85 }}>
+              We are hosting a mostly unplugged christening. You are welcome to take a few photos, but please keep it minimal and avoid blocking our official photographer so every precious moment is beautifully captured. Photos will be shared after the celebration.
+            </p>
+          </ReminderCard>
+
+          <ReminderCard eyebrow="Be On Time" title="Arrival"
+            icon={<Clock className="w-5 h-5" style={{ color: BABY_BLUE }} />} index={1}>
+            <p className="garamond text-center" style={{ fontSize: "clamp(0.82rem, 2.8vw, 0.95rem)", color: `${DEEP}cc`, lineHeight: 1.85 }}>
+              Please arrive at least 30 minutes early. The ceremony begins at{" "}
+              <span style={{ color: DEEP, fontWeight: 600 }}>{siteConfig.ceremony.time}</span>, so kindly be seated by{" "}
+              <span style={{ color: DEEP, fontWeight: 600 }}>{siteConfig.ceremony.guestsTime}</span>.
+            </p>
+          </ReminderCard>
+{/* 
+          <ReminderCard eyebrow="Kind Request" title="Dear Ninongs & Ninangs"
+            icon={<Heart className="w-5 h-5" style={{ color: BABY_BLUE }} fill={BABY_BLUE} />} index={2}>
+            <p className="garamond text-center" style={{ fontSize: "clamp(0.82rem, 2.8vw, 0.95rem)", color: `${DEEP}cc`, lineHeight: 1.85 }}>
+              We kindly ask for a{" "}
+              <span style={{ color: DEEP, fontWeight: 600 }}>PHP 200 church fee</span>{" "}
+              to help with the ceremony. Payment via GCash is welcome.
+            </p>
+            <div className="mt-4 flex flex-col items-center gap-2">
+              <div className="relative w-32 h-32 sm:w-36 sm:h-36 rounded-xl overflow-hidden border shadow-sm" style={{ background: "#fff", borderColor: BLUE_MID }}>
+                <Image src={gcashQr.src} alt={`${gcashQr.label} QR code`} fill className="object-contain p-2" sizes="144px" />
+              </div>
+              <p className="garamond text-xs sm:text-sm" style={{ color: `${DEEP}88` }}>{gcashQr.accountNumber}</p>
+            </div>
+          </ReminderCard> */}
+
+          {/* Baby Health Note */}
+          <ReminderCard eyebrow="A Little Note from Me" title="Baby's Health"
+            icon={<Baby className="w-5 h-5" style={{ color: BABY_BLUE }} />} index={3}>
+            <div className="garamond text-center space-y-2" style={{ fontSize: "clamp(0.82rem, 2.8vw, 0.95rem)", color: `${DEEP}cc`, lineHeight: 1.85 }}>
+              <p>My immune system is still tiny and growing, so please come only if you&apos;re feeling healthy and well.</p>
+              <p>Please sanitize your hands before carrying me and kindly avoid kissing me for now.</p>
+              <p style={{ color: DEEP }}>Thank you for helping keep me safe on my special day! 🤍</p>
+            </div>
+          </ReminderCard>
         </div>
       </div>
 
-      {/* Enhanced Image Modal */}
-      {showImageModal && (
+      {/* ══════════════════════════════════════════════════════════════
+          CLOSING MESSAGE
+      ══════════════════════════════════════════════════════════════ */}
+      <motion.div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 pb-6"
+        custom={5} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-40px" }}>
         <div
-          className="fixed inset-0 backdrop-blur-xl z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 animate-in fade-in duration-500"
-          onClick={() => setShowImageModal(null)}
-          style={{ backgroundColor: "rgba(91,102,85,0.96)" }}
+          className="rounded-3xl p-6 sm:p-10 text-center overflow-hidden"
+          style={{
+            background: "rgba(254,249,243,0.88)",
+            backdropFilter: "blur(14px)",
+            WebkitBackdropFilter: "blur(14px)",
+            border: "1px solid rgba(184,130,42,0.20)",
+            boxShadow: "0 12px 44px rgba(61,40,16,0.11), 0 3px 12px rgba(61,40,16,0.05)",
+          }}
         >
-          {/* Decorative background elements */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div
-              className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-3xl animate-pulse"
-              style={{ backgroundColor: "var(--color-motif-cream)", opacity: 0.12 }}
-            />
-            <div
-              className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-3xl animate-pulse"
-              style={{ backgroundColor: "var(--color-motif-cream)", opacity: 0.14, animationDelay: "1s" }}
-            />
+          {/* Gold+blue accent stripe */}
+          {/* <div className="h-[3px] w-full rounded-full mb-6 mx-auto max-w-[160px]" style={{ background: `linear-gradient(to right, ${GOLD}, ${BABY_BLUE}, ${BLUE_MID})` }} /> */}
+          {/* Top ornament */}
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <div className="h-px w-12 sm:w-20" style={{ background: `linear-gradient(to left, ${GOLD}70, transparent)` }} />
+            <Heart className="w-5 h-5" fill={BABY_BLUE} style={{ color: BABY_BLUE, filter: `drop-shadow(0 0 6px rgba(63,163,200,0.45))` }} />
+            <div className="h-px w-12 sm:w-20" style={{ background: `linear-gradient(to right, ${GOLD}70, transparent)` }} />
           </div>
 
-          <div
-            className="relative max-w-6xl w-full max-h-[95vh] sm:max-h-[90vh] bg-motif-deep rounded-3xl overflow-hidden shadow-2xl border-2 animate-in zoom-in-95 duration-500 group"
-            onClick={(e) => e.stopPropagation()}
-            style={{ borderColor: "var(--color-motif-cream)" }}
-          >
-            {/* Decorative top accent */}
-            <div
-              className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r"
-              style={{ background: "linear-gradient(to right, var(--color-motif-cream), var(--color-motif-cream), var(--color-motif-deep))" }}
-            />
+          <p className="garamond mb-4" style={{ fontSize: "clamp(0.92rem, 3vw, 1.1rem)", color: `${DEEP}cc`, lineHeight: 1.95, fontStyle: "italic" }}>
+            Thank you for being part of the story God wrote for our family.
+          </p>
 
-            {/* Enhanced close button */}
+          <p className="gistesy" style={{ fontSize: "clamp(1.8rem, 7vw, 3rem)", color: DEEP, lineHeight: 1.1, overflow: "visible", paddingTop: "0.1em" }}>
+            With love,
+          </p>
+          <p className="amsterdam-one" style={{ fontSize: "clamp(2.2rem, 9vw, 3.8rem)", color: BABY_BLUE, lineHeight: 1.1, marginTop: "0.2rem" }}>
+            Kaezar
+          </p>
+
+          {/* Bottom ornament */}
+          <div className="flex items-center justify-center gap-3 mt-6">
+            <div className="h-px w-12 sm:w-20" style={{ background: `linear-gradient(to left, ${GOLD}70, transparent)` }} />
+            <ShieldCheck className="w-5 h-5" style={{ color: BABY_BLUE, opacity: 0.7 }} />
+            <div className="h-px w-12 sm:w-20" style={{ background: `linear-gradient(to right, ${GOLD}70, transparent)` }} />
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ══════════════════════════════════════════════════════════════
+          QR MODAL
+      ══════════════════════════════════════════════════════════════ */}
+      {showQrModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-300"
+          style={{ backgroundColor: "rgba(30,52,64,0.88)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)" }}
+          onClick={() => setShowQrModal(null)}
+          role="dialog" aria-modal="true" aria-label="QR code"
+        >
+          <div
+            className="relative w-full max-w-xs rounded-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "rgba(254,249,243,0.97)",
+              border: `2px solid ${BABY_BLUE}`,
+              boxShadow: `0 0 60px rgba(63,163,200,0.22), 0 24px 48px rgba(30,52,64,0.35)`,
+            }}
+          >
+            {/* Gradient stripe */}
+            {/* <div className="h-[3px] w-full" style={{ background: `linear-gradient(to right, ${GOLD}, ${BABY_BLUE}, ${BLUE_MID})` }} /> */}
+
+            {/* Close */}
             <button
-              onClick={() => setShowImageModal(null)}
-              className="absolute top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 z-20 hover:bg-motif-accent backdrop-blur-sm p-2.5 sm:p-3 rounded-xl shadow-xl transition-all duration-300 hover:scale-110 hover:shadow-2xl active:scale-95 border-2 group/close"
+              onClick={() => setShowQrModal(null)}
+              className="absolute top-3 right-3 z-10 p-2 rounded-xl border transition-all duration-200 hover:scale-110 active:scale-95"
+              style={{ background: "rgba(213,238,248,0.70)", borderColor: "rgba(123,190,221,0.55)", color: BABY_BLUE }}
               title="Close (ESC)"
-              style={{ backgroundColor: "var(--color-motif-deep)", borderColor: "var(--color-motif-cream)", color: "var(--color-motif-cream)" }}
             >
-              <X className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 group-hover/close:text-[#E1D5C7] transition-colors" />
+              <X className="w-4 h-4" />
             </button>
 
-            {/* Venue badge */}
-            <div className="absolute top-4 left-4 sm:top-5 sm:left-5 md:top-6 md:left-6 z-20">
+            {/* Header */}
+            <div className="pt-6 pb-3 px-6 text-center">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-3"
+                style={{ background: "rgba(63,163,200,0.12)", border: `1.5px solid rgba(123,190,221,0.50)` }}>
+                <Gift className="w-4 h-4" style={{ color: BABY_BLUE }} />
+              </div>
+              <p className="garamond uppercase" style={{ fontSize: "clamp(0.52rem, 1.8vw, 0.64rem)", letterSpacing: "0.44em", color: BABY_BLUE }}>
+                Scan to Bless
+              </p>
+              <p className="gistesy mt-1" style={{ fontSize: "clamp(1.6rem, 6vw, 2.4rem)", color: DEEP, lineHeight: 1.1 }}>
+                {showQrModal.label}
+              </p>
+            </div>
+
+            {/* QR image */}
+            <div className="px-8 pb-2 flex items-center justify-center">
               <div
-                className="flex items-center gap-2 backdrop-blur-md px-4 py-2 rounded-full shadow-xl border-2"
-                style={{ backgroundColor: "var(--color-motif-deep)", borderColor: "var(--color-motif-cream)" }}
+                className="relative w-full aspect-square rounded-2xl overflow-hidden border-2 shadow-md"
+                style={{ background: "#fff", borderColor: "rgba(123,190,221,0.60)" }}
               >
-                {showImageModal === "ceremony" ? (
-                  <>
-                    <Heart className="w-4 h-4" fill="var(--color-motif-cream)" style={{ color: "var(--color-motif-cream)" }} />
-                    <span className="text-xs sm:text-sm font-bold text-motif-cream">
-                      Ceremony Venue
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <Utensils className="w-4 h-4 text-motif-cream" />
-                    <span className="text-xs sm:text-sm font-bold text-motif-cream">
-                      Reception Venue
-                    </span>
-                  </>
-                )}
+                <Image
+                  src={showQrModal.src}
+                  alt={`${showQrModal.label} QR code`}
+                  fill className="object-contain p-3"
+                  sizes="320px" priority
+                />
               </div>
             </div>
 
-            {/* Image section with enhanced effects */}
-            <div
-              className="relative w-full h-[50vh] sm:h-[60vh] md:h-[70vh] overflow-hidden"
-              style={{ backgroundColor: "var(--color-motif-deep)" }}
-            >
-              {/* Shimmer effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 animate-shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-1000 z-0" />
-
-              <CloudinaryImage
-                src={showImageModal === "ceremony" ? siteConfig.ceremony.image : siteConfig.reception.image[0]}
-                alt={showImageModal === "ceremony" ? ceremonyVenueName : receptionVenueName}
-                fill
-                className="object-contain p-6 sm:p-8 md:p-10 transition-transform duration-700 group-hover:scale-105 z-10"
-                sizes="95vw"
-                priority
-              />
-            </div>
-
-            {/* Enhanced content section */}
-            <div
-              className="garamond p-5 sm:p-6 md:p-8 bg-motif-deep backdrop-blur-sm border-t-2 relative"
-              style={{ borderColor: "var(--color-motif-cream)" }}
-            >
-              {/* Decorative line */}
-              <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-motif-cream/30 to-transparent" />
-
-              <div className="space-y-5">
-                {/* Header with venue info */}
-                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                  <div className="space-y-2">
-                    <h3
-                      className="gistesy flex items-center gap-3"
-                      style={{ fontSize: "clamp(1.2rem, 4vw, 1.8rem)", color: "var(--color-motif-cream)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em" }}
-                    >
-                      {showImageModal === "ceremony" ? (
-                        <Heart className="w-6 h-6 text-motif-cream" fill="var(--color-motif-cream)" />
-                      ) : (
-                        <Utensils className="w-6 h-6 text-motif-cream" />
-                      )}
-                      {showImageModal === "ceremony" ? ceremonyVenueName : receptionVenueName}
-                    </h3>
-                    <div className="flex items-center gap-2 text-sm opacity-70 text-motif-cream">
-                      <MapPin className="w-4 h-4 text-motif-cream" />
-                      <span>
-                        {showImageModal === "ceremony" ? ceremonyAddress : receptionAddress}
-                      </span>
-                    </div>
-
-                    {/* Date & Time info */}
-                    {showImageModal === "ceremony" && (
-                      <div
-                        className="flex items-center gap-2 text-sm font-medium px-3 py-2 rounded-lg border"
-                        style={{
-                          color: "var(--color-motif-cream)",
-                          backgroundColor: "var(--color-motif-deep)",
-                          opacity: 0.9,
-                          borderColor: "var(--color-motif-cream)",
-                        }}
-                      >
-                        <Clock className="w-4 h-4 text-motif-cream" />
-                        <span>
-                          {formattedCeremonyDate} at {siteConfig.ceremony.time}
-                        </span>
-                      </div>
-                    )}
-                    {showImageModal === "reception" && (
-                      <div
-                        className="flex items-center gap-2 text-sm font-medium px-3 py-2 rounded-lg border"
-                        style={{
-                          color: "var(--color-motif-cream)",
-                          backgroundColor: "var(--color-motif-deep)",
-                          opacity: 0.9,
-                          borderColor: "var(--color-motif-cream)",
-                        }}
-                      >
-                        <Clock className="w-4 h-4 text-motif-cream" />
-                        <span>
-                          {formattedReceptionDate} - {siteConfig.reception.time}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Action buttons */}
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
-                    <button
-                      onClick={() =>
-                        copyToClipboard(
-                          showImageModal === "ceremony"
-                            ? ceremonyLocation
-                            : receptionLocation,
-                          `modal-${showImageModal}`,
-                        )
-                      }
-                      className="flex items-center justify-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 bg-motif-deep border-2 rounded-xl font-semibold text-sm transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95 shadow-md hover:bg-motif-accent whitespace-nowrap text-motif-cream"
-                      title="Copy address"
-                      style={{ borderColor: "var(--color-motif-cream)" }}
-                    >
-                      {copiedItems.has(`modal-${showImageModal}`) ? (
-                        <>
-                          <Check className="w-4 h-4" />
-                          <span>Copied!</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-4 h-4" />
-                          <span>Copy Address</span>
-                        </>
-                      )}
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        openInMaps(showImageModal === "ceremony" ? ceremonyMapsLink : receptionMapsLink)
-                      }
-                      className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-300 hover:scale-105 hover:shadow-xl active:scale-95 shadow-lg whitespace-nowrap bg-motif-cream text-motif-deep"
-                    >
-                      <Navigation className="w-4 h-4 sm:w-5 sm:h-5" />
-                      <span>Get Directions</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Additional info */}
-                  <div className="flex items-center gap-2 text-xs opacity-65 text-motif-cream">
-                  <span className="flex items-center gap-1.5">
-                    <Camera className="w-3 h-3" />
-                    Click outside to close
-                  </span>
-                  <span className="hidden sm:inline">•</span>
-                  <span className="hidden sm:inline-flex items-center gap-1.5">Press ESC to close</span>
-                </div>
-              </div>
+            {/* Account / footer */}
+            <div className="px-6 pt-3 pb-6 text-center">
+              <p className="garamond" style={{ fontSize: "clamp(0.76rem, 2.4vw, 0.88rem)", color: `${DEEP}99` }}>
+                {showQrModal.accountNumber}
+              </p>
+              <p className="garamond mt-3 italic" style={{ fontSize: "clamp(0.72rem, 2.2vw, 0.82rem)", color: `${DEEP}88`, lineHeight: 1.7 }}>
+                Thank you for blessing little Kaezar's future.
+              </p>
+              <button
+                onClick={() => setShowQrModal(null)}
+                className="mt-4 garamond px-6 py-2 rounded-full text-white text-sm transition-all duration-200 hover:opacity-90 active:scale-95"
+                style={{ background: `linear-gradient(135deg, ${BABY_BLUE}, ${BLUE_MID})`, fontSize: "clamp(0.72rem, 2.2vw, 0.82rem)", letterSpacing: "0.06em" }}
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>
       )}
-     
-      </div>
+
     </Section>
   )
 }

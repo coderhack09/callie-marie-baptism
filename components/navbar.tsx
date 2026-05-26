@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useRef } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import StaggeredMenu from "./StaggeredMenu"
 
 const navLinks = [
@@ -75,43 +76,57 @@ export function Navbar() {
     <nav
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-700 ease-out ${
         isScrolled
-          ? "backdrop-blur-xl shadow-[0_10px_40px_rgba(139,111,90,0.18)] border-b border-[var(--color-motif-medium)]/50"
-          : "backdrop-blur-lg border-b border-[var(--color-motif-medium)]/40"
+          ? "backdrop-blur-xl shadow-[0_10px_40px_rgba(191,160,122,0.22)] border-b border-[#BFA07A]/40"
+          : "backdrop-blur-lg border-b border-[#BFA07A]/25"
       }`}
       style={{
-        background: isScrolled 
-          ? 'linear-gradient(135deg, color-mix(in srgb, var(--color-motif-cream) 94%, white 6%) 0%, color-mix(in srgb, var(--color-motif-soft) 92%, white 8%) 100%)'
-          : 'linear-gradient(135deg, color-mix(in srgb, var(--color-motif-cream) 90%, white 10%) 0%, color-mix(in srgb, var(--color-motif-soft) 88%, white 12%) 100%)'
+        background: isScrolled
+          ? 'linear-gradient(135deg, rgba(245,230,211,0.97) 0%, rgba(253,246,237,0.95) 50%, rgba(245,230,211,0.97) 100%)'
+          : 'linear-gradient(135deg, rgba(245,230,211,0.90) 0%, rgba(253,246,237,0.87) 50%, rgba(245,230,211,0.90) 100%)'
       }}
     >
-      {/* Elegant glow effect when scrolled */}
+      {/* Soft warm glow when scrolled */}
       {isScrolled && (
-        <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-motif-cream)]/20 via-[var(--color-motif-soft)]/10 to-[var(--color-motif-cream)]/20 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#EDE3D6]/20 via-[#FAF0E4]/15 to-[#EDE3D6]/20 pointer-events-none" />
       )}
       {/* Subtle texture overlay for depth */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-[var(--color-motif-soft)]/12 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-[#CFA06B]/8 pointer-events-none" />
       
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 relative">
         <div className="flex justify-between items-center h-14 sm:h-16 md:h-20">
           <Link href="#home" className="flex-shrink-0 group relative z-10">
-            <div className="relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 flex items-center justify-center">
-              <div 
-                className="text-center group-hover:scale-110 group-active:scale-105 transition-all duration-500"
+            <div className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 flex items-center justify-center group-hover:scale-110 group-active:scale-105 transition-all duration-500">
+              {/* Hidden Image for Next.js preload & priority hint */}
+              <Image
+                src="/monogram/monogram.png"
+                alt="Monogram"
+                width={56}
+                height={56}
+                priority
+                className="sr-only"
+              />
+              {/* Gradient-tinted monogram via CSS mask */}
+              <div
+                role="img"
+                aria-label="Monogram"
                 style={{
-                  fontFamily: '"Cormorant Garamond", serif',
-                  fontWeight: 700,
-                  fontSize: '20px',
-                  lineHeight: '28px',
-                  color: 'var(--color-motif-deep)',
-                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                  width: '100%',
+                  height: '100%',
+                  background: 'linear-gradient(135deg, #B8E4F9 0%, #89CFF0 35%, #4FC3F7 65%, #0ea5e9 100%)',
+                  WebkitMaskImage: 'url(/monogram/monogram.png)',
+                  WebkitMaskSize: 'contain',
+                  WebkitMaskRepeat: 'no-repeat',
+                  WebkitMaskPosition: 'center',
+                  maskImage: 'url(/monogram/monogram.png)',
+                  maskSize: 'contain',
+                  maskRepeat: 'no-repeat',
+                  maskPosition: 'center',
                 }}
-              >
-                N C
-              </div>
+              />
             </div>
-            
+
             {/* Subtle background glow on hover */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--color-motif-medium)]/30 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-10" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#89CFF0]/35 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-10" />
           </Link>
 
           <div className="hidden md:flex gap-1 items-center">
@@ -123,25 +138,25 @@ export function Navbar() {
                   href={link.href}
                   className={`px-3 lg:px-4 py-2 text-xs lg:text-sm uppercase rounded-lg transition-all duration-500 relative group ${
                     isActive
-                      ? "text-[var(--color-motif-deep)] bg-[var(--color-motif-cream)]/95 backdrop-blur-md shadow-[0_6px_18px_rgba(139,111,90,0.2)] border border-[var(--color-motif-medium)]"
-                      : "text-[var(--color-motif-deep)]/80 hover:text-[var(--color-motif-deep)] hover:bg-[var(--color-motif-cream)]/95 hover:border hover:border-[var(--color-motif-medium)]/60 hover:shadow-[0_6px_18px_rgba(139,111,90,0.15)] hover:scale-105 active:scale-95 bg-white/0 border border-transparent"
+                      ? "text-[#1a5a7a] bg-white/70 backdrop-blur-md shadow-[0_6px_18px_rgba(137,207,240,0.35)] border border-[#89CFF0]"
+                      : "text-[#1a5a7a]/80 hover:text-[#1a5a7a] hover:bg-white/70 hover:border hover:border-[#89CFF0]/60 hover:shadow-[0_6px_18px_rgba(137,207,240,0.25)] hover:scale-105 active:scale-95 bg-white/0 border border-transparent"
                   }`}
                   style={{ fontFamily: '"Montserrat", sans-serif', fontWeight: 400 }}
                 >
                   {link.label.toUpperCase()}
                   <span
-                    className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-[var(--color-motif-deep)] via-[var(--color-motif-medium)] to-[var(--color-motif-deep)] transition-all duration-500 rounded-full ${
+                    className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-[#4aa8d8] via-[#89CFF0] to-[#4aa8d8] transition-all duration-500 rounded-full ${
                       isActive
-                        ? "w-full shadow-[0_0_10px_rgba(139,111,90,0.45)]"
-                        : "w-0 group-hover:w-full group-hover:shadow-[0_0_8px_rgba(139,111,90,0.35)]"
+                        ? "w-full shadow-[0_0_10px_rgba(137,207,240,0.55)]"
+                        : "w-0 group-hover:w-full group-hover:shadow-[0_0_8px_rgba(137,207,240,0.40)]"
                     }`}
                   />
                   {/* Active indicator dot */}
                   {isActive && (
-                    <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[var(--color-motif-accent)] animate-pulse shadow-[0_0_6px_rgba(207,160,107,0.55)]" />
+                    <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[#4aa8d8] animate-pulse shadow-[0_0_6px_rgba(137,207,240,0.70)]" />
                   )}
                   {/* Subtle accent on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-transparent via-[var(--color-motif-medium)]/30 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-transparent via-[#89CFF0]/25 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
                 </Link>
               )
             })}
@@ -150,7 +165,7 @@ export function Navbar() {
           <div className="md:hidden flex items-center h-full">
             {/* Decorative halo to improve tap target and visual affordance */}
             <div className="relative">
-              <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-[var(--color-motif-medium)]/24 via-[var(--color-motif-accent)]/18 to-transparent blur-md pointer-events-none" />
+              <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-[#89CFF0]/30 via-[#B8E4F9]/22 to-transparent blur-md pointer-events-none" />
               <StaggeredMenu
                 position="left"
                 items={menuItems}

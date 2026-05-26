@@ -21,9 +21,10 @@ import {
 import { siteConfig } from "@/content/site"
 
 // ── Motif palette ─────────────────────────────────────────────────────────────
-const DEEP   = "#8B6F5A"
-const MEDIUM = "#BFA07A"
-const ACCENT = "#CFA06B"
+const DEEP      = "#3D2810"
+const MEDIUM    = "#8C6035"
+const ACCENT    = "#B8822A"
+const BABY_BLUE = "#3FA3C8"
 
 interface ApiGuest {
   id: string | number
@@ -398,100 +399,116 @@ export function GuestList() {
   return (
     <Section id="guest-list" className="relative z-30 py-6 sm:py-10 md:py-12 lg:py-16">
       {/* Header */}
-      <div className="relative z-10 text-center mb-4 sm:mb-6 md:mb-8 lg:mb-10 px-2 sm:px-3 md:px-4">
-
-        {/* Eyebrow */}
-        <p
-          className="garamond"
+      <div className="relative z-10 text-center mb-6 sm:mb-8 md:mb-10 px-2 sm:px-3 md:px-4">
+        {/* Frosted glass header card */}
+        <div
+          className="inline-block rounded-3xl px-8 py-7 sm:px-14 sm:py-9"
           style={{
-            fontSize: "clamp(0.56rem, 2.2vw, 0.72rem)",
-            letterSpacing: "0.48em",
-            textTransform: "uppercase",
-            color: "rgba(255,247,240,0.82)",
-            marginBottom: "0.4rem",
-            paddingRight: "0.48em",
-            textShadow: "0 1px 8px rgba(0,0,0,0.6)",
+            background: "rgba(254,249,243,0.88)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+            border: "1px solid rgba(184,130,42,0.20)",
+            boxShadow: "0 8px 40px rgba(0,0,0,0.22), 0 2px 10px rgba(0,0,0,0.12)",
           }}
         >
-          Confirm Your Attendance
-        </p>
+          {/* Eyebrow */}
+          <p
+            className="garamond"
+            style={{
+              fontSize: "clamp(0.56rem, 2.2vw, 0.68rem)",
+              letterSpacing: "0.52em",
+              textTransform: "uppercase",
+              color: BABY_BLUE,
+              marginBottom: "0.5rem",
+              paddingRight: "0.52em",
+            }}
+          >
+            Confirm Your Attendance
+          </p>
 
-        {/* Ornament */}
-        <div className="flex items-center justify-center gap-3 mb-2">
-          <div className="h-px w-8 sm:w-12" style={{ background: "linear-gradient(to left, rgba(207,160,107,0.5), transparent)" }} />
-          <span style={{ color: ACCENT, fontSize: "7px", opacity: 0.8 }}>✦</span>
-          <div className="h-px w-8 sm:w-12" style={{ background: "linear-gradient(to right, rgba(207,160,107,0.5), transparent)" }} />
-        </div>
+          {/* Ornament */}
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <div className="h-px w-10 sm:w-16" style={{ background: `linear-gradient(to left, ${ACCENT}88, transparent)` }} />
+            <span style={{ color: ACCENT, fontSize: "8px", opacity: 0.9 }}>✦</span>
+            <div className="h-px w-10 sm:w-16" style={{ background: `linear-gradient(to right, ${ACCENT}88, transparent)` }} />
+          </div>
 
-        {/* Title */}
-        <h2
-          className="gistesy"
-          style={{
-            fontSize: "clamp(2.8rem, 12vw, 5.5rem)",
-            color: "var(--color-motif-cream)",
-            lineHeight: 1.1,
-            overflow: "visible",
-            paddingTop: "0.1em",
-            marginBottom: "0.5rem",
-            textShadow: "0 4px 20px rgba(0,0,0,0.55)",
-          }}
-        >
-          RSVP
-        </h2>
+          {/* Title */}
+          <h2
+            className="gistesy"
+            style={{
+              fontSize: "clamp(2.8rem, 12vw, 5.5rem)",
+              color: DEEP,
+              lineHeight: 1.1,
+              overflow: "visible",
+              paddingTop: "0.1em",
+              marginBottom: "0.5rem",
+            }}
+          >
+            RSVP
+          </h2>
 
-        <p
-          className="garamond"
-          style={{
-            fontSize: "clamp(0.78rem, 2.8vw, 0.96rem)",
-            color: "rgba(255,247,240,0.85)",
-            fontStyle: "italic",
-            lineHeight: 1.8,
-            maxWidth: "460px",
-            margin: "0 auto 0.4rem",
-            textShadow: "0 1px 8px rgba(0,0,0,0.5)",
-          }}
-        >
-          Please search for your name below to confirm your presence at this blessed celebration.
-        </p>
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <div className="h-px w-6 sm:w-10" style={{ background: `linear-gradient(to left, ${BABY_BLUE}cc, transparent)` }} />
+            <span style={{ color: BABY_BLUE, fontSize: "5px", letterSpacing: "0.2em" }}>◆◆◆</span>
+            <div className="h-px w-6 sm:w-10" style={{ background: `linear-gradient(to right, ${BABY_BLUE}cc, transparent)` }} />
+          </div>
 
-        <p
-          className="garamond"
-          style={{
-            fontSize: "clamp(0.78rem, 2.8vw, 0.9rem)",
-            color: "rgba(255,247,240,0.92)",
-            fontWeight: 600,
-            letterSpacing: "0.04em",
-            marginBottom: "0.5rem",
-            textShadow: "0 1px 8px rgba(0,0,0,0.5)",
-          }}
-        >
-          RSVP Deadline: {siteConfig.details.rsvp.deadline}
-        </p>
+          <p
+            className="garamond"
+            style={{
+              fontSize: "clamp(0.78rem, 2.8vw, 0.96rem)",
+              color: MEDIUM,
+              fontStyle: "italic",
+              lineHeight: 1.8,
+              maxWidth: "420px",
+              margin: "0 auto 0.5rem",
+            }}
+          >
+            Please search for your name below to confirm your presence at this blessed celebration.
+          </p>
 
-        {/* Divider */}
-        <div className="flex items-center justify-center gap-3 mt-2">
-          <div className="h-px w-8 sm:w-12" style={{ background: "linear-gradient(to left, rgba(207,160,107,0.45), transparent)" }} />
-          <span style={{ color: "#D4B896", fontSize: "5px" }}>◆</span>
-          <div className="h-px w-8 sm:w-12" style={{ background: "linear-gradient(to right, rgba(207,160,107,0.45), transparent)" }} />
+          <p
+            className="garamond"
+            style={{
+              fontSize: "clamp(0.78rem, 2.8vw, 0.9rem)",
+              color: DEEP,
+              fontWeight: 600,
+              letterSpacing: "0.04em",
+            }}
+          >
+            RSVP Deadline: <span style={{ color: BABY_BLUE }}>{siteConfig.details.rsvp.deadline}</span>
+          </p>
         </div>
       </div>
 
       {/* Search Section */}
       <div className="relative z-10 max-w-2xl mx-auto px-2 sm:px-4 md:px-6 overflow-visible">
-        {/* Card with elegant border */}
-        <div className="relative bg-white/10 backdrop-blur-md border border-motif-deep/60 rounded-lg sm:rounded-xl md:rounded-2xl shadow-lg overflow-visible">
+        {/* Card with frosted ivory background */}
+        <div
+          className="relative rounded-2xl overflow-visible"
+          style={{
+            background: "rgba(254,249,243,0.92)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+            border: "1px solid rgba(184,130,42,0.22)",
+            boxShadow: "0 12px 40px rgba(0,0,0,0.22), 0 3px 10px rgba(0,0,0,0.10)",
+          }}
+        >
+          {/* Top accent stripe */}
+          {/* <div className="h-[3px] w-full rounded-t-2xl" style={{ background: `linear-gradient(to right, ${ACCENT}, ${BABY_BLUE})` }} /> */}
           {/* Card content */}
-          <div className="relative p-2.5 sm:p-4 md:p-5 lg:p-6 overflow-visible">
+          <div className="relative p-3 sm:p-5 md:p-6 overflow-visible">
             <div className="relative z-10 space-y-3 sm:space-y-4 overflow-visible">
               <div className="flex items-center gap-2 sm:gap-3">
-                <div className="bg-motif-deep p-1.5 sm:p-2 rounded-lg shadow-md">
+                <div className="p-1.5 sm:p-2 rounded-lg shadow-md" style={{ background: BABY_BLUE }}>
                   <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-white" />
                 </div>
                 <div>
-                  <label className="garamond block mb-0.5 sm:mb-1" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.94rem)", color: "var(--color-motif-cream)", fontWeight: 600 }}>
+                  <label className="garamond block mb-0.5 sm:mb-1" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.94rem)", color: DEEP, fontWeight: 600 }}>
                     Find Your Name
                   </label>
-                  <p className="garamond" style={{ fontSize: "clamp(0.65rem, 2vw, 0.76rem)", color: "rgba(255,247,240,0.75)", fontStyle: "italic" }}>
+                  <p className="garamond" style={{ fontSize: "clamp(0.65rem, 2vw, 0.76rem)", color: MEDIUM, fontStyle: "italic" }}>
                     Type as you search to see instant results
                   </p>
                 </div>
@@ -596,34 +613,40 @@ export function GuestList() {
           onClick={handleCloseModal}
         >
             <div 
-              className="relative w-full max-w-md sm:max-w-lg mx-1 sm:mx-2 md:mx-4 bg-motif-cream rounded-xl sm:rounded-2xl shadow-2xl border-2 border-motif-deep/80 overflow-hidden animate-in zoom-in-95 duration-300 max-h-[95vh] flex flex-col"
+              className="relative w-full max-w-md sm:max-w-lg mx-1 sm:mx-2 md:mx-4 rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 max-h-[95vh] flex flex-col"
+              style={{ background: "#FEF9F3", border: `2px solid ${BABY_BLUE}55` }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Modal Header */}
-              <div className="relative bg-motif-deep p-3 sm:p-4 md:p-5 lg:p-6 flex-shrink-0">
+              {/* Modal Header — baby blue */}
+              <div
+                className="relative p-3 sm:p-4 md:p-5 lg:p-6 flex-shrink-0"
+                style={{ background: `linear-gradient(135deg, ${BABY_BLUE} 0%, #5BB8D8 100%)` }}
+              >
+                {/* Accent stripe */}
+                <div className="h-[3px] w-full absolute top-0 left-0" style={{ background: `linear-gradient(to right, ${ACCENT}, #fff8, ${ACCENT})` }} />
                 <div className="relative flex items-start justify-between gap-1.5 sm:gap-2">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 mb-1 sm:mb-1.5 md:mb-2 lg:mb-3">
-                      <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 bg-motif-cream/20 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Heart className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 lg:h-5 lg:w-5 text-motif-cream" />
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 bg-white/25 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Heart className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 lg:h-5 lg:w-5 text-white" />
                       </div>
-                      <h3 className="gistesy text-motif-cream" style={{ fontSize: "clamp(1.2rem, 5vw, 2rem)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em" }}>
+                      <h3 className="gistesy text-white" style={{ fontSize: "clamp(1.2rem, 5vw, 2rem)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em" }}>
                         You Are Warmly Invited
                       </h3>
                     </div>
-                    <p className="garamond text-motif-cream/95" style={{ fontSize: "clamp(0.72rem, 2.5vw, 0.9rem)", lineHeight: 1.6 }}>
-                      Dear <span className="font-bold text-motif-cream">{selectedGuest?.Name}</span>, witness and celebrate the Christening!
+                    <p className="garamond text-white/95" style={{ fontSize: "clamp(0.72rem, 2.5vw, 0.9rem)", lineHeight: 1.6 }}>
+                      Dear <span className="font-bold text-white">{selectedGuest?.Name}</span>, witness and celebrate the Christening!
                     </p>
-                    <p className="garamond text-motif-cream/85 mt-1" style={{ fontSize: "clamp(0.65rem, 2vw, 0.8rem)" }}>
-                      We've reserved <span className="font-bold text-motif-cream">{selectedGuest?.AllowedGuests || 1}</span> {selectedGuest?.AllowedGuests === 1 ? 'seat' : 'seats'} for you.
+                    <p className="garamond text-white/85 mt-1" style={{ fontSize: "clamp(0.65rem, 2vw, 0.8rem)" }}>
+                      We've reserved <span className="font-bold text-white">{selectedGuest?.AllowedGuests || 1}</span> {selectedGuest?.AllowedGuests === 1 ? 'seat' : 'seats'} for you.
                     </p>
                   </div>
                   {!hasResponded && (
                     <button
                       onClick={handleCloseModal}
-                      className="text-motif-deep/80 hover:text-motif-deep transition-colors p-0.5 sm:p-1 md:p-2 hover:bg-white/20 rounded-full flex-shrink-0"
+                      className="transition-colors p-0.5 sm:p-1 md:p-2 hover:bg-white/20 rounded-full flex-shrink-0"
                     >
-                      <X className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-motif-deep" />
+                      <X className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-white" />
                     </button>
                   )}
                 </div>
@@ -634,16 +657,16 @@ export function GuestList() {
                 {hasResponded ? (
                   // Thank you message for guests who already responded
                   <div className="text-center py-3 sm:py-4 md:py-6">
-                    <div className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-motif-deep rounded-full mb-2 sm:mb-3 md:mb-4">
+                    <div className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full mb-2 sm:mb-3 md:mb-4" style={{ background: BABY_BLUE }}>
                       <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 text-white" />
                     </div>
-                    <h4 className="gistesy text-motif-deep mb-1.5 sm:mb-2 md:mb-3" style={{ fontSize: "clamp(1.3rem, 5vw, 1.9rem)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em" }}>
+                    <h4 className="gistesy mb-1.5 sm:mb-2 md:mb-3" style={{ fontSize: "clamp(1.3rem, 5vw, 1.9rem)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em", color: DEEP }}>
                       Thank You for Responding!
                     </h4>
-                    <p className="garamond text-motif-medium text-[10px] sm:text-xs md:text-sm mb-2 sm:mb-3 md:mb-4 px-2">
+                    <p className="garamond text-[10px] sm:text-xs md:text-sm mb-2 sm:mb-3 md:mb-4 px-2" style={{ color: MEDIUM }}>
                       We've received your RSVP and look forward to celebrating with you!
                     </p>
-                    <div className="bg-motif-cream/40 rounded-lg p-2.5 sm:p-3 md:p-4 border border-motif-deep/70 space-y-2 sm:space-y-2.5 md:space-y-3">
+                    <div className="rounded-lg p-2.5 sm:p-3 md:p-4 space-y-2 sm:space-y-2.5 md:space-y-3" style={{ background: `${BABY_BLUE}15`, border: `1px solid ${BABY_BLUE}44` }}>
                       <div className="flex items-center justify-center gap-1.5 sm:gap-2 md:gap-3 mb-1.5 sm:mb-2">
                         {selectedGuest?.RSVP === "Yes" && (
                           <>
@@ -663,18 +686,18 @@ export function GuestList() {
                         )}
                       </div>
                       {selectedGuest?.RSVP === "Yes" && (
-                        <div className="bg-motif-cream/60 rounded-lg p-2 sm:p-2.5 md:p-3 border border-motif-deep/80">
+                        <div className="rounded-lg p-2 sm:p-2.5 md:p-3" style={{ background: "rgba(254,249,243,0.8)", border: `1px solid ${BABY_BLUE}55` }}>
                           <div className="text-center">
-                            <p className="text-[10px] sm:text-xs text-motif-medium mb-1 font-medium">Number of Guests</p>
-                            <p className="text-lg sm:text-xl md:text-2xl font-bold text-motif-deep">
+                            <p className="text-[10px] sm:text-xs mb-1 font-medium" style={{ color: MEDIUM }}>Number of Guests</p>
+                            <p className="text-lg sm:text-xl md:text-2xl font-bold" style={{ color: BABY_BLUE }}>
                               {selectedGuest.AllowedGuests || 1}
                             </p>
                           </div>
                         </div>
                       )}
                       {selectedGuest && selectedGuest.Message && selectedGuest.Message.trim() !== "" && (
-                        <div className="pt-1.5 sm:pt-2 border-t border-motif-deep/70">
-                          <p className="text-[10px] sm:text-xs text-motif-medium italic px-1">
+                        <div className="pt-1.5 sm:pt-2" style={{ borderTop: `1px solid ${BABY_BLUE}44` }}>
+                          <p className="text-[10px] sm:text-xs italic px-1" style={{ color: MEDIUM }}>
                             "{selectedGuest.Message}"
                           </p>
                         </div>
@@ -682,7 +705,8 @@ export function GuestList() {
                     </div>
                     <button
                       onClick={handleCloseModal}
-                      className="mt-3 sm:mt-4 md:mt-6 !bg-motif-deep hover:!bg-motif-deep/90 text-white px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300"
+                      className="mt-3 sm:mt-4 md:mt-6 text-white px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300 hover:opacity-90"
+                      style={{ background: BABY_BLUE }}
                     >
                       Close
                     </button>
@@ -708,23 +732,18 @@ export function GuestList() {
                           onClick={() =>
                             setFormData((prev) => ({ ...prev, RSVP: "Yes", Guest: "1" }))
                           }
-                          className={`relative p-2 sm:p-2.5 md:p-3 lg:p-4 rounded-lg border-2 transition-all duration-300 ${
-                            formData.RSVP === "Yes"
-                              ? "border-motif-deep bg-motif-deep/10 shadow-md scale-105"
-                              : "border-motif-deep/60 bg-motif-cream/60 hover:border-motif-deep/70 hover:shadow-sm"
-                          }`}
+                          className="relative p-2 sm:p-2.5 md:p-3 lg:p-4 rounded-lg border-2 transition-all duration-300"
+                          style={formData.RSVP === "Yes"
+                            ? { borderColor: BABY_BLUE, background: `${BABY_BLUE}18`, boxShadow: `0 4px 14px ${BABY_BLUE}33`, transform: "scale(1.05)" }
+                            : { borderColor: `${BABY_BLUE}55`, background: "rgba(254,249,243,0.7)" }
+                          }
                         >
                           <div className="flex items-center justify-center gap-1.5 sm:gap-2">
                             <CheckCircle
-                              className={`h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 ${
-                                formData.RSVP === "Yes" ? "text-motif-deep" : "text-motif-medium/60"
-                              }`}
+                              className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0"
+                              style={{ color: formData.RSVP === "Yes" ? BABY_BLUE : `${MEDIUM}99` }}
                             />
-                            <span
-                              className={`text-xs sm:text-sm font-bold ${
-                                formData.RSVP === "Yes" ? "text-motif-deep" : "text-motif-deep"
-                              }`}
-                            >
+                            <span className="text-xs sm:text-sm font-bold" style={{ color: formData.RSVP === "Yes" ? BABY_BLUE : DEEP }}>
                               Yes!
                             </span>
                           </div>
@@ -732,11 +751,11 @@ export function GuestList() {
                         <button
                           type="button"
                           onClick={() => setFormData((prev) => ({ ...prev, RSVP: "No" }))}
-                          className={`relative p-2 sm:p-2.5 md:p-3 lg:p-4 rounded-lg border-2 transition-all duration-300 ${
-                            formData.RSVP === "No"
-                              ? "border-red-500 bg-red-50 shadow-md scale-105"
-                              : "border-motif-deep/60 bg-motif-cream/60 hover:border-motif-deep/70 hover:shadow-sm"
-                          }`}
+                          className="relative p-2 sm:p-2.5 md:p-3 lg:p-4 rounded-lg border-2 transition-all duration-300"
+                          style={formData.RSVP === "No"
+                            ? { borderColor: "#ef4444", background: "#fef2f2", transform: "scale(1.05)" }
+                            : { borderColor: `${BABY_BLUE}55`, background: "rgba(254,249,243,0.7)" }
+                          }
                         >
                           <div className="flex items-center justify-center gap-1.5 sm:gap-2">
                             <XCircle
@@ -767,7 +786,7 @@ export function GuestList() {
                           Please provide names and relationships for your <span className="font-semibold">{companions.length}</span> additional {companions.length === 1 ? 'guest' : 'guests'}
                         </p>
                         {companions.map((companion, index) => (
-                          <div key={index} className="bg-motif-cream/40 rounded-lg p-2 sm:p-2.5 md:p-3 border border-motif-deep/40 space-y-2 sm:space-y-2.5">
+                          <div key={index} className="rounded-lg p-2 sm:p-2.5 md:p-3 space-y-2 sm:space-y-2.5" style={{ background: `${BABY_BLUE}10`, border: `1px solid ${BABY_BLUE}33` }}>
                             <div className="flex items-center gap-1.5 mb-1 sm:mb-1.5">
                               <User className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-motif-deep" />
                               <span className="text-[10px] sm:text-xs font-semibold text-motif-deep">
@@ -852,7 +871,8 @@ export function GuestList() {
                       <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full !bg-motif-deep hover:!bg-motif-deep/90 text-white py-2 sm:py-2.5 md:py-3 rounded-lg text-xs sm:text-sm font-semibold shadow-md transition-all duration-300 hover:shadow-lg disabled:opacity-70 flex items-center justify-center gap-1.5 sm:gap-2"
+                        className="w-full text-white py-2 sm:py-2.5 md:py-3 rounded-lg text-xs sm:text-sm font-semibold shadow-md transition-all duration-300 hover:opacity-90 hover:shadow-lg disabled:opacity-70 flex items-center justify-center gap-1.5 sm:gap-2"
+                        style={{ background: `linear-gradient(135deg, ${BABY_BLUE} 0%, #5BB8D8 100%)` }}
                       >
                         {isLoading ? (
                           <>
@@ -871,55 +891,53 @@ export function GuestList() {
                 )}
               </div>
 
-              {/* Enhanced Success Overlay */}
+              {/* Success Overlay — light ivory */}
               {success && (
-                <div className="absolute inset-0 bg-motif-deep/98 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-300 p-2 sm:p-3 md:p-4">
+                <div className="absolute inset-0 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-300 p-2 sm:p-3 md:p-4" style={{ background: "rgba(254,249,243,0.97)" }}>
                   <div className="text-center p-3 sm:p-4 md:p-5 lg:p-6 max-w-sm mx-auto">
-                    {/* Enhanced Icon Circle */}
+                    {/* Icon Circle */}
                     <div className="relative inline-flex items-center justify-center mb-3 sm:mb-4">
-                      {/* Animated rings */}
-                      <div className="absolute inset-0 rounded-full border-2 border-motif-cream/20 animate-ping" />
-                      <div className="absolute inset-0 rounded-full border-2 border-motif-cream/30" />
-                      {/* Icon container */}
-                      <div className="relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 bg-motif-cream rounded-full flex items-center justify-center shadow-xl">
-                        <CheckCircle className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-10 lg:w-10 text-motif-medium" strokeWidth={2.5} />
+                      <div className="absolute inset-0 rounded-full border-2 animate-ping" style={{ borderColor: `${BABY_BLUE}44` }} />
+                      <div className="absolute inset-0 rounded-full border-2" style={{ borderColor: `${BABY_BLUE}66` }} />
+                      <div className="relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full flex items-center justify-center shadow-xl" style={{ background: BABY_BLUE }}>
+                        <CheckCircle className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-10 lg:w-10 text-white" strokeWidth={2.5} />
                       </div>
                     </div>
-                    
+
                     {/* Title */}
-                    <h4 className="gistesy text-motif-cream mb-2 sm:mb-3" style={{ fontSize: "clamp(1.4rem, 5vw, 2rem)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em" }}>
+                    <h4 className="gistesy mb-2 sm:mb-3" style={{ fontSize: "clamp(1.4rem, 5vw, 2rem)", color: DEEP, lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em" }}>
                       RSVP Confirmed!
                     </h4>
-                    
+
                     {/* Message based on RSVP response */}
                     {formData.RSVP === "Yes" && (
                       <div className="space-y-1 sm:space-y-1.5 mb-2 sm:mb-3">
-                        <p className="text-motif-medium/95 text-xs sm:text-sm font-medium">
+                        <p className="text-xs sm:text-sm font-medium" style={{ color: BABY_BLUE }}>
                           We're thrilled you'll be joining us!
                         </p>
-                        <p className="text-motif-medium/80 text-[10px] sm:text-xs">
+                        <p className="text-[10px] sm:text-xs" style={{ color: MEDIUM }}>
                           Your response has been recorded
                         </p>
                       </div>
                     )}
                     {formData.RSVP === "No" && (
-                      <p className="text-motif-medium/90 text-xs sm:text-sm mb-2 sm:mb-3">
+                      <p className="text-xs sm:text-sm mb-2 sm:mb-3" style={{ color: MEDIUM }}>
                         We'll miss you, but thank you for letting us know.
                       </p>
                     )}
                     {!formData.RSVP && (
-                      <p className="text-motif-medium/90 text-xs sm:text-sm mb-2 sm:mb-3">
+                      <p className="text-xs sm:text-sm mb-2 sm:mb-3" style={{ color: MEDIUM }}>
                         Thank you for your response!
                       </p>
                     )}
-                    
-                    {/* Subtle closing indicator */}
+
+                    {/* Closing indicator */}
                     <div className="flex items-center justify-center gap-1 sm:gap-1.5 mt-2 sm:mt-3">
-                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 bg-motif-medium/60 rounded-full animate-pulse" />
-                      <p className="text-motif-medium/70 text-[10px] sm:text-xs">
+                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full animate-pulse" style={{ background: `${BABY_BLUE}99` }} />
+                      <p className="text-[10px] sm:text-xs" style={{ color: `${MEDIUM}aa` }}>
                         This will close automatically
                       </p>
-                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 bg-motif-medium/60 rounded-full animate-pulse" />
+                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full animate-pulse" style={{ background: `${BABY_BLUE}99` }} />
                     </div>
                   </div>
                 </div>
@@ -947,24 +965,29 @@ export function GuestList() {
             onClick={handleCloseRequestModal}
           >
             <div 
-              className="relative w-full max-w-md sm:max-w-lg mx-1 sm:mx-2 md:mx-4 bg-motif-cream rounded-xl sm:rounded-2xl shadow-2xl border-2 border-motif-deep/80 overflow-hidden animate-in zoom-in-95 duration-300 max-h-[95vh] flex flex-col"
+              className="relative w-full max-w-md sm:max-w-lg mx-1 sm:mx-2 md:mx-4 rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 max-h-[95vh] flex flex-col"
+              style={{ background: "#FEF9F3", border: `2px solid ${BABY_BLUE}55` }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Modal Header with Gradient */}
-              <div className="relative bg-motif-deep p-3 sm:p-4 md:p-5 lg:p-6 flex-shrink-0">
+              {/* Modal Header — baby blue */}
+              <div
+                className="relative p-3 sm:p-4 md:p-5 lg:p-6 flex-shrink-0"
+                style={{ background: `linear-gradient(135deg, ${BABY_BLUE} 0%, #5BB8D8 100%)` }}
+              >
+                <div className="h-[3px] w-full absolute top-0 left-0" style={{ background: `linear-gradient(to right, ${ACCENT}, #fff8, ${ACCENT})` }} />
                 <div className="relative flex items-start justify-between gap-1.5 sm:gap-2">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 mb-1 sm:mb-1.5 md:mb-2 lg:mb-3">
-                      <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 bg-motif-cream/20 rounded-full flex items-center justify-center backdrop-blur-sm flex-shrink-0">
-                        <UserPlus className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 lg:h-5 lg:w-5 text-motif-cream" />
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 bg-white/25 rounded-full flex items-center justify-center flex-shrink-0">
+                        <UserPlus className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 lg:h-5 lg:w-5 text-white" />
                       </div>
-                      <h3 className="gistesy text-motif-cream" style={{ fontSize: "clamp(1.2rem, 5vw, 2rem)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em" }}>
+                      <h3 className="gistesy text-white" style={{ fontSize: "clamp(1.2rem, 5vw, 2rem)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em" }}>
                         Request to Join
                       </h3>
                     </div>
-                    <p className="text-motif-cream/95 text-[10px] sm:text-xs md:text-sm lg:text-base font-sans leading-tight sm:leading-normal">
+                    <p className="text-white/95 text-[10px] sm:text-xs md:text-sm lg:text-base font-sans leading-tight sm:leading-normal">
                       {requestFormData.Name ? (
-                        <>Hi <span className="font-extrabold text-motif-cream">{requestFormData.Name}</span> — want to celebrate with us? Send a request!</>
+                        <>Hi <span className="font-extrabold text-white">{requestFormData.Name}</span> — want to celebrate with us? Send a request!</>
                       ) : (
                         <>Want to celebrate with us? Send a request!</>
                       )}
@@ -972,9 +995,9 @@ export function GuestList() {
                   </div>
                   <button
                     onClick={handleCloseRequestModal}
-                    className="text-motif-cream/80 hover:text-motif-cream transition-colors p-0.5 sm:p-1 md:p-1.5 lg:p-2 hover:bg-motif-deep/20 rounded-full flex-shrink-0"
+                    className="transition-colors p-0.5 sm:p-1 md:p-1.5 lg:p-2 hover:bg-white/20 rounded-full flex-shrink-0"
                   >
-                    <X className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-motif-cream" />
+                    <X className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-white" />
                   </button>
                 </div>
               </div>
@@ -1079,7 +1102,8 @@ export function GuestList() {
                     <button
                       type="submit"
                       disabled={isLoading}
-                      className="w-full !bg-motif-deep hover:!bg-motif-deep/90 text-white py-2 sm:py-2.5 md:py-3 rounded-lg text-xs sm:text-sm font-semibold shadow-md transition-all duration-300 hover:shadow-lg disabled:opacity-70 flex items-center justify-center gap-1.5 sm:gap-2"
+                      className="w-full text-white py-2 sm:py-2.5 md:py-3 rounded-lg text-xs sm:text-sm font-semibold shadow-md transition-all duration-300 hover:opacity-90 hover:shadow-lg disabled:opacity-70 flex items-center justify-center gap-1.5 sm:gap-2"
+                      style={{ background: `linear-gradient(135deg, ${BABY_BLUE} 0%, #5BB8D8 100%)` }}
                     >
                       {isLoading ? (
                         <>
@@ -1097,41 +1121,41 @@ export function GuestList() {
                 </form>
               </div>
 
-              {/* Enhanced Success Overlay */}
+              {/* Success Overlay — light ivory */}
               {requestSuccess && (
-                <div className="absolute inset-0 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-300 p-2 sm:p-3 md:p-4" style={{ background: `${DEEP}f5` }}>
+                <div className="absolute inset-0 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-300 p-2 sm:p-3 md:p-4" style={{ background: "rgba(254,249,243,0.97)" }}>
                   <div className="text-center p-3 sm:p-4 md:p-5 lg:p-6 max-w-sm mx-auto">
                     {/* Icon Circle */}
                     <div className="relative inline-flex items-center justify-center mb-3 sm:mb-4">
-                      <div className="absolute inset-0 rounded-full border-2 animate-ping" style={{ borderColor: `${ACCENT}40` }} />
-                      <div className="absolute inset-0 rounded-full border-2" style={{ borderColor: `${ACCENT}55` }} />
-                      <div className="relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full flex items-center justify-center shadow-xl" style={{ background: "var(--color-motif-cream)" }}>
-                        <CheckCircle className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-10 lg:w-10" style={{ color: ACCENT }} strokeWidth={2.5} />
+                      <div className="absolute inset-0 rounded-full border-2 animate-ping" style={{ borderColor: `${BABY_BLUE}44` }} />
+                      <div className="absolute inset-0 rounded-full border-2" style={{ borderColor: `${BABY_BLUE}66` }} />
+                      <div className="relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full flex items-center justify-center shadow-xl" style={{ background: BABY_BLUE }}>
+                        <CheckCircle className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-10 lg:w-10 text-white" strokeWidth={2.5} />
                       </div>
                     </div>
 
                     {/* Title */}
-                    <h4 className="gistesy mb-2 sm:mb-3" style={{ fontSize: "clamp(1.4rem, 5vw, 2rem)", color: "var(--color-motif-cream)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em" }}>
+                    <h4 className="gistesy mb-2 sm:mb-3" style={{ fontSize: "clamp(1.4rem, 5vw, 2rem)", color: DEEP, lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em" }}>
                       Request Sent!
                     </h4>
 
                     {/* Message */}
                     <div className="space-y-1 sm:space-y-1.5 mb-2 sm:mb-3">
-                      <p className="garamond" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: "rgba(255,247,240,0.92)", fontWeight: 500 }}>
+                      <p className="garamond font-medium" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: BABY_BLUE }}>
                         We've received your request
                       </p>
-                      <p className="garamond" style={{ fontSize: "clamp(0.65rem, 2vw, 0.76rem)", color: "rgba(255,247,240,0.75)", fontStyle: "italic" }}>
+                      <p className="garamond italic" style={{ fontSize: "clamp(0.65rem, 2vw, 0.76rem)", color: MEDIUM }}>
                         We'll review it and get back to you soon
                       </p>
                     </div>
 
                     {/* Closing indicator */}
                     <div className="flex items-center justify-center gap-1 sm:gap-1.5 mt-2 sm:mt-3">
-                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full animate-pulse" style={{ background: "rgba(207,160,107,0.6)" }} />
-                      <p className="garamond" style={{ fontSize: "clamp(0.6rem, 1.8vw, 0.7rem)", color: "rgba(255,247,240,0.6)" }}>
+                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full animate-pulse" style={{ background: `${BABY_BLUE}99` }} />
+                      <p className="garamond" style={{ fontSize: "clamp(0.6rem, 1.8vw, 0.7rem)", color: `${MEDIUM}aa` }}>
                         This will close automatically
                       </p>
-                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full animate-pulse" style={{ background: "rgba(207,160,107,0.6)" }} />
+                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full animate-pulse" style={{ background: `${BABY_BLUE}99` }} />
                     </div>
                   </div>
                 </div>
