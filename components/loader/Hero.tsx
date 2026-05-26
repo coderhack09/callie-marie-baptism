@@ -20,7 +20,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpen, visible }) => {
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
         >
-          <source src="/background_music/backgroundvideo.mov" type="video/mp4" />
+          <source src="/desktop_background/copy_9EFACE50-A32C-4CBC-86C7-6749533E1305 (1).mov" type="video/mp4" />
         </video>
 
         {/* Dark base overlay for readability */}

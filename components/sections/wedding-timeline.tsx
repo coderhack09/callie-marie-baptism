@@ -49,7 +49,7 @@ const milestones: Milestone[] = [
     date: "September 19, 2025",
     title: "The Day They Shared Me with the World",
     caption: "Pregnancy Announcement",
-    media: { type: "video", src: "/desktop_background/copy_9EFACE50-A32C-4CBC-86C7-6749533E1305.mov" },
+    media: { type: "video", src: "/desktop_background/copy_9EFACE50-A32C-4CBC-86C7-6749533E1305 (1).mov" },
   },
   {
     date: "November 6, 2025",
