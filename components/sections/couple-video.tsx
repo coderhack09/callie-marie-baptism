@@ -218,6 +218,7 @@ export function CoupleVideo() {
               <video
                 ref={videoRef}
                 src="/desktop_background/IMG_8045.mov"
+                poster="/background_music/LinkPreview.png"
                 controls
                 playsInline
                 className="w-full block"
