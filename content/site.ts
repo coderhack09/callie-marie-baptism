@@ -6,8 +6,9 @@ export const siteConfig = {
     groomNickname: "Kenneth",
     child: "Kaezar Isaiahnuel Galardo",
     childNickname: "King",
-    monogram:"/monogram/monogram.png" ,//Ltryl
-    backgroundMusic:"/background_music/For This Child - Baby Dedication Song - Ken Blount.mp3"
+    monogram:"/monogram/new-mongoram.png" ,//Ltryl
+    backgroundMusic:"/background_music/For This Child - Baby Dedication Song - Ken Blount.mp3",
+    parents: "Engr. Carl Kevin & Christine Marie Gallardo",
   },
   googleAPI:{
     messageForm: "https://docs.google.com/forms/d/e/1FAIpQLSf2Fcojdr0e_YGsDJ57o18TCLorKbikJ9nYHxP4YoYZxwZCVA/formResponse", //done
@@ -59,7 +60,7 @@ export const siteConfig = {
     location: "Cathedral of Our Lady of Arabia, Awali, Kingdom of Bahrain",
     venue: "Cathedral of Our Lady of Arabia, Awali, Kingdom of Bahrain",
     date: "July 4, 2026",
-    day: "Sunday",
+    day: "Saturday",
     time: "10:00 AM",
     entourageTime: "8:00 AM",
     guestsTime: "8:30 AM",

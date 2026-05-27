@@ -63,7 +63,7 @@ function SectionHeader({
       <Image src="/decoration/right-top-removebg-preview.png" alt="" width={180} height={180} aria-hidden
         className="absolute top-0 right-0 pointer-events-none select-none w-20 sm:w-28 md:w-36 opacity-45" />
 
-        <p
+        {/* <p
           className="cinzel"
           style={{
             fontSize: "clamp(0.52rem, 2vw, 0.66rem)",
@@ -75,7 +75,7 @@ function SectionHeader({
           }}
         >
           {eyebrow}
-        </p>
+        </p> */}
 
         <div className="flex items-center justify-center gap-3 mb-3">
           <div className="h-px w-10 sm:w-16" style={{ background: `linear-gradient(to left, ${GOLD}88, transparent)` }} />
@@ -84,16 +84,17 @@ function SectionHeader({
         </div>
 
         <h2
-          className="lora-regular"
+          className="cinzel"
           style={{
-            fontSize: "clamp(2rem, 9vw, 4.5rem)",
-            color: DEEP,
-            lineHeight: 1.1,
-            letterSpacing: "0.03em",
+            fontSize: "clamp(1.8rem, 7vw, 2.2rem)",
+            fontWeight: 700,
+            color: "rgba(43,74,107,0.55)",
+            lineHeight: 1.2,
+            letterSpacing: "0.02em",
             marginBottom: "0.5rem",
-          }}
-        >
-          {heading}
+            filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.18))",
+          }}>
+          My Story
         </h2>
 
         <div className="flex items-center justify-center gap-2 mb-3">
@@ -207,7 +208,7 @@ export function LoveStory() {
       <StorySection
         theme="dark"
         layout="image-right"
-        imageSrc="/desktop_background/image00007.jpeg"
+        // imageSrc="/desktop_background/image00007.jpeg"
         text={
           <>
             <p>
@@ -228,7 +229,7 @@ export function LoveStory() {
       <StorySection
         theme="light"
         layout="image-left"
-        imageSrc="/desktop_background/image00005.jpeg"
+        // imageSrc="/desktop_background/image00005.jpeg"
         text={
           <>
             <p>
@@ -248,7 +249,7 @@ export function LoveStory() {
       <StorySection
         theme="dark"
         layout="image-right"
-        imageSrc="/desktop_background/image00004.jpeg"
+        // imageSrc="/desktop_background/image00004.jpeg"
         text={
           <p>
             So with{" "}
@@ -261,17 +262,17 @@ export function LoveStory() {
       />
 
       {/* ── How I Got My Name ── */}
-      <SectionHeader
+      {/* <SectionHeader
         eyebrow="His Name"
         heading="How I Got My Name"
         tagline={"Faith, family, prayers, love, and God's perfect timing"}
-      />
+      /> */}
 
       {/* Name intro */}
       <StorySection
         theme="light"
         layout="image-left"
-        imageSrc="/desktop_background/image00008.jpeg"
+        imageSrc="/desktop_background/image00004.jpeg"
         title="How I Got My Name"
         text={
           <p>
@@ -373,7 +374,7 @@ export function LoveStory() {
         </Link>
 
         <p
-          className="garamond mt-5"
+          className="cinzel mt-5"
           style={{ fontSize: "clamp(0.72rem, 2.2vw, 0.84rem)", color: MEDIUM, fontStyle: "italic", opacity: 0.7 }}
         >
           It would be a joy to celebrate with you.

@@ -1,99 +1,77 @@
 "use client"
 
 import React, { useEffect, useState, useRef } from "react"
-import Image from "next/image"
+import { siteConfig } from "@/content/site"
+import { CloudinaryImage } from "@/components/ui/cloudinary-image"
 
 interface LoadingScreenProps {
   onComplete: () => void
 }
 
-// ── Color palette — warm taupe/khaki (from globals.css motif) ───────────────
-const DEEP      = "#8B6F5A"   // taupe  — headings
-const MEDIUM    = "#BFA07A"   // khaki  — body text
-const ACCENT    = "#CFA06B"   // camel  — accents/highlights
-const CREAM     = "#F5E6D3"   // beige  — main background
-const SILVER    = "#EDE3D6"   // sand   — borders/dividers
-const BABY_BLUE = "#89CFF0"   // baby blue — monogram & event title
+const DOT_FRAMES = ["", ".", "..", "..."]
 
-// Baptism details — hardcoded for this event
-const BABY_NAME_FIRST = "Kaezar"
-const BABY_NAME_LAST  = "Isaiahnuel Galardo"
-const EVENT_LABEL     = "Christening Celebration"
-const TAGLINE         = "A Little Piece of Heaven"
-const EVENT_DATE      = "July 4 , 2026  |  10:00 AM"
-const EVENT_VENUE     = "Cathedral of Our Lady of Arabia, Awali, Kingdom of Bahrain"
-
-// const images = [
-//   {
-//     src: "/mobile_display/baby (9).jpg",
-//     alt: "Baby photo 1",
-//   },
-//   {
-//     src: "/mobile_display/baby (14).jpg",
-//     alt: "Baby photo 2",
-//   },
-// ]
-
-// Ghost watermark date segments (MM DD YY)
-const GHOST_NUMBERS = ["07", "04", "26"]
-
-// ── Canvas particle system ──────────────────────────────────────────────────
+const BUBBLES = [
+  { left: "5%",  size: 7,  dur: 16, delay: 0   },
+  { left: "14%", size: 11, dur: 21, delay: -7  },
+  { left: "25%", size: 5,  dur: 12, delay: -14 },
+  { left: "37%", size: 9,  dur: 18, delay: -4  },
+  { left: "49%", size: 14, dur: 25, delay: -11 },
+  { left: "60%", size: 4,  dur: 10, delay: -19 },
+  { left: "70%", size: 10, dur: 17, delay: -6  },
+  { left: "79%", size: 6,  dur: 13, delay: -9  },
+  { left: "88%", size: 12, dur: 20, delay: -2  },
+  { left: "95%", size: 8,  dur: 15, delay: -16 },
+]
 
 interface Particle {
-  x: number
-  y: number
-  vx: number
-  vy: number
-  radius: number
-  opacity: number
-  twinklePhase: number
-  twinkleSpeed: number
-  colorIdx: number
+  x: number; y: number; vx: number; vy: number
+  radius: number; opacity: number
+  twinklePhase: number; twinkleSpeed: number; colorIdx: number
 }
 
-/** Warm taupe tones matching the motif palette */
 const PARTICLE_COLORS = [
-  "139, 111,  90",   // deep taupe   #8B6F5A
-  "191, 160, 122",   // khaki        #BFA07A
-  "207, 160, 107",   // camel        #CFA06B
-  "232, 210, 181",   // tan/soft     #E8D2B5
+  "196, 152, 88",
+  "210, 170, 105",
+  "180, 138, 78",
+  "220, 185, 128",
 ]
 
 function createParticles(width: number, height: number): Particle[] {
-  const count = Math.min(45, Math.max(20, Math.floor((width * height) / 15000)))
+  const count = Math.min(36, Math.max(16, Math.floor((width * height) / 16000)))
   return Array.from({ length: count }, () => ({
     x: Math.random() * width,
     y: Math.random() * height,
-    vx: (Math.random() - 0.5) * 0.25,
-    vy: -(Math.random() * 0.18 + 0.06),
+    vx: (Math.random() - 0.5) * 0.18,
+    vy: -(Math.random() * 0.10 + 0.03),
     radius: Math.random() * 1.8 + 0.4,
-    opacity: Math.random() * 0.35 + 0.20,
+    opacity: Math.random() * 0.18 + 0.04,
     twinklePhase: Math.random() * Math.PI * 2,
-    twinkleSpeed: Math.random() * 0.012 + 0.004,
+    twinkleSpeed: Math.random() * 0.008 + 0.002,
     colorIdx: Math.floor(Math.random() * PARTICLE_COLORS.length),
   }))
 }
 
-// ── Component ───────────────────────────────────────────────────────────────
-
 export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
   const [fadeOut, setFadeOut]   = useState(false)
   const [progress, setProgress] = useState(0)
-  // phase gates: 0=hidden · 1=header+event · 2=name · 3=tagline · 4=date/venue · 5=progress
   const [phase, setPhase]       = useState(0)
+  const [dotFrame, setDotFrame] = useState(0)
 
   const canvasRef    = useRef<HTMLCanvasElement>(null)
   const animFrameRef = useRef<number>(0)
   const particlesRef = useRef<Particle[]>([])
 
-  const TOTAL_LOAD_MS = 12000
+  const TOTAL_LOAD_MS = 10000
   const FADE_MS       = 700
 
-  // ── Canvas particle animation ────────────────────────────────────────────
+  const parts      = siteConfig.couple.child.trim().split(" ")
+  const givenName  = parts[0]
+  const middleName = parts.length > 2 ? parts[1] : ""
+  const familyName = parts[parts.length - 1]
+
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
-
     const resize = () => {
       canvas.width  = window.innerWidth
       canvas.height = window.innerHeight
@@ -101,47 +79,36 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
     }
     resize()
     window.addEventListener("resize", resize)
-
     const ctx = canvas.getContext("2d")
     if (!ctx) return
-
     let running = true
-
     const draw = () => {
       if (!running) return
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-
       particlesRef.current.forEach((p) => {
         p.twinklePhase += p.twinkleSpeed
         const twinkle = (Math.sin(p.twinklePhase) + 1) * 0.5
-        const alpha   = p.opacity * (0.3 + twinkle * 0.7)
+        const alpha   = p.opacity * (0.35 + twinkle * 0.65)
         const color   = PARTICLE_COLORS[p.colorIdx]
-        const blurR   = p.radius * 3.5
-
+        const blurR   = p.radius * 4.5
         const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, blurR)
-        g.addColorStop(0,   `rgba(${color}, ${alpha})`)
-        g.addColorStop(0.4, `rgba(${color}, ${alpha * 0.45})`)
-        g.addColorStop(1,   `rgba(${color}, 0)`)
-
+        g.addColorStop(0,   `rgba(${color},${alpha})`)
+        g.addColorStop(0.4, `rgba(${color},${alpha * 0.4})`)
+        g.addColorStop(1,   `rgba(${color},0)`)
         ctx.beginPath()
         ctx.arc(p.x, p.y, blurR, 0, Math.PI * 2)
         ctx.fillStyle = g
         ctx.fill()
-
         p.x += p.vx
         p.y += p.vy
-
         const { width, height } = canvas
-        if (p.y < -20)        { p.y = height + 10; p.x = Math.random() * width }
-        if (p.x < -20)          p.x = width + 20
-        if (p.x > width + 20)   p.x = -20
+        if (p.y < -20)         { p.y = height + 10; p.x = Math.random() * width }
+        if (p.x < -20)           p.x = width  + 20
+        if (p.x > width + 20)    p.x = -20
       })
-
       animFrameRef.current = requestAnimationFrame(draw)
     }
-
     draw()
-
     return () => {
       running = false
       cancelAnimationFrame(animFrameRef.current)
@@ -149,35 +116,35 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
     }
   }, [])
 
-  // ── Staggered content reveal ─────────────────────────────────────────────
   useEffect(() => {
     const timers = [
-      setTimeout(() => setPhase(1), 150),
-      setTimeout(() => setPhase(2), 500),
-      setTimeout(() => setPhase(3), 820),
-      setTimeout(() => setPhase(4), 1100),
-      setTimeout(() => setPhase(5), 1380),
+      setTimeout(() => setPhase(1), 120),
+      setTimeout(() => setPhase(2), 380),
+      setTimeout(() => setPhase(3), 600),
+      setTimeout(() => setPhase(4), 820),
+      setTimeout(() => setPhase(5), 1020),
     ]
     return () => timers.forEach(clearTimeout)
   }, [])
 
-  // ── Progress counter ─────────────────────────────────────────────────────
+  useEffect(() => {
+    const id = setInterval(() => setDotFrame(d => (d + 1) % 4), 550)
+    return () => clearInterval(id)
+  }, [])
+
   useEffect(() => {
     let rafId = 0
     const start        = performance.now()
     const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3)
-
     const tick = (now: number) => {
       const t    = Math.min(1, (now - start) / TOTAL_LOAD_MS)
       const next = Math.round(easeOutCubic(t) * 100)
-      setProgress((prev) => (next > prev ? next : prev))
+      setProgress(prev => (next > prev ? next : prev))
       if (t < 1) rafId = requestAnimationFrame(tick)
     }
     rafId = requestAnimationFrame(tick)
-
     const fadeTimer = setTimeout(() => setFadeOut(true), TOTAL_LOAD_MS - FADE_MS)
     const doneTimer = setTimeout(() => { setProgress(100); onComplete() }, TOTAL_LOAD_MS)
-
     return () => {
       cancelAnimationFrame(rafId)
       clearTimeout(fadeTimer)
@@ -185,15 +152,15 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
     }
   }, [onComplete])
 
-  const vis = (minPhase: number) =>
-    phase >= minPhase
-      ? "opacity-100 translate-y-0 transition-all duration-700 ease-out"
-      : "opacity-0 translate-y-4 transition-all duration-700 ease-out"
+  const vis = (minPhase: number, delay = "0ms") => ({
+    opacity:    phase >= minPhase ? 1 : 0,
+    transform:  phase >= minPhase ? "translateY(0)" : "translateY(12px)",
+    transition: `opacity 0.7s ease-out ${delay}, transform 0.7s ease-out ${delay}`,
+  })
 
-  // ── Render ───────────────────────────────────────────────────────────────
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center overflow-hidden transition-opacity duration-700 ease-out ${
+      className={`fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden transition-opacity duration-700 ease-out ${
         fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"
       }`}
       role="progressbar"
@@ -201,375 +168,290 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
       aria-valuemin={0}
       aria-valuemax={100}
       aria-label="Loading invitation"
+      style={{ backgroundColor: "#FFFFFF" }}
     >
-      {/* ── Layer 1: Warm cream base ── */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `linear-gradient(155deg, ${CREAM} 0%, #FAF0E4 40%, ${CREAM} 70%, #FDF6ED 100%)`,
-        }}
-      />
+      {/* ── Center spotlight — identical to Hero ── */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: "radial-gradient(ellipse 72% 65% at 50% 48%, rgba(255,255,255,0.68) 0%, transparent 72%)",
+      }} />
 
-      {/* ── Layer 2: Soft warm radial wash ── */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `radial-gradient(ellipse 60% 55% at 50% 52%, rgba(207,160,107,0.08) 0%, transparent 75%)`,
-        }}
-      />
+      {/* ── Baptismal water wash bottom — identical to Hero ── */}
+      <div className="absolute pointer-events-none" style={{
+        bottom: 0, left: 0, right: 0, height: "36%",
+        background: "linear-gradient(0deg, rgba(120,175,215,0.20) 0%, rgba(140,185,220,0.10) 40%, transparent 100%)",
+      }} />
 
-      {/* ── Layer 3: Canvas particle field ── */}
+      {/* ── Warm particle canvas ── */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 pointer-events-none"
-        style={{ mixBlendMode: "multiply" }}
+        style={{ mixBlendMode: "multiply", opacity: 0.35 }}
         aria-hidden
       />
 
-      {/* ── Layer 4: Warm edge vignette ── */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `radial-gradient(ellipse 85% 80% at 50% 50%, transparent 40%, rgba(191,160,122,0.15) 100%)`,
-        }}
-      />
-
-      {/* ── Layer 5: Corner floral decorations ── */}
-      <Image
-        src="/decoration/left-top-removebg-preview.png"
-        alt=""
-        width={280}
-        height={280}
-        className="absolute top-0 left-0 pointer-events-none select-none w-24 sm:w-32 md:w-40 lg:w-44"
-        aria-hidden
-        priority
-      />
-      <Image
-        src="/decoration/right-top-removebg-preview.png"
-        alt=""
-        width={280}
-        height={280}
-        className="absolute top-0 right-0 pointer-events-none select-none w-24 sm:w-32 md:w-40 lg:w-44"
-        aria-hidden
-        priority
-      />
-      <Image
-        src="/decoration/bottom-left-removebg-preview.png"
-        alt=""
-        width={280}
-        height={280}
-        className="absolute bottom-0 left-0 pointer-events-none select-none w-24 sm:w-32 md:w-40 lg:w-44"
-        aria-hidden
-      />
-      <Image
-        src="/decoration/bottom-right-removebg-preview.png"
-        alt=""
-        width={280}
-        height={280}
-        className="absolute bottom-0 right-0 pointer-events-none select-none w-24 sm:w-32 md:w-40 lg:w-44"
-        aria-hidden
-      />
-
-      {/* ── Layer 6: Ghost date watermark (right side) ── */}
-      <div
-        className="absolute inset-0 pointer-events-none flex flex-col items-end justify-center pr-4 sm:pr-8 md:pr-12 lg:pr-16 select-none"
-        aria-hidden
-      >
-        {GHOST_NUMBERS.map((num, i) => (
-          <span
-            key={`ghost-${num}-${i}`}
-            className="lora-bold leading-[0.82]"
+      {/* ── Pearl bubbles ── */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
+        {BUBBLES.map((b, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full animate-bubble-rise"
             style={{
-              fontSize: "clamp(5rem, 14vw, 12rem)",
-              color: `rgba(139, 111, 90, 0.055)`,
-              letterSpacing: "-0.04em",
-              opacity: phase >= 2 ? 1 : 0,
-              transition: `opacity 1.6s ease-out ${i * 150}ms`,
+              left: b.left, bottom: "-16px",
+              width: `${b.size}px`, height: `${b.size}px`,
+              background: "radial-gradient(circle at 32% 32%, rgba(255,255,255,0.95), rgba(220,185,130,0.10))",
+              border: "1px solid rgba(196,152,88,0.15)",
+              animationDuration: `${b.dur}s`,
+              animationDelay:    `${b.delay}s`,
             }}
-          >
-            {num}
-          </span>
+          />
         ))}
       </div>
 
-      {/* ── Main content ── */}
-      <div className="relative z-10 w-full max-w-sm mx-auto px-3 sm:px-6 md:px-8 text-center">
+      {/* ── Sparkle dots — identical to Hero ── */}
+      {([
+        { top: "14%", left: "8%",   size: 3,   op: 0.45, delay: "1.2s" },
+        { top: "22%", left: "14%",  size: 2,   op: 0.30, delay: "1.5s" },
+        { top: "10%", right: "28%", size: 2.5, op: 0.38, delay: "1.8s" },
+        { top: "35%", left: "5%",   size: 2,   op: 0.28, delay: "2.0s" },
+        { top: "18%", right: "15%", size: 3,   op: 0.40, delay: "1.4s" },
+        { top: "62%", right: "7%",  size: 2.5, op: 0.32, delay: "2.2s" },
+        { top: "70%", left: "10%",  size: 2,   op: 0.28, delay: "1.9s" },
+      ] as Array<{ top: string; left?: string; right?: string; size: number; op: number; delay: string }>)
+        .map((s, i) => (
+          <div key={i} className="absolute pointer-events-none rounded-full" style={{
+            top: s.top, left: s.left, right: s.right,
+            width: `${s.size}px`, height: `${s.size}px`,
+            background: "rgba(196,152,88,1)",
+            opacity: phase >= 1 ? s.op : 0,
+            transition: `opacity 1s ease-out ${s.delay}`,
+          }} aria-hidden />
+        ))}
 
-        {/* Monogram */}
+
+      {/* ════════════════════════════════════════════
+          Full-height spread layout — 3 sections
+      ════════════════════════════════════════════ */}
+      <div
+        className="relative z-10 flex flex-col items-center w-full"
+        style={{ minHeight: "100svh", paddingBottom: "clamp(5rem,14vw,7rem)" }}
+      >
+
+        {/* ── SECTION 1: Monogram + Holy Baptism — top ── */}
         <div
-          className={`flex justify-center mb-3 ${vis(1)}`}
-          style={{ transitionDelay: "0ms" }}
+          className="flex flex-col items-center"
+          style={{ paddingTop: "clamp(4rem,10vh,6rem)" }}
         >
-          <Image
-            src="/monogram/monogram.png"
-            alt="Monogram"
-            width={90}
-            height={90}
-            className="select-none"
-            style={{ filter: "brightness(0) saturate(100%) invert(81%) sepia(25%) saturate(600%) hue-rotate(180deg) brightness(95%) contrast(105%)", width: "clamp(56px, 14vw, 90px)", height: "auto" }}
-            priority
-          />
-        </div>
-
-        {/* "JOIN US FOR" header */}
-        <p
-          className={`garamond ${vis(1)}`}
-          style={{
-            fontSize: "clamp(0.62rem, 3.2vw, 0.75rem)",
-            letterSpacing: "0.48em",
-            textTransform: "uppercase",
-            color: MEDIUM,
-            marginBottom: "0.4rem",
-          }}
-        >
-          Join us for
-        </p>
-
-        {/* "Christening Celebration" script title */}
-        <h2
-          className={`${vis(1)}`}
-          style={{ transitionDelay: "80ms", marginBottom: "0.5rem" }}
-        >
-          <span
-            className="gistesy"
-            style={{
-              fontSize: "clamp(2.2rem, 9.5vw, 4.5rem)",
-              color: BABY_BLUE,
-              lineHeight: 1.15,
-              display: "block",
-              letterSpacing: "-0.01em",
-              textShadow: `0 2px 24px rgba(137,207,240,0.35)`,
-            }}
-          >
-            {EVENT_LABEL}
-          </span>
-        </h2>
-
-        {/* Thin divider line */}
-        <div
-          className={`flex items-center gap-3 justify-center mb-4 sm:mb-6 ${vis(1)}`}
-          style={{ transitionDelay: "140ms" }}
-        >
-          <div className="h-px flex-1" style={{ background: `linear-gradient(to left, rgba(207,160,107,0.35), transparent)` }} />
-          <div className="w-1 h-1 rounded-full" style={{ backgroundColor: `rgba(207,160,107,0.45)` }} />
-          <div className="h-px flex-1" style={{ background: `linear-gradient(to right, rgba(207,160,107,0.35), transparent)` }} />
-        </div>
-
-        {/* ── Name + Photos layered block ── */}
-        {/* mx-auto + maxWidth centres the whole composition so photos + name sit together */}
-        <div className="relative mx-auto" style={{ maxWidth: "clamp(260px, 82vw, 320px)", minHeight: "clamp(210px, 60vw, 280px)", marginBottom: "0" }}>
-
-          {/* Polaroid photos — absolute right, BEHIND the name */}
-          <div
-            className={vis(2)}
-            aria-hidden
-            style={{
-              position: "absolute",
-              top: "10px",
-              right: "-12px",
-              width: "clamp(120px, 42vw, 155px)",
-              height: "clamp(190px, 62vw, 245px)",
-              zIndex: 1,
-            }}
-          >
-            {/* Back photo — tilted left */}
-            {/* <div
+          <div style={{
+            position: "relative",
+            opacity:    phase >= 1 ? 1 : 0,
+            transform:  phase >= 1 ? "scale(1)" : "scale(0.92)",
+            transition: "opacity 0.8s ease-out, transform 0.8s ease-out",
+            marginBottom: "clamp(0.5rem,1.5vw,0.8rem)",
+          }}>
+            <div className="absolute rounded-full animate-loader-glow pointer-events-none" style={{
+              inset: "-24px",
+              background: "radial-gradient(circle, rgba(210,185,150,0.22) 0%, transparent 65%)",
+              filter: "blur(14px)",
+            }} />
+            <CloudinaryImage
+              src={siteConfig.couple.monogram}
+              alt="Monogram"
+              width={160} height={160}
+              className="h-16 w-16 sm:h-20 sm:w-20 object-contain object-center relative"
               style={{
-                position: "absolute",
-                top: "0px",
-                right: "clamp(36px, 13vw, 52px)",
-                width: "clamp(88px, 29vw, 115px)",
-                height: "clamp(100px, 33vw, 132px)",
-                background: "#fff",
-                boxShadow: "0 6px 24px rgba(139,111,90,0.16)",
-                transform: "rotate(-10deg)",
-                padding: "6px",
-                paddingBottom: "22px",
-                borderRadius: "2px",
-                zIndex: 1,
-                overflow: "hidden",
+                filter: "brightness(0) sepia(1) saturate(0.18) brightness(1.35)",
+                opacity: 0.85,
               }}
-            >
-              <div style={{ position: "relative", width: "100%", height: "100%", borderRadius: "1px", overflow: "hidden" }}>
-                <Image
-                  src={images[0].src}
-                  alt={images[0].alt}
-                  fill
-                  sizes="115px"
-                  className="object-cover object-center"
-                  priority
-                />
-              </div>
-            </div> */}
-
-            {/* Front photo — tilted right */}
-            {/* <div
-              style={{
-                position: "absolute",
-                top: "clamp(75px, 25vw, 105px)",
-                right: "0px",
-                width: "clamp(88px, 29vw, 115px)",
-                height: "clamp(100px, 33vw, 132px)",
-                background: "#fff",
-                boxShadow: "0 8px 28px rgba(139,111,90,0.20)",
-                transform: "rotate(7deg)",
-                padding: "6px",
-                paddingBottom: "22px",
-                borderRadius: "2px",
-                zIndex: 2,
-                overflow: "hidden",
-              }}
-            >
-              <div style={{ position: "relative", width: "100%", height: "100%", borderRadius: "1px", overflow: "hidden" }}>
-                <Image
-                  src={images[1].src}
-                  alt={images[1].alt}
-                  fill
-                  sizes="115px"
-                  className="object-cover object-center"
-                />
-              </div>
-            </div> */}
+              priority
+            />
           </div>
 
-          {/* Baby name — centred, IN FRONT of the images */}
-          <h1
-            className={`flex flex-col items-center justify-center ${vis(2)}`}
-            style={{ transitionDelay: "60ms", position: "relative", zIndex: 5, paddingTop: "clamp(3rem, 10vw, 4rem)" }}
-          >
-            {/* First name */}
-            <div className="coolvetica regular flex items-baseline justify-center" style={{ gap: "0.1rem" }}>
-              <span
-                style={{
-                  fontSize: "clamp(4.8rem, 21vw, 8.5rem)",
-                  color: DEEP,
-                  lineHeight: 1,
-                  textShadow: `0 3px 28px rgba(139,111,90,0.18)`,
-                  marginTop: "clamp(0.3rem, 1.5vw, 0.6rem)",
-                }}
-              >
-                {BABY_NAME_FIRST.charAt(0)}
-              </span>
-              <span
-                style={{
-                  fontSize: "clamp(2.4rem, 10.5vw, 4.2rem)",
-                  color: DEEP,
-                  lineHeight: 1,
-                  textShadow: `0 2px 20px rgba(139,111,90,0.14)`,
-                }}
-              >
-                {BABY_NAME_FIRST.slice(1)}
-              </span>
-            </div>
-
-            {/* Last name */}
-            <span
-              className="amsterdam-one"
-              style={{
-                fontSize: "clamp(1.8rem, 8vw, 3.2rem)",
-                color: DEEP,
-                lineHeight: 1.1,
-                textShadow: `0 2px 20px rgba(139,111,90,0.14)`,
-                marginTop: "clamp(0.9rem, 4vw, 1.4rem)",
-                textAlign: "center",
-              }}
-            >
-              {BABY_NAME_LAST}
-            </span>
-          </h1>
-        </div>
-
-        {/* Thin rule below name */}
-        <div className={`flex items-center gap-3 justify-center mt-2 sm:mt-3 mb-2 sm:mb-3 ${vis(3)}`}>
-          <div className="h-px flex-1" style={{ background: `linear-gradient(to left, rgba(139,111,90,0.20), transparent)` }} />
-          <span style={{ color: SILVER, fontSize: "5px", letterSpacing: "0.2em" }}>◆</span>
-          <div className="h-px flex-1" style={{ background: `linear-gradient(to right, rgba(139,111,90,0.20), transparent)` }} />
-        </div>
-
-        {/* Tagline */}
-        <p
-          className={`garamond ${vis(3)}`}
-          style={{
-            fontSize: "clamp(0.82rem, 3vw, 1.1rem)",
-            color: DEEP,
-            letterSpacing: "0.03em",
-            marginBottom: "0.5rem",
-          }}
-        >
-          {TAGLINE}
-        </p>
-
-        {/* Date — bold and prominent */}
-        <p
-          className={`garamond ${vis(4)}`}
-          style={{
-            transitionDelay: "40ms",
-            fontSize: "clamp(0.95rem, 3.8vw, 1.25rem)",
-            letterSpacing: "0.05em",
+          <p style={{
+            ...vis(1, "0.3s"),
+            fontFamily: '"Cinzel", serif',
             fontWeight: 700,
-            color: DEEP,
-            marginBottom: "0.3rem",
-          }}
-        >
-          {EVENT_DATE}
-        </p>
-
-        {/* Venue */}
-        <p
-          className={`garamond ${vis(4)}`}
-          style={{
-            transitionDelay: "80ms",
-            fontSize: "clamp(0.6rem, 2.2vw, 0.76rem)",
-            letterSpacing: "0.02em",
-            color: MEDIUM,
-            marginBottom: "clamp(1rem, 4vw, 1.8rem)",
-          }}
-        >
-          {EVENT_VENUE}
-        </p>
-
-        {/* Progress section */}
-        <div className={`${vis(5)}`}>
-          <p
-            className="garamond"
-            style={{
-              fontSize: "clamp(0.82rem, 3vw, 1.1rem)",
-              letterSpacing: "0.07em",
-              color: `rgba(191,160,122,0.85)`,
-              marginBottom: "10px",
-            }}
-          >
-            Loading Invitation
+            fontSize: "clamp(0.68rem, 2.4vw, 0.85rem)",
+            letterSpacing: "0.24em",
+            textTransform: "uppercase",
+            color: "#1C3050",
+            textShadow: "0 1px 8px rgba(28,48,80,0.10)",
+          }}>
+            Holy Baptism
           </p>
+        </div>
 
-          {/* Hairline progress bar */}
-          <div className="w-full max-w-[180px] mx-auto relative" style={{ height: "1px" }} role="presentation">
-            <div className="absolute inset-0 rounded-full" style={{ backgroundColor: `rgba(191,160,122,0.22)` }} />
-            <div
-              className="absolute inset-y-0 left-0 rounded-full overflow-hidden"
-              style={{
-                width: `${Math.max(progress, 2)}%`,
-                transition: "width 200ms linear",
-                background: `linear-gradient(to right, rgba(139,111,90,0.65), rgba(207,160,107,0.90))`,
-              }}
-            >
-              <div
-                className="absolute inset-y-0 animate-loader-shimmer"
-                style={{ width: "50px", background: `linear-gradient(90deg, transparent 0%, rgba(232,210,181,0.55) 50%, transparent 100%)` }}
-              />
+        {/* ── Flex spacer pushes name to center ── */}
+        <div style={{ flex: 1 }} />
+
+        {/* ── SECTION 2: Name stack — vertical center ── */}
+        <div className="flex flex-col items-center text-center px-6">
+
+          {/* Diamond rule above name */}
+          <div style={vis(2, "0ms")}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", width: "clamp(180px,60vw,280px)", marginBottom: "clamp(0.8rem,2.4vw,1.2rem)" }}>
+              <div style={{ flex: 1, height: "1px", background: "linear-gradient(to right, transparent, rgba(196,152,88,0.45))" }} />
+              <div style={{ width: "6px", height: "6px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.68)" }} />
+              <div style={{ flex: 1, height: "1px", background: "linear-gradient(to left, transparent, rgba(196,152,88,0.45))" }} />
             </div>
           </div>
 
-          {/* Percentage counter */}
-          <p
-            className="garamond tabular-nums mt-2"
-            style={{
-              fontSize: "clamp(0.48rem, 1.8vw, 0.62rem)",
-              letterSpacing: "0.35em",
-              color: `rgba(139,111,90,0.52)`,
-            }}
-            aria-live="polite"
-          >
+          {/* KAEZAR */}
+          <div style={vis(2, "60ms")}>
+            <div style={{
+              fontFamily: '"Cinzel", serif',
+              fontWeight: 700,
+              fontSize: "clamp(3.4rem, 14.5vw, 7.5rem)",
+              color: "#2B4A6B",
+              lineHeight: 1.0,
+              letterSpacing: "0.14em",
+              textShadow: "0 2px 20px rgba(43,74,107,0.14), 0 4px 40px rgba(43,74,107,0.06)",
+            }}>
+              {givenName.toUpperCase()}
+            </div>
+          </div>
+
+          {/* Isaiahnuel */}
+          {middleName && (
+            <div style={vis(3, "60ms")}>
+              <div style={{
+                fontFamily: '"LeJourScript", cursive',
+                fontSize: "clamp(2.4rem, 9.5vw, 5rem)",
+                color: "#C4965A",
+                lineHeight: 1.08,
+                letterSpacing: "0.02em",
+                marginTop: "clamp(0.2rem,0.8vw,0.4rem)",
+                filter: "drop-shadow(0 2px 6px rgba(196,152,88,0.16))",
+              }}>
+                {middleName}
+              </div>
+            </div>
+          )}
+
+          {/* Galardo */}
+          <div style={vis(3, "120ms")}>
+            <div style={{
+              fontFamily: '"Cinzel", serif',
+              fontWeight: 400,
+              fontSize: "clamp(1.0rem, 4vw, 2rem)",
+              color: "rgba(43,74,107,0.55)",
+              lineHeight: 1.20,
+              letterSpacing: "0.20em",
+              textTransform: "uppercase",
+              marginTop: "clamp(0.3rem,0.8vw,0.5rem)",
+            }}>
+              {familyName}
+            </div>
+          </div>
+
+          {/* Diamond rule below name */}
+          <div style={vis(4, "0ms")}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", width: "clamp(180px,60vw,280px)", marginTop: "clamp(0.8rem,2.4vw,1.2rem)" }}>
+              <div style={{ flex: 1, height: "1px", background: "linear-gradient(to right, transparent, rgba(196,152,88,0.42))" }} />
+              <div style={{ width: "6px", height: "6px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.60)" }} />
+              <div style={{ flex: 1, height: "1px", background: "linear-gradient(to left, transparent, rgba(196,152,88,0.42))" }} />
+            </div>
+          </div>
+        </div>
+
+        {/* ── Flex spacer pushes parents to bottom ── */}
+        <div style={{ flex: 1 }} />
+
+        {/* ── SECTION 3: Son of + Parents — lower third ── */}
+        <div
+          className="flex flex-col items-center text-center px-6"
+          style={{ paddingBottom: "clamp(0.5rem,2vw,1rem)" }}
+        >
+          <div style={vis(4, "80ms")}>
+            <p style={{
+              fontFamily: '"Cinzel", serif',
+              fontSize: "clamp(0.52rem, 1.8vw, 0.62rem)",
+              letterSpacing: "0.40em",
+              textTransform: "uppercase",
+              color: "rgba(72,112,148,0.68)",
+              marginBottom: "8px",
+            }}>
+              Son of
+            </p>
+            <p style={{
+              fontFamily: '"Fahkwang", sans-serif',
+              fontWeight: 400,
+              fontSize: "clamp(0.82rem, 2.8vw, 1.0rem)",
+              color: "rgba(65,90,115,0.82)",
+              letterSpacing: "0.03em",
+              lineHeight: 1.7,
+              textAlign: "center",
+              maxWidth: "clamp(230px,72vw,320px)",
+            }}>
+              {siteConfig.couple.parents}
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      {/* ── Progress bar — pinned to bottom ── */}
+      <div
+        className="absolute bottom-0 left-0 right-0 z-10 flex flex-col items-center"
+        style={{ paddingBottom: "clamp(1.8rem,5vw,3rem)" }}
+      >
+        <div style={{
+          ...vis(5, "0ms"),
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          width: "100%",
+          maxWidth: "240px",
+          padding: "0 28px",
+          gap: "10px",
+        }}>
+          {/* Label with gold hairlines */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div style={{ flex: 1, height: "1px", background: "linear-gradient(to right, transparent, rgba(196,152,88,0.40))" }} />
+            <p style={{
+              fontFamily: '"Cinzel", serif',
+              fontSize: "clamp(0.62rem, 2.2vw, 0.72rem)",
+              letterSpacing: "0.28em",
+              textTransform: "uppercase",
+              color: "rgba(72,112,148,0.72)",
+              margin: 0,
+              whiteSpace: "nowrap",
+            }}>
+              Loading Invitation{DOT_FRAMES[dotFrame]}
+            </p>
+            <div style={{ flex: 1, height: "1px", background: "linear-gradient(to left, transparent, rgba(196,152,88,0.40))" }} />
+          </div>
+
+          {/* Progress bar */}
+          <div className="w-full relative" style={{ height: "2px" }} role="presentation">
+            <div className="absolute inset-0 rounded-full" style={{ backgroundColor: "rgba(196,152,88,0.14)" }} />
+            <div className="absolute inset-y-0 left-0 overflow-visible rounded-full" style={{
+              width: `${Math.max(progress, 2)}%`,
+              transition: "width 200ms linear",
+              background: "linear-gradient(to right, #C4965A, rgba(210,170,105,0.70))",
+            }}>
+              <div className="absolute inset-y-0 animate-loader-shimmer" style={{
+                width: "60px",
+                background: "linear-gradient(90deg, transparent 0%, rgba(255,240,200,0.65) 50%, transparent 100%)",
+              }} />
+              <div className="absolute top-1/2 -translate-y-1/2" style={{
+                right: "-4px",
+                width: "8px", height: "8px",
+                borderRadius: "50%",
+                background: "#C4965A",
+                boxShadow: "0 0 8px rgba(196,152,88,0.90), 0 0 16px rgba(196,152,88,0.35)",
+              }} />
+            </div>
+          </div>
+
+          {/* Percentage */}
+          <p className="tabular-nums" style={{
+            fontFamily: '"Cinzel", serif',
+            fontSize: "clamp(0.62rem, 2.2vw, 0.72rem)",
+            letterSpacing: "0.30em",
+            color: "rgba(196,152,88,0.60)",
+            textAlign: "center",
+            margin: 0,
+          }} aria-live="polite">
             {progress}%
           </p>
         </div>

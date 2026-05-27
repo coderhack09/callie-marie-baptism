@@ -283,6 +283,104 @@ html {
   font-style: normal;
 }
 
+/* Imperial Script font utility class */
+.imperial-script-regular {
+  font-family: var(--font-imperial-script), cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Lavishly Yours font utility class */
+.lavishly-yours-regular {
+  font-family: "Lavishly Yours", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* ── Lighten display font ── */
+@font-face {
+  font-family: "LightenFree";
+  src: url("/fonts/LightenFreeRegular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Agrandir Wide Bold ── */
+@font-face {
+  font-family: "AgrandirWideBold";
+  src: url("/fonts/agrandir-wide-bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Brittany Signature Script ── */
+@font-face {
+  font-family: "BrittanySignature";
+  src: url("/fonts/BrittanySignatureScript.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Westonia ── */
+@font-face {
+  font-family: "Westonia";
+  src: url("/fonts/Westonia.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Le Jour Serif ── */
+@font-face {
+  font-family: "LeJourSerif";
+  src: url("/fonts/LeJourSerif.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Le Jour Script ── */
+@font-face {
+  font-family: "LeJourScript";
+  src: url("/fonts/LeJourScript.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fahkwang";
+  src: url("/fonts/Fahkwang-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fahkwang";
+  src: url("/fonts/Fahkwang-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fahkwang";
+  src: url("/fonts/Fahkwang-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+.lighten-regular {
+  font-family: "LightenFree", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
 /* ── Loader animations ── */
 @keyframes loader-glow {
   0%, 100% { opacity: 0.55; transform: scale(1); }
@@ -301,6 +399,23 @@ html {
 .animate-loader-shimmer {
   animation: loader-shimmer 2.8s ease-in-out infinite;
 }
+
+/* Loading Screen — rising baptism bubbles */
+@keyframes bubble-rise {
+  0%   { transform: translateY(0) scale(0.85);  opacity: 0; }
+  8%   { opacity: 0.65; }
+  90%  { opacity: 0.28; }
+  100% { transform: translateY(-110vh) scale(1.4); opacity: 0; }
+}
+
+/* Loading Screen — soft name glow pulse */
+@keyframes loader-name-glow {
+  0%, 100% { text-shadow: none; }
+  50%       { text-shadow: 0 0 28px rgba(196,152,88,0.22), 0 0 54px rgba(91,157,192,0.12); }
+}
+
+.animate-bubble-rise       { animation: bubble-rise linear infinite; }
+.animate-loader-name-glow  { animation: loader-name-glow 5s ease-in-out infinite; }
 
 /* Scrollbar styling */
 ::-webkit-scrollbar {

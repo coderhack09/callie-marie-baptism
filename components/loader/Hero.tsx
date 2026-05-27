@@ -1,173 +1,309 @@
-import React from 'react';
-import Image from 'next/image';
-import { FadeIn } from './FadeIn';
+"use client"
+
+import React from "react"
+import { siteConfig } from "@/content/site"
+import { FadeIn } from "./FadeIn"
 
 interface HeroProps {
-  onOpen: () => void;
-  visible: boolean;
+  onOpen: () => void
+  visible: boolean
 }
 
 export const Hero: React.FC<HeroProps> = ({ onOpen, visible }) => {
+  const parts      = siteConfig.couple.child.trim().split(" ")
+  const givenName  = parts[0]       // Kaezar
+  const middleName = parts[1] ?? "" // Isaiahnuel
 
   return (
-    <div className={`fixed inset-0 z-30 flex items-center justify-center overflow-hidden transition-all duration-1000 ${visible ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
-      {/* Background Video */}
-      <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-        >
-          <source src="/desktop_background/copy_9EFACE50-A32C-4CBC-86C7-6749533E1305 (1).mov" type="video/mp4" />
-        </video>
+    <div
+      className={`fixed inset-0 z-30 flex items-center justify-center overflow-hidden transition-all duration-1000 ${
+        visible ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
+      }`}
+    >
 
-        {/* Dark base overlay for readability */}
+
+      {/* ── Center spotlight — lifts content off background ── */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse 72% 65% at 50% 48%, rgba(255,255,255,0.68) 0%, transparent 72%)",
+        }}
+      />
+
+
+      {/* ── Baptismal water wash — bottom ── */}
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          bottom: 0, left: 0, right: 0, height: "36%",
+          background: "linear-gradient(0deg, rgba(120,175,215,0.20) 0%, rgba(140,185,220,0.10) 40%, transparent 100%)",
+        }}
+      />
+
+      {/* ── Small scattered sparkle dots ── */}
+      {[
+        { top: "14%", left: "8%",  size: 3, op: 0.45, delay: "1.2s" },
+        { top: "22%", left: "14%", size: 2, op: 0.30, delay: "1.5s" },
+        { top: "10%", right: "28%",size: 2.5, op: 0.38, delay: "1.8s" },
+        { top: "35%", left: "5%",  size: 2, op: 0.28, delay: "2.0s" },
+        { top: "18%", right: "15%",size: 3, op: 0.40, delay: "1.4s" },
+        { top: "62%", right: "7%", size: 2.5, op: 0.32, delay: "2.2s" },
+        { top: "70%", left: "10%", size: 2, op: 0.28, delay: "1.9s" },
+      ].map((s, i) => (
         <div
-          className="absolute inset-0"
-          style={{ background: 'rgba(10,6,4,0.48)' }}
-        />
-        {/* Warm gradient overlay */}
-        <div 
-          className="absolute inset-0" 
+          key={i}
+          className="absolute pointer-events-none rounded-full"
           style={{
-            background: "linear-gradient(175deg, rgba(30,18,10,0.62) 0%, rgba(60,36,18,0.38) 45%, rgba(100,60,20,0.30) 100%)",
+            ...{ top: s.top, left: (s as Record<string,unknown>).left as string | undefined, right: (s as Record<string,unknown>).right as string | undefined },
+            width:  `${s.size}px`,
+            height: `${s.size}px`,
+            background: "rgba(196,152,88,1)",
+            opacity: visible ? s.op : 0,
+            transition: `opacity 1s ease-out ${s.delay}`,
           }}
+          aria-hidden
         />
-      </div>
+      ))}
 
-      {/* Content Container */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center p-6 w-full max-w-md mx-auto min-h-screen">
+      {/* ── Main content ── */}
+      <div className="relative z-10 flex flex-col items-center justify-center text-center w-full max-w-sm mx-auto px-6 min-h-screen">
 
-        {/* Monogram */}
-        <FadeIn show={visible} delay={150} className="mb-3 sm:mb-4">
-          <div
-            style={{
-              background: 'linear-gradient(160deg, rgba(255,255,255,0.13) 0%, rgba(191,160,122,0.18) 50%, rgba(255,255,255,0.06) 100%)',
-              borderRadius: '50%',
-              padding: 'clamp(10px, 2.5vw, 16px)',
-              boxShadow: '0 0 32px rgba(191,160,122,0.22), 0 0 0 1px rgba(255,255,255,0.10)',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Image
-              src="/monogram/monogram.png"
-              alt="Monogram"
-              width={100}
-              height={100}
-              priority
+        {/* Cross — with golden halo + 20-pt rays */}
+        <FadeIn show={visible} delay={80}>
+          <div style={{ position: "relative", marginBottom: "clamp(1rem,3vw,1.6rem)", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+            {/* Soft halo glow */}
+            <div
+              className="absolute animate-loader-glow"
               style={{
-                width: 'clamp(52px, 13vw, 88px)',
-                height: 'auto',
-                filter: 'brightness(0) invert(1) drop-shadow(0 2px 12px rgba(0,0,0,0.30))',
-                opacity: 1,
+                inset: "-8px",
+                borderRadius: "50%",
+                background: "radial-gradient(circle, rgba(196,152,88,0.18) 0%, rgba(220,175,100,0.08) 55%, transparent 80%)",
+                filter: "blur(6px)",
               }}
             />
+            <svg viewBox="0 0 110 115" style={{ width: "clamp(66px,16vw,90px)", position: "relative" }} fill="none">
+              {/* Halo circle */}
+              <circle cx="55" cy="56" r="22" stroke="rgba(196,152,88,0.20)" strokeWidth="0.8" fill="rgba(196,152,88,0.05)" />
+              {/* 20 radiant rays */}
+              {Array.from({ length: 20 }, (_, i) => {
+                const deg  = (i * 360) / 20
+                const long = i % 2 === 0
+                const rad  = (deg * Math.PI) / 180
+                return (
+                  <line
+                    key={i}
+                    x1={55 + Math.sin(rad) * (long ? 24 : 19)}
+                    y1={56 - Math.cos(rad) * (long ? 24 : 19)}
+                    x2={55 + Math.sin(rad) * (long ? 42 : 33)}
+                    y2={56 - Math.cos(rad) * (long ? 42 : 33)}
+                    stroke={`rgba(196,152,88,${long ? 0.58 : 0.25})`}
+                    strokeWidth={long ? "1.5" : "0.8"}
+                    strokeLinecap="round"
+                  />
+                )
+              })}
+              {/* Cross bars */}
+              <rect x="49" y="18" width="12" height="74" rx="5" fill="url(#crossGold)" />
+              <rect x="22" y="38" width="66" height="12" rx="5" fill="url(#crossGold)" />
+              {/* Highlight */}
+              <rect x="52" y="18" width="5" height="74" rx="2.5" fill="rgba(255,242,200,0.28)" />
+              <defs>
+                <linearGradient id="crossGold" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%"   stopColor="#D4A860" />
+                  <stop offset="50%"  stopColor="#C4965A" />
+                  <stop offset="100%" stopColor="#A87840" />
+                </linearGradient>
+              </defs>
+            </svg>
           </div>
         </FadeIn>
 
-        {/* Name block */}
-        <FadeIn show={visible} delay={300} className="mb-4 sm:mb-6 flex flex-col items-center">
-
-          {/* Top rule */}
-          <div className="flex items-center gap-3 mb-4" style={{ width: 'clamp(180px, 58vw, 280px)' }}>
-            <div className="flex-1 h-px" style={{ background: 'linear-gradient(to left, rgba(255,255,255,0.5), transparent)' }} />
-            <div className="w-[3px] h-[3px] rounded-full rotate-45" style={{ backgroundColor: 'rgba(255,255,255,0.6)' }} />
-            <div className="flex-1 h-px" style={{ background: 'linear-gradient(to right, rgba(255,255,255,0.5), transparent)' }} />
+        {/* "You are invited to" */}
+        <FadeIn show={visible} delay={200}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "clamp(0.8rem,2.5vw,1.2rem)" }}>
+            <div style={{ width: "clamp(16px,4vw,24px)", height: "1px", background: "linear-gradient(to right, transparent, rgba(80,120,155,0.40))" }} />
+            <p style={{
+              fontFamily: '"Cinzel", serif',
+              fontSize: "clamp(0.60rem, 2.2vw, 0.74rem)",
+              letterSpacing: "0.36em",
+              textTransform: "uppercase",
+              color: "rgba(72,112,148,0.88)",
+              margin: 0,
+            }}>
+              You are invited to
+            </p>
+            <div style={{ width: "clamp(16px,4vw,24px)", height: "1px", background: "linear-gradient(to left, transparent, rgba(80,120,155,0.40))" }} />
           </div>
-
-          {/* First name */}
-          <div
-            className="lora-regular"
-            style={{
-              fontSize: 'clamp(3.4rem, 15vw, 6rem)',
-              color: '#ffffff',
-              lineHeight: 1,
-              letterSpacing: '0.06em',
-              textShadow: '0 2px 4px rgba(0,0,0,0.55), 0 6px 28px rgba(0,0,0,0.40)',
-            }}
-          >
-            Kaezar
-          </div>
-
-          {/* Thin spacer */}
-          <div style={{ height: 'clamp(0.25rem, 1.2vw, 0.5rem)' }} />
-
-          {/* Last name */}
-          <div
-            className="lora-regular"
-            style={{
-              fontSize: 'clamp(1.15rem, 5vw, 2rem)',
-              color: 'rgba(255,255,255,0.95)',
-              letterSpacing: '0.22em',
-              textTransform: 'uppercase',
-              textShadow: '0 2px 6px rgba(0,0,0,0.55), 0 4px 18px rgba(0,0,0,0.35)',
-              lineHeight: 1.3,
-            }}
-          >
-            Isaiahnuel Galardo
-          </div>
-
-          {/* Bottom rule */}
-          <div className="flex items-center gap-3 mt-4" style={{ width: 'clamp(180px, 58vw, 280px)' }}>
-            <div className="flex-1 h-px" style={{ background: 'linear-gradient(to left, rgba(255,255,255,0.5), transparent)' }} />
-            <div className="w-[3px] h-[3px] rounded-full rotate-45" style={{ backgroundColor: 'rgba(255,255,255,0.6)' }} />
-            <div className="flex-1 h-px" style={{ background: 'linear-gradient(to right, rgba(255,255,255,0.5), transparent)' }} />
-          </div>
-
         </FadeIn>
 
-        <div className="flex flex-col items-center gap-6 sm:gap-8">
-          <FadeIn show={visible} delay={500}>
-            <h1
-              className="tracking-widest uppercase"
+        {/* Diamond rule */}
+        <FadeIn show={visible} delay={280}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", width: "clamp(180px,60vw,280px)", marginBottom: "clamp(0.9rem,2.8vw,1.4rem)" }}>
+            <div style={{ flex: 1, height: "1px", background: "linear-gradient(to right, transparent, rgba(196,152,88,0.45))" }} />
+            <div style={{ width: "6px", height: "6px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.68)" }} />
+            <div style={{ flex: 1, height: "1px", background: "linear-gradient(to left, transparent, rgba(196,152,88,0.45))" }} />
+          </div>
+        </FadeIn>
+
+        {/* KAEZAR — bold hero */}
+        <FadeIn show={visible} delay={370}>
+          <div
+            style={{
+              fontFamily: '"Cinzel", serif',
+              fontWeight: 700,
+              fontSize: "clamp(3.4rem, 14.5vw, 7.5rem)",
+              color: "#2B4A6B",
+              lineHeight: 1.0,
+              letterSpacing: "0.14em",
+              textShadow: "0 2px 20px rgba(43,74,107,0.14), 0 4px 40px rgba(43,74,107,0.06)",
+            }}
+          >
+            {givenName.toUpperCase()}
+          </div>
+        </FadeIn>
+
+        {/* Isaiahnuel's — script gold */}
+        <FadeIn show={visible} delay={490}>
+          <div
+            style={{
+              fontFamily: '"LeJourScript", cursive',
+              fontSize: "clamp(2.4rem, 9.5vw, 5rem)",
+              color: "#C4965A",
+              lineHeight: 1.08,
+              letterSpacing: "0.02em",
+              marginTop: "clamp(0.2rem,0.8vw,0.5rem)",
+              filter: "drop-shadow(0 2px 6px rgba(196,152,88,0.16))",
+            }}
+          >
+            {middleName}&apos;s
+          </div>
+        </FadeIn>
+
+        {/* ✦ Holy Baptism ✦ with olive branches */}
+        <FadeIn show={visible} delay={610}>
+          <div style={{ display: "flex", alignItems: "center", gap: "clamp(6px,2vw,12px)", marginTop: "clamp(0.8rem,2.5vw,1.3rem)" }}>
+            {/* Left olive branch */}
+            <svg viewBox="0 0 58 24" style={{ width: "clamp(34px,9vw,56px)" }} fill="none">
+              <line x1="2" y1="12" x2="54" y2="12" stroke="rgba(108,128,94,0.38)" strokeWidth="0.8" />
+              <ellipse cx="11" cy="7"  rx="7.5" ry="4.2" fill="rgba(108,128,94,0.52)" transform="rotate(-22 11 7)"  />
+              <ellipse cx="23" cy="9"  rx="6.5" ry="3.8" fill="rgba(108,128,94,0.42)" transform="rotate(-14 23 9)"  />
+              <ellipse cx="35" cy="10" rx="5.5" ry="3.2" fill="rgba(108,128,94,0.34)" transform="rotate(-7 35 10)"  />
+              <ellipse cx="47" cy="11" rx="4.5" ry="2.6" fill="rgba(108,128,94,0.24)" transform="rotate(-2 47 11)"  />
+              <ellipse cx="14" cy="17" rx="6" ry="3.5" fill="rgba(108,128,94,0.38)" transform="rotate(18 14 17)" />
+              <ellipse cx="28" cy="16" rx="5" ry="3"   fill="rgba(108,128,94,0.28)" transform="rotate(10 28 16)" />
+            </svg>
+
+            <div
               style={{
                 fontFamily: '"Cinzel", serif',
-                fontWeight: 600,
-                fontSize: 'clamp(1.4rem, 6vw, 2.2rem)',
-                color: '#ffffff',
-                letterSpacing: '0.3em',
-                textShadow: '0 2px 6px rgba(0,0,0,0.55), 0 4px 20px rgba(0,0,0,0.35)',
+                fontWeight: 700,
+                fontSize: "clamp(1.0rem, 3.8vw, 1.9rem)",
+                color: "#1C3050",
+                letterSpacing: "0.15em",
+                textTransform: "uppercase",
+                whiteSpace: "nowrap",
+                textShadow: "0 1px 8px rgba(28,48,80,0.10)",
               }}
             >
-              You&apos;re Invited
-            </h1>
-          </FadeIn>
+              Holy Baptism
+            </div>
 
-          <FadeIn show={visible} delay={750}>
-            <button 
-              onClick={() => {
-                onOpen();
-              }}
-              className="group relative px-10 py-4 bg-transparent border-2 font-serif text-sm tracking-[0.2em] uppercase transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 active:translate-y-0 rounded-sm overflow-hidden"
+            {/* Right olive branch (mirrored) */}
+            <svg viewBox="0 0 58 24" style={{ width: "clamp(34px,9vw,56px)", transform: "scaleX(-1)" }} fill="none">
+              <line x1="2" y1="12" x2="54" y2="12" stroke="rgba(108,128,94,0.38)" strokeWidth="0.8" />
+              <ellipse cx="11" cy="7"  rx="7.5" ry="4.2" fill="rgba(108,128,94,0.52)" transform="rotate(-22 11 7)"  />
+              <ellipse cx="23" cy="9"  rx="6.5" ry="3.8" fill="rgba(108,128,94,0.42)" transform="rotate(-14 23 9)"  />
+              <ellipse cx="35" cy="10" rx="5.5" ry="3.2" fill="rgba(108,128,94,0.34)" transform="rotate(-7 35 10)"  />
+              <ellipse cx="47" cy="11" rx="4.5" ry="2.6" fill="rgba(108,128,94,0.24)" transform="rotate(-2 47 11)"  />
+              <ellipse cx="14" cy="17" rx="6" ry="3.5" fill="rgba(108,128,94,0.38)" transform="rotate(18 14 17)" />
+              <ellipse cx="28" cy="16" rx="5" ry="3"   fill="rgba(108,128,94,0.28)" transform="rotate(10 28 16)" />
+            </svg>
+          </div>
+        </FadeIn>
+
+        {/* Diamond rule */}
+        <FadeIn show={visible} delay={700}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", width: "clamp(180px,60vw,280px)", margin: "clamp(1.1rem,3.2vw,1.6rem) 0" }}>
+            <div style={{ flex: 1, height: "1px", background: "linear-gradient(to right, transparent, rgba(196,152,88,0.42))" }} />
+            <div style={{ width: "6px", height: "6px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.60)" }} />
+            <div style={{ flex: 1, height: "1px", background: "linear-gradient(to left, transparent, rgba(196,152,88,0.42))" }} />
+          </div>
+        </FadeIn>
+
+        {/* Son of + parents — soft subtitle */}
+        <FadeIn show={visible} delay={780}>
+          <div style={{ marginBottom: "clamp(1.3rem,3.8vw,2rem)" }}>
+            <p style={{
+              fontFamily: '"Cinzel", serif',
+              fontSize: "clamp(0.52rem,1.8vw,0.62rem)",
+              letterSpacing: "0.40em",
+              textTransform: "uppercase",
+              color: "rgba(72,112,148,0.68)",
+              marginBottom: "4px",
+            }}>
+              Son of
+            </p>
+            <p style={{
+              fontFamily: '"Fahkwang", sans-serif',
+              fontWeight: 400,
+              fontSize: "clamp(0.80rem,2.8vw,1.0rem)",
+              color: "rgba(65,90,115,0.82)",
+              letterSpacing: "0.03em",
+              lineHeight: 1.6,
+            }}>
+              {siteConfig.couple.parents}
+            </p>
+          </div>
+        </FadeIn>
+
+        {/* Open Invitation button — premium style */}
+        <FadeIn show={visible} delay={920}>
+          <div style={{ height: "clamp(1.2rem,3.5vw,2rem)" }} />
+          <button
+            onClick={onOpen}
+            className="group relative overflow-hidden"
+            style={{
+              padding: "clamp(12px,3vw,16px) clamp(32px,10vw,52px)",
+              background: "rgba(255,255,255,0.30)",
+              border: "1.5px solid rgba(43,74,107,0.38)",
+              borderRadius: "2px",
+              cursor: "pointer",
+              transition: "all 0.45s ease",
+              boxShadow: "0 4px 24px rgba(43,74,107,0.10), 0 1px 0 rgba(255,255,255,0.60) inset",
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLButtonElement).style.background = "rgba(43,74,107,0.08)"
+              ;(e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(43,74,107,0.60)"
+              ;(e.currentTarget as HTMLButtonElement).style.boxShadow = "0 8px 32px rgba(43,74,107,0.16), 0 1px 0 rgba(255,255,255,0.60) inset"
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.30)"
+              ;(e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(43,74,107,0.38)"
+              ;(e.currentTarget as HTMLButtonElement).style.boxShadow = "0 4px 24px rgba(43,74,107,0.10), 0 1px 0 rgba(255,255,255,0.60) inset"
+            }}
+          >
+            {/* Gold bottom accent line */}
+            <div
+              className="absolute bottom-0 left-0 right-0"
+              style={{ height: "2px", background: "linear-gradient(to right, transparent, rgba(196,152,88,0.50), transparent)" }}
+            />
+            <span
               style={{
-                borderColor: 'rgba(255,255,255,0.70)',
-                color: '#ffffff',
-                boxShadow: '0 10px 28px rgba(0,0,0,0.30)',
+                position: "relative",
+                fontFamily: '"Cinzel", serif',
+                fontWeight: 500,
+                fontSize: "clamp(0.64rem, 2.2vw, 0.78rem)",
+                letterSpacing: "0.34em",
+                textTransform: "uppercase",
+                color: "#2B4A6B",
               }}
             >
-              <span
-                className="relative z-10 drop-shadow-md transition-colors duration-500 group-hover:text-[var(--color-motif-cream)]"
-                style={{ fontFamily: '"Cinzel", serif', fontWeight: 500 }}
-              >
-                Open Invitation
-              </span>
-              {/* Button sheen effect */}
-              <div
-                className="absolute top-0 left-[-100%] w-full h-full skew-x-12 group-hover:animate-[shimmer_1s_infinite]"
-                style={{ background: 'color-mix(in srgb, var(--color-motif-silver) 50%, transparent)' }}
-              />
-              <div
-                className="absolute inset-0 -z-10 transition-all duration-500 group-hover:opacity-100 opacity-0"
-                style={{ background: 'linear-gradient(135deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 100%)' }}
-              />
-            </button>
-          </FadeIn>
-        </div>
+              Open Invitation
+            </span>
+          </button>
+        </FadeIn>
+
       </div>
     </div>
-  );
-};
+  )
+}

@@ -1,139 +1,132 @@
 "use client"
 
-import Image from "next/image"
 import { Section } from "@/components/section"
-
-// ── Motif palette ────────────────────────────────────────────────────────────
-const DEEP   = "#8B6F5A"
-const MEDIUM = "#BFA07A"
-const ACCENT = "#CFA06B"
+import { siteConfig } from "@/content/site"
 
 export function Welcome() {
+  const parts      = siteConfig.couple.child.trim().split(" ")
+  const givenName  = parts[0]
+  const middleName = parts.length > 2 ? parts[1] : ""
+  const familyName = parts[parts.length - 1]
+
   return (
     <Section
       id="welcome"
       className="relative overflow-hidden bg-transparent py-14 sm:py-20 md:py-24"
     >
-      {/* Corner floral decorations */}
-      
       <div className="relative z-10 max-w-xl mx-auto px-4 sm:px-6 md:px-8">
         <div
           className="relative overflow-hidden rounded-2xl sm:rounded-3xl border"
           style={{
-            borderColor: `rgba(207,160,107,0.25)`,
-            background: `linear-gradient(170deg,
-              rgba(253,248,242,0.95) 0%,
-              rgba(245,230,211,0.88) 50%,
-              rgba(253,248,242,0.95) 100%)`,
-            boxShadow: `0 20px 64px rgba(139,111,90,0.12), 0 2px 10px rgba(139,111,90,0.06)`,
+            borderColor: "rgba(196,152,88,0.28)",
+            background: "linear-gradient(170deg, rgba(255,255,255,0.98) 0%, rgba(253,250,245,0.96) 50%, rgba(255,255,255,0.98) 100%)",
+            boxShadow: "0 20px 64px rgba(43,74,107,0.08), 0 2px 10px rgba(43,74,107,0.05)",
             padding: "clamp(1.8rem, 6vw, 3.5rem) clamp(1.4rem, 5vw, 3rem)",
           }}
         >
-          {/* Top glow */}
+          {/* Top spotlight */}
           <div className="pointer-events-none absolute inset-0" aria-hidden
-            style={{ background: `radial-gradient(ellipse 80% 40% at 50% 0%, rgba(207,160,107,0.09) 0%, transparent 65%)` }} />
-          {/* Bottom glow */}
+            style={{ background: "radial-gradient(ellipse 80% 40% at 50% 0%, rgba(196,152,88,0.07) 0%, transparent 65%)" }} />
+          {/* Bottom water wash */}
           <div className="pointer-events-none absolute inset-0" aria-hidden
-            style={{ background: `radial-gradient(ellipse 60% 30% at 50% 100%, rgba(207,160,107,0.06) 0%, transparent 70%)` }} />
-          {/* Inner hairline border */}
+            style={{ background: "radial-gradient(ellipse 70% 35% at 50% 100%, rgba(120,175,215,0.10) 0%, transparent 70%)" }} />
+          {/* Inner hairline */}
           <div className="pointer-events-none absolute inset-[1px] rounded-[inherit]" aria-hidden
-            style={{ border: `1px solid rgba(207,160,107,0.12)` }} />
+            style={{ border: "1px solid rgba(196,152,88,0.10)" }} />
 
-          {/* ─────────────────────────────────────────────────────── */}
           <div className="relative flex flex-col items-center text-center">
 
-            {/* ── Eyebrow ── */}
-            <p
-              className="garamond"
-              style={{
-                fontSize: "clamp(0.56rem, 2.2vw, 0.72rem)",
-                letterSpacing: "0.5em",
-                textTransform: "uppercase",
-                color: ACCENT,
-                marginBottom: "clamp(0.4rem, 1.5vw, 0.65rem)",
-                paddingRight: "0.5em", /* optical compensation for trailing letter-spacing */
-              }}
-            >
+            {/* ── Eyebrow label ── */}
+            {/* <p style={{
+              fontFamily: '"Cinzel", serif',
+              fontSize: "clamp(0.54rem, 2vw, 0.68rem)",
+              letterSpacing: "0.44em",
+              textTransform: "uppercase",
+              color: "rgba(72,112,148,0.80)",
+              marginBottom: "clamp(0.4rem, 1.4vw, 0.6rem)",
+              paddingRight: "0.44em",
+            }}>
               A Little Piece of Heaven
-            </p>
+            </p> */}
 
             {/* ── "The Christening of" ── */}
-            <p
-              className="garamond"
-              style={{
-                fontSize: "clamp(0.68rem, 2.6vw, 0.84rem)",
-                letterSpacing: "0.18em",
-                color: MEDIUM,
-                marginBottom: "0.15rem",
-              }}
-            >
+            <p style={{
+              fontFamily: '"Cinzel", serif',
+              fontSize: "clamp(0.62rem, 2.4vw, 0.78rem)",
+              letterSpacing: "0.22em",
+              color: "rgba(72,112,148,0.68)",
+              marginBottom: "0.2rem",
+              textTransform: "uppercase",
+            }}>
               The Christening of
             </p>
 
             {/* ── Name ── */}
-            <h2
-              className="flex flex-col items-center"
-              style={{ marginBottom: "clamp(0.8rem, 2.5vw, 1.2rem)", gap: "clamp(0.1rem, 0.8vw, 0.3rem)" }}
-            >
-              {/* First name */}
-              <span
-                className="lora-regular"
-                style={{
-                  fontSize: "clamp(3rem, 13vw, 6rem)",
-                  color: DEEP,
-                  lineHeight: 1,
-                  letterSpacing: "0.05em",
-                  textShadow: `0 3px 32px rgba(139,111,90,0.22)`,
-                  display: "block",
-                }}
-              >
-                Kaezar
+            <h2 className="flex flex-col items-center" style={{ marginBottom: "clamp(0.8rem, 2.5vw, 1.2rem)", gap: 0 }}>
+              {/* KAEZAR — Cinzel Bold navy */}
+              <span style={{
+                fontFamily: '"Cinzel", serif',
+                fontWeight: 700,
+                fontSize: "clamp(3rem, 13vw, 6rem)",
+                color: "#2B4A6B",
+                lineHeight: 1.0,
+                letterSpacing: "0.10em",
+                textShadow: "0 2px 20px rgba(43,74,107,0.14)",
+                display: "block",
+              }}>
+                {givenName.toUpperCase()}
               </span>
 
-              {/* Thin inline rule */}
-              <span className="flex items-center gap-2" style={{ width: "clamp(120px, 35vw, 200px)", margin: "clamp(0.2rem, 1vw, 0.4rem) 0" }}>
-                {/* <span className="flex-1 h-px" style={{ background: `linear-gradient(to left, rgba(207,160,107,0.45), transparent)` }} />
-                <span style={{ color: ACCENT, fontSize: "0.42rem", letterSpacing: "0.2em" }}>◆</span>
-                <span className="flex-1 h-px" style={{ background: `linear-gradient(to right, rgba(207,160,107,0.45), transparent)` }} /> */}
-              </span>
-
-              {/* Last name */}
-              <span
-                className="lora-regular"
-                style={{
-                  fontSize: "clamp(1.1rem, 5vw, 2.1rem)",
-                  color: MEDIUM,
-                  lineHeight: 1.2,
-                  letterSpacing: "0.20em",
-                  textTransform: "uppercase",
-                  textShadow: `0 2px 18px rgba(139,111,90,0.14)`,
+              {/* Isaiahnuel — LeJourScript gold */}
+              {middleName && (
+                <span style={{
+                  fontFamily: '"LeJourScript", cursive',
+                  fontSize: "clamp(1.8rem, 8vw, 3.8rem)",
+                  color: "#C4965A",
+                  lineHeight: 1.10,
+                  letterSpacing: "0.02em",
                   display: "block",
-                }}
-              >
-                Isaiahnuel Galardo
+                  filter: "drop-shadow(0 2px 6px rgba(196,152,88,0.16))",
+                }}>
+                  {middleName}
+                </span>
+              )}
+
+              {/* Family name — Cinzel light navy */}
+              <span style={{
+                fontFamily: '"Cinzel", serif',
+                fontWeight: 400,
+                fontSize: "clamp(0.9rem, 4vw, 1.8rem)",
+                color: "rgba(43,74,107,0.55)",
+                lineHeight: 1.25,
+                letterSpacing: "0.20em",
+                textTransform: "uppercase",
+                display: "block",
+                marginTop: "clamp(0.1rem,0.5vw,0.3rem)",
+              }}>
+                {familyName}
               </span>
             </h2>
 
-            {/* ── Long ornamental divider ── */}
+            {/* ── Diamond rule — matching Hero ── */}
             <div className="flex items-center justify-center gap-2 w-full max-w-[240px] mb-[clamp(1.2rem,3.5vw,2rem)]">
-              <div className="h-px flex-1" style={{ background: `linear-gradient(to left, ${ACCENT}, transparent)`, opacity: 0.35 }} />
-              <span style={{ color: ACCENT, fontSize: "7px", opacity: 0.7, letterSpacing: "0.3em" }}>✦</span>
-              <div className="h-px flex-1" style={{ background: `linear-gradient(to right, ${ACCENT}, transparent)`, opacity: 0.35 }} />
+              <div className="h-px flex-1" style={{ background: "linear-gradient(to left, rgba(196,152,88,0.45), transparent)" }} />
+              <div style={{ width: "6px", height: "6px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.65)" }} />
+              <div className="h-px flex-1" style={{ background: "linear-gradient(to right, rgba(196,152,88,0.45), transparent)" }} />
             </div>
 
             {/* ── Section heading ── */}
-            <h3
-              className="cinzel"
-              style={{
-                fontSize: "clamp(0.9rem, 3.8vw, 1.35rem)",
-                fontWeight: 600,
-                color: DEEP,
-                letterSpacing: "0.08em",
-                lineHeight: 1.5,
-                marginBottom: "clamp(1rem, 3vw, 1.5rem)",
-                textTransform: "uppercase",
-              }}
-            >
+            <h3 style={{
+              fontFamily: '"Cinzel", serif',
+              fontWeight: 700,
+              fontSize: "clamp(0.85rem, 3.6vw, 1.25rem)",
+              color: "#1C3050",
+              letterSpacing: "0.10em",
+              lineHeight: 1.5,
+              marginBottom: "clamp(1rem, 3vw, 1.5rem)",
+              textTransform: "uppercase",
+              textShadow: "0 1px 8px rgba(28,48,80,0.10)",
+            }}>
               Welcome to this Blessed Beginning
             </h3>
 
@@ -141,151 +134,120 @@ export function Welcome() {
             <div
               className="w-full mb-[clamp(1.4rem,4vw,2.2rem)] relative"
               style={{
-                background: `linear-gradient(150deg, rgba(207,160,107,0.10) 0%, rgba(245,230,211,0.20) 50%, rgba(207,160,107,0.08) 100%)`,
-                border: `1px solid rgba(207,160,107,0.28)`,
+                background: "linear-gradient(150deg, rgba(196,152,88,0.07) 0%, rgba(255,255,255,0.60) 50%, rgba(120,175,215,0.06) 100%)",
+                border: "1px solid rgba(196,152,88,0.22)",
                 borderRadius: "12px",
                 padding: "clamp(1rem, 3.5vw, 1.6rem) clamp(1.4rem, 5vw, 2.4rem)",
               }}
             >
-              <div
-                className="absolute left-0 top-4 bottom-4 w-[3px] rounded-full"
-                style={{ background: `linear-gradient(to bottom, transparent, ${ACCENT}, transparent)` }}
-              />
-              <p
-                className="lora-regular"
-                style={{
-                  fontSize: "clamp(0.88rem, 3.4vw, 1.08rem)",
-                  color: DEEP,
-                  fontStyle: "italic",
-                  lineHeight: 2,
-                  marginBottom: "0.6rem",
-                  letterSpacing: "0.01em",
-                }}
-              >
+              {/* Gold left accent bar */}
+              <div className="absolute left-0 top-4 bottom-4 w-[3px] rounded-full"
+                style={{ background: "linear-gradient(to bottom, transparent, #C4965A, transparent)" }} />
+              <p style={{
+                fontFamily: '"Fahkwang", sans-serif',
+                fontWeight: 400,
+                fontSize: "clamp(0.88rem, 3.2vw, 1.05rem)",
+                color: "#2B4A6B",
+                fontStyle: "italic",
+                lineHeight: 1.9,
+                marginBottom: "0.6rem",
+                letterSpacing: "0.01em",
+              }}>
                 &ldquo;When the time is right, I, the Lord, will make it happen.&rdquo;
               </p>
-              <p
-                className="cinzel"
-                style={{
-                  fontSize: "clamp(0.52rem, 1.8vw, 0.68rem)",
-                  color: ACCENT,
-                  letterSpacing: "0.22em",
-                  textTransform: "uppercase",
-                  fontWeight: 600,
-                }}
-              >
+              <p style={{
+                fontFamily: '"Cinzel", serif',
+                fontWeight: 600,
+                fontSize: "clamp(0.50rem, 1.8vw, 0.65rem)",
+                color: "#C4965A",
+                letterSpacing: "0.24em",
+                textTransform: "uppercase",
+              }}>
                 — Isaiah 60:22
               </p>
             </div>
 
             {/* ── Body paragraphs ── */}
-            <div
-              className="w-full flex flex-col"
-              style={{ gap: "clamp(1rem, 3.2vw, 1.5rem)", marginBottom: "clamp(1.6rem, 5vw, 2.6rem)" }}
-            >
-              <p
-                className="lora-regular"
-                style={{
-                  fontSize: "clamp(0.82rem, 3vw, 1rem)",
-                  color: DEEP,
-                  lineHeight: 2,
-                  textAlign: "center",
-                  letterSpacing: "0.01em",
-                }}
-              >
+            <div className="w-full flex flex-col" style={{ gap: "clamp(1rem, 3.2vw, 1.5rem)", marginBottom: "clamp(1.6rem, 5vw, 2.6rem)" }}>
+              <p style={{
+                fontFamily: '"Fahkwang", sans-serif', fontWeight: 400,
+                fontSize: "clamp(0.80rem, 2.8vw, 0.96rem)",
+                color: "rgba(43,74,107,0.82)",
+                lineHeight: 1.9, textAlign: "center", letterSpacing: "0.01em",
+              }}>
                 With hearts full of gratitude and joy, we invite you to witness
                 and celebrate the Christening of our beloved son,{" "}
-                <span style={{ color: ACCENT, fontStyle: "italic", fontWeight: 700 }}>
-                  Kaezar Isaiahnuel Galardo.
+                <span style={{ color: "#C4965A", fontStyle: "italic", fontWeight: 700 }}>
+                  {siteConfig.couple.child}.
                 </span>
               </p>
 
-              <p
-                className="lora-regular"
-                style={{
-                  fontSize: "clamp(0.82rem, 3vw, 1rem)",
-                  color: MEDIUM,
-                  lineHeight: 2,
-                  textAlign: "center",
-                  letterSpacing: "0.01em",
-                }}
-              >
+              <p style={{
+                fontFamily: '"Fahkwang", sans-serif', fontWeight: 400,
+                fontSize: "clamp(0.80rem, 2.8vw, 0.96rem)",
+                color: "rgba(65,90,115,0.78)",
+                lineHeight: 1.9, textAlign: "center", letterSpacing: "0.01em",
+              }}>
                 This sacred moment marks the beginning of his spiritual journey —
                 welcoming him into God&apos;s loving embrace and the Christian faith.
                 It is a day of blessing, hope, and thanksgiving as we entrust his
                 life to His guidance and grace.
               </p>
 
-              <p
-                className="lora-regular"
-                style={{
-                  fontSize: "clamp(0.82rem, 3vw, 1rem)",
-                  color: DEEP,
-                  lineHeight: 2,
-                  textAlign: "center",
-                  letterSpacing: "0.01em",
-                  opacity: 0.88,
-                }}
-              >
+              <p style={{
+                fontFamily: '"Fahkwang", sans-serif', fontWeight: 400,
+                fontSize: "clamp(0.80rem, 2.8vw, 0.96rem)",
+                color: "rgba(43,74,107,0.72)",
+                lineHeight: 1.9, textAlign: "center", letterSpacing: "0.01em",
+              }}>
                 We are deeply thankful for the love and support that surround
                 our family. Your presence, prayers, and shared joy mean so much
                 to us — it would truly be a blessing to have you with us as we
                 celebrate this meaningful milestone.
               </p>
 
-              <p
-                className="lora-regular"
-                style={{
-                  fontSize: "clamp(0.82rem, 3vw, 1rem)",
-                  color: MEDIUM,
-                  lineHeight: 2,
-                  textAlign: "center",
-                  letterSpacing: "0.01em",
-                  opacity: 0.85,
-                }}
-              >
+              <p style={{
+                fontFamily: '"Fahkwang", sans-serif', fontWeight: 400,
+                fontSize: "clamp(0.80rem, 2.8vw, 0.96rem)",
+                color: "rgba(65,90,115,0.70)",
+                lineHeight: 1.9, textAlign: "center", letterSpacing: "0.01em",
+              }}>
                 As you prepare to join us, please feel free to explore the
                 details and reminders for the day. We look forward to
                 celebrating this beautiful occasion together.
               </p>
             </div>
 
-            {/* ── Rule before sign-off ── */}
-            <div className="flex items-center justify-center gap-3 w-full max-w-[200px] mb-[clamp(0.9rem,2.8vw,1.4rem)]">
-              <div className="h-px flex-1" style={{ background: `linear-gradient(to left, rgba(207,160,107,0.42), transparent)` }} />
-              <span style={{ color: ACCENT, fontSize: "5px", letterSpacing: "0.2em" }}>◆</span>
-              <div className="h-px flex-1" style={{ background: `linear-gradient(to right, rgba(207,160,107,0.42), transparent)` }} />
+            {/* ── Diamond rule before sign-off ── */}
+            <div className="flex items-center justify-center gap-2 w-full max-w-[200px] mb-[clamp(0.9rem,2.8vw,1.4rem)]">
+              <div className="h-px flex-1" style={{ background: "linear-gradient(to left, rgba(196,152,88,0.42), transparent)" }} />
+              <div style={{ width: "5px", height: "5px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.58)" }} />
+              <div className="h-px flex-1" style={{ background: "linear-gradient(to right, rgba(196,152,88,0.42), transparent)" }} />
             </div>
 
             {/* ── Sign-off ── */}
-            <p
-              className="cinzel"
-              style={{
-                fontSize: "clamp(0.52rem, 1.9vw, 0.68rem)",
-                letterSpacing: "0.38em",
-                textTransform: "uppercase",
-                color: MEDIUM,
-                marginBottom: "0.4rem",
-                paddingRight: "0.38em",
-              }}
-            >
+            <p style={{
+              fontFamily: '"Cinzel", serif',
+              fontSize: "clamp(0.50rem, 1.8vw, 0.65rem)",
+              letterSpacing: "0.40em",
+              textTransform: "uppercase",
+              color: "rgba(72,112,148,0.68)",
+              marginBottom: "0.4rem",
+              paddingRight: "0.40em",
+            }}>
               With love,
             </p>
-            <p
-              className="lora-regular"
-              style={{
-                fontSize: "clamp(1.5rem, 6vw, 2.6rem)",
-                color: DEEP,
-                lineHeight: 1.2,
-                letterSpacing: "0.04em",
-                textShadow: `0 3px 24px rgba(139,111,90,0.18)`,
-              }}
-            >
+            <p style={{
+              fontFamily: '"Cinzel", serif',
+              fontSize: "clamp(1.0rem, 4vw, 2rem)",
+              color: "rgba(43,74,107,0.55)",
+              lineHeight: 1.2,
+              letterSpacing: "0.02em",
+            }}>
               The Galardo Family
             </p>
 
           </div>
-          {/* ─────────────────────────────────────────────────────── */}
         </div>
       </div>
     </Section>
