@@ -55,7 +55,7 @@ const milestones: Milestone[] = [
     media: { type: "video", src: "/desktop_background/ScreenRecording_05-25-2026 13-15-38_1.mov" },
   },
   {
-    title: "First Glimpse of Me",
+    title: "A Glimpse of Me",
     caption: "Ultrasound",
     media: { type: "video", src: "/desktop_background/IMG_3693.mov" },
   },
@@ -73,7 +73,7 @@ const milestones: Milestone[] = [
   },
   {
     date: "January 12, 2026",
-    title: "The Day They Finally Held Me",
+    title: "My Birth",
     details: ["2:35 PM", "2.540 kg · 46 cm", "Emergency C-Section"],
     caption: "Birth & Hospital Photos",
     media: { type: "photo", src: "/desktop_background/image00008.jpeg" },
@@ -81,7 +81,7 @@ const milestones: Milestone[] = [
   {
     date: "July 4, 2026",
     title: "And Now I Am Getting Baptized",
-    caption: "Family Photo with Rosary",
+    caption: "And Now I Am Getting Baptized",
     media: { type: "photo", src: "/desktop_background/image00005.jpeg" },
   },
 ]

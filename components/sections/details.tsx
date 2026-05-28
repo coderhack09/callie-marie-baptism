@@ -421,7 +421,7 @@ export function Details() {
           maxWidth: "460px",
           margin: "0.75rem auto 0",
         }}>
-          Every sacred detail, lovingly prepared for the blessed celebration of {childName}&apos;s Christening.
+          Every sacred detail, lovingly prepared for MY blessed celebration.
         </p>
       </motion.div>
 
@@ -701,7 +701,7 @@ export function Details() {
           </div>
 
           <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.92rem, 2.8vw, 1.05rem)", color: NAVY_MUTE, lineHeight: 1.95, fontStyle: "italic", marginBottom: "1rem" }}>
-            Thank you for being part of the story God wrote for our family.
+          I can’t wait to celebrate, smile, sleep through photos, and make beautiful memories with all of you!
           </p>
 
           <p style={{ fontFamily: '"LeJourScript", cursive', fontSize: "clamp(1.6rem, 6.5vw, 2.8rem)", color: GOLD, lineHeight: 1.1 }}>

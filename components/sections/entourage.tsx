@@ -103,6 +103,126 @@ function splitSponsors(sponsors: PrincipalSponsor[]): {
   return { ninongs, ninangs }
 }
 
+/** Split a flat name list into left/right columns; odd count centers the last name */
+function splitIntoTwoColumns(names: string[]): {
+  left: string[]
+  right: string[]
+  center?: string
+} {
+  if (names.length === 0) return { left: [], right: [] }
+  if (names.length % 2 === 1) {
+    const center = names[names.length - 1]
+    const rest = names.slice(0, -1)
+    const mid = rest.length / 2
+    return { left: rest.slice(0, mid), right: rest.slice(mid), center }
+  }
+  const mid = names.length / 2
+  return { left: names.slice(0, mid), right: names.slice(mid) }
+}
+
+const NAME_STYLE = {
+  fontFamily: '"Fahkwang", sans-serif',
+  fontSize: "clamp(0.78rem, 2.5vw, 0.92rem)",
+  color: DARK_NAVY,
+  lineHeight: 1.65,
+} as const
+
+function GodparentNameGrid({
+  names,
+  isVisible,
+  rowOffset = 0,
+}: {
+  names: string[]
+  isVisible: boolean
+  rowOffset?: number
+}) {
+  const { left, right, center } = splitIntoTwoColumns(names)
+  const maxRows = Math.max(left.length, right.length)
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 sm:gap-x-10 gap-y-0">
+        <div className="text-center sm:text-left space-y-2 sm:space-y-2.5">
+          {left.map((name, i) => (
+            <p
+              key={`l-${name}-${i}`}
+              className="transition-all duration-700"
+              style={{
+                ...NAME_STYLE,
+                opacity: isVisible ? 1 : 0,
+                transform: isVisible ? "none" : "translateY(8px)",
+                transitionDelay: `${Math.min((rowOffset + i) * 40, 900)}ms`,
+              }}
+            >
+              {name}
+            </p>
+          ))}
+        </div>
+        <div className="text-center sm:text-left space-y-2 sm:space-y-2.5">
+          {right.map((name, i) => (
+            <p
+              key={`r-${name}-${i}`}
+              className="transition-all duration-700"
+              style={{
+                ...NAME_STYLE,
+                opacity: isVisible ? 1 : 0,
+                transform: isVisible ? "none" : "translateY(8px)",
+                transitionDelay: `${Math.min((rowOffset + left.length + i) * 40, 900)}ms`,
+              }}
+            >
+              {name}
+            </p>
+          ))}
+        </div>
+      </div>
+      {center ? (
+        <p
+          className="text-center transition-all duration-700"
+          style={{
+            ...NAME_STYLE,
+            opacity: isVisible ? 1 : 0,
+            transform: isVisible ? "none" : "translateY(8px)",
+            transitionDelay: `${Math.min((rowOffset + maxRows) * 40, 900)}ms`,
+          }}
+        >
+          {center}
+        </p>
+      ) : null}
+    </div>
+  )
+}
+
+function GodparentSection({
+  title,
+  names,
+  isVisible,
+  rowOffset = 0,
+}: {
+  title: string
+  names: string[]
+  isVisible: boolean
+  rowOffset?: number
+}) {
+  if (names.length === 0) return null
+
+  return (
+    <div className="text-center">
+      <h3
+        style={{
+          fontFamily: '"LeJourScript", cursive',
+          fontSize: "clamp(1.5rem, 5vw, 2.4rem)",
+          color: DARK_NAVY,
+          lineHeight: 1.15,
+          marginBottom: "1.25rem",
+        }}
+      >
+        {title}
+      </h3>
+      <GodparentNameGrid names={names} isVisible={isVisible} rowOffset={rowOffset} />
+    </div>
+  )
+}
+
 export function Entourage() {
   const [sponsors, setSponsors] = useState<PrincipalSponsor[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -144,7 +264,6 @@ export function Entourage() {
   }, [])
 
   const { ninongs, ninangs } = splitSponsors(sponsors)
-  const maxRows = Math.max(ninongs.length, ninangs.length)
 
   return (
     <div className="relative w-full overflow-hidden">
@@ -188,89 +307,36 @@ export function Entourage() {
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
           }`}
         >
-          <p style={{
-            fontFamily: '"Cinzel", serif',
-            fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)",
-            letterSpacing: "0.40em",
-            textTransform: "uppercase",
-            color: "rgba(72,112,148,0.80)",
-            marginBottom: "0.4rem",
-            paddingRight: "0.40em",
-          }}>
-            Principal Sponsors
-          </p>
-
           <OrnamentDivider />
 
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center mt-4">
-            <div className="text-right pr-3 sm:pr-5">
-              <p style={{
-                fontFamily: '"Cinzel", serif',
-                fontSize: "clamp(0.50rem, 1.7vw, 0.60rem)",
-                letterSpacing: "0.36em",
-                textTransform: "uppercase",
-                color: "rgba(72,112,148,0.80)",
-                marginBottom: "0.25rem",
-                paddingRight: "0.36em",
-              }}>
-                Male Sponsors
-              </p>
-              <p style={{
-                fontFamily: '"LeJourScript", cursive',
-                fontSize: "clamp(1.6rem, 5.5vw, 2.8rem)",
-                color: GOLD,
-                lineHeight: 1.0,
-                filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))",
-              }}>
-                Ninong
-              </p>
-            </div>
-
-            <div className="flex flex-col items-center gap-1.5 px-3 sm:px-4">
-              <div className="w-px h-6" style={{ background: "linear-gradient(to bottom, transparent, rgba(196,152,88,0.45))" }} />
-              <div style={{ width: "5px", height: "5px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.68)" }} />
-              <div className="w-px h-6" style={{ background: "linear-gradient(to top, transparent, rgba(196,152,88,0.45))" }} />
-            </div>
-
-            <div className="text-left pl-3 sm:pl-5">
-              <p style={{
-                fontFamily: '"Cinzel", serif',
-                fontSize: "clamp(0.50rem, 1.7vw, 0.60rem)",
-                letterSpacing: "0.36em",
-                textTransform: "uppercase",
-                color: "rgba(72,112,148,0.80)",
-                marginBottom: "0.25rem",
-              }}>
-                Female Sponsors
-              </p>
-              <p style={{
-                fontFamily: '"LeJourScript", cursive',
-                fontSize: "clamp(1.6rem, 5.5vw, 2.8rem)",
-                color: GOLD,
-                lineHeight: 1.0,
-                filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))",
-              }}>
-                Ninang
-              </p>
-            </div>
-          </div>
+          <h2
+            className="mt-4"
+            style={{
+              fontFamily: '"Cinzel", serif',
+              fontWeight: 600,
+              fontSize: "clamp(1.6rem, 7vw, 3.2rem)",
+              color: NAVY_MUTE,
+              lineHeight: 1.1,
+              letterSpacing: "0.02em",
+            }}>
+            My Godparents
+          </h2>
 
           <p style={{
             fontFamily: '"Fahkwang", sans-serif',
             fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
             color: NAVY_MUTE,
             lineHeight: 1.75,
-            fontStyle: "italic",
-            maxWidth: "32rem",
+            maxWidth: "36rem",
             margin: "1rem auto 0",
           }}>
-            Those who walk with us in faith, guiding little Kaezar with their love and prayers.
+            Mommy and Daddy chose these wonderful people to guide me with love, faith, and prayers as I grow.
           </p>
         </div>
 
         {/* ── Sponsors Card ───────────────────────────────────────────── */}
         <div
-          className={`relative z-30 max-w-3xl mx-auto px-3 sm:px-5 pb-6 transition-all duration-1000 delay-200 ${
+          className={`relative z-30 max-w-4xl mx-auto px-3 sm:px-5 pb-6 transition-all duration-1000 delay-200 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
           }`}
         >
@@ -279,83 +345,48 @@ export function Entourage() {
             style={FROSTED_CARD}
           >
             {isLoading ? (
-              <div className="p-5 sm:p-7 md:p-9 space-y-2">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="grid grid-cols-[1fr_24px_1fr] gap-x-2 animate-pulse">
-                    <div className="h-5 rounded-lg ml-auto" style={{ width: `${55 + (i % 3) * 12}%`, background: "rgba(43,74,107,0.08)" }} />
-                    <div />
-                    <div className="h-5 rounded-lg" style={{ width: `${50 + (i % 4) * 10}%`, background: "rgba(43,74,107,0.08)" }} />
+              <div className="p-5 sm:p-7 md:p-9 space-y-6">
+                {Array.from({ length: 2 }).map((_, section) => (
+                  <div key={section} className="space-y-3">
+                    <div className="h-8 rounded-lg mx-auto animate-pulse" style={{ width: "45%", background: "rgba(43,74,107,0.08)" }} />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {Array.from({ length: 6 }).map((_, i) => (
+                        <div key={i} className="h-5 rounded-lg animate-pulse" style={{ width: `${70 + (i % 3) * 8}%`, background: "rgba(43,74,107,0.08)" }} />
+                      ))}
+                    </div>
                   </div>
                 ))}
-                <div className="flex justify-center pt-4 gap-2">
+                <div className="flex justify-center pt-2 gap-2">
                   <Loader2 className="h-5 w-5 animate-spin" style={{ color: GOLD, opacity: 0.65 }} />
-                  <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "0.82rem", color: NAVY_MUTE, fontStyle: "italic" }}>Loading sponsors…</span>
+                  <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "0.82rem", color: NAVY_MUTE, fontStyle: "italic" }}>Loading godparents…</span>
                 </div>
               </div>
             ) : (
-              <div className="p-4 sm:p-6 md:p-8">
+              <div className="p-4 sm:p-6 md:p-8 space-y-10 sm:space-y-12">
 
-                <div className="h-px mb-3" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
+                <div className="h-px" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
 
-                <div className="grid grid-cols-[1fr_28px_1fr] gap-y-0">
-                  {Array.from({ length: maxRows }).map((_, i) => {
-                    const ninong = ninongs[i]
-                    const ninang = ninangs[i]
-                    const delay = `${Math.min(i * 45, 900)}ms`
+                <GodparentSection
+                  title="My Ninangs"
+                  names={ninangs}
+                  isVisible={isVisible}
+                  rowOffset={0}
+                />
 
-                    return (
-                      <React.Fragment key={i}>
-                        <div
-                          className="text-right pr-3 sm:pr-5 py-2 sm:py-2.5 rounded-l-xl transition-all duration-700"
-                          style={{
-                            opacity: isVisible ? 1 : 0,
-                            transform: isVisible ? "none" : "translateX(-12px)",
-                            transitionDelay: delay,
-                          }}
-                        >
-                          {ninong ? (
-                            <p style={{
-                              fontFamily: '"Cinzel", serif',
-                              fontSize: "clamp(0.72rem, 2.4vw, 0.88rem)",
-                              color: DARK_NAVY,
-                              lineHeight: 1.55,
-                              fontWeight: 500,
-                            }}>
-                              {ninong}
-                            </p>
-                          ) : <div className="h-6" />}
-                        </div>
+                {ninangs.length > 0 && ninongs.length > 0 && (
+                  <div className="py-1">
+                    <OrnamentDivider width="100%" />
+                  </div>
+                )}
 
-                        <div className="flex flex-col items-center justify-center">
-                          <div className="w-px h-full" style={{ background: "rgba(196,152,88,0.22)" }} />
-                        </div>
+                <GodparentSection
+                  title="My Ninongs"
+                  names={ninongs}
+                  isVisible={isVisible}
+                  rowOffset={ninangs.length}
+                />
 
-                        <div
-                          className="text-left pl-3 sm:pl-5 py-2 sm:py-2.5 rounded-r-xl transition-all duration-700"
-                          style={{
-                            opacity: isVisible ? 1 : 0,
-                            transform: isVisible ? "none" : "translateX(12px)",
-                            transitionDelay: delay,
-                          }}
-                        >
-                          {ninang ? (
-                            <p style={{
-                              fontFamily: '"Cinzel", serif',
-                              fontSize: "clamp(0.72rem, 2.4vw, 0.88rem)",
-                              color: DARK_NAVY,
-                              lineHeight: 1.55,
-                              fontWeight: 500,
-                            }}>
-                              {ninang}
-                            </p>
-                          ) : <div className="h-6" />}
-                        </div>
-                      </React.Fragment>
-                    )
-                  })}
-                </div>
-
-                <div className="mt-6 sm:mt-7">
+                <div className="pt-2">
                   <OrnamentDivider width="100%" />
                 </div>
 

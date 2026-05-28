@@ -70,7 +70,7 @@ export const siteConfig = {
     location: "Pinoy Turo Party Hall, UmAlhassam, Kingdom of Bahrain",
     venue: "Pinoy Turo Party Hall, UmAlhassam, Kingdom of Bahrain",
     date: "July 4, 2026",
-    time: "11:00 AM",
+    time: "11:30 AM",
     image: ["/Details/reception.png","/Details/reception2.png"],
   },                          
   dressCode: {
