@@ -4,7 +4,7 @@ export const siteConfig = {
     brideNickname: "Macy",
     groom: "Kenneth Erwin Brucelo Jose",
     groomNickname: "Kenneth",
-    child: "Kaezar Isaiahnuel Galardo",
+    child: "Kaezar Isaiahnuel Gallardo",
     childNickname: "King",
     monogram:"/monogram/new-mongoram.png" ,//Ltryl
     backgroundMusic:"/background_music/For This Child - Baby Dedication Song - Ken Blount.mp3",
@@ -32,7 +32,7 @@ export const siteConfig = {
   details: {
     rsvp: {
       deadline: "JULY 4, 2026",
-      contact: "Kaezar Isaiahnuel Galardo",
+      contact: "Kaezar Isaiahnuel Gallardo",
       phone: "+973 3999 9999",
     },
   },

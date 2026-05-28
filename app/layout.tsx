@@ -8,8 +8,8 @@ import { ClientLayout } from "@/components/client-layout"
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kaezar-isaiahnuel-baptism.vercel.app/"
 const canonicalUrl = siteUrl.replace(/\/$/, "")
-const desktopHero = "/background_music/LinkPreview.png"
-const mobileHero = "/background_music/LinkPreview.png"
+const desktopHero = "/Details/newLinkPreview.png"
+const mobileHero = "/Details/newLinkPreview.png"
 const eventImageUrl = `${canonicalUrl}${desktopHero}`
 
 const coupleNames = `Kaezar Isaiahnuel`
