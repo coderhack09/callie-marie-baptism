@@ -2,29 +2,44 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "motion/react"
-import { Instagram, Facebook, MapPin, Calendar, Clock, Heart, Music2, Twitter, Sparkles } from "lucide-react"
+import { Instagram, Facebook, MapPin, Calendar, Clock, Heart, Music2, Twitter } from "lucide-react"
 import Image from "next/image"
 import { siteConfig } from "@/content/site"
-// ── Motif palette (aligned with BookOfGuests / Messages / FAQ / SnapShare) ────
-const DEEP      = "#3D2810"
-const MEDIUM    = "#8C6035"
-const GOLD      = "#B8822A"
-const BABY_BLUE = "#3FA3C8"
-const BLUE_MID  = "#7BBEDD"
-const IVORY     = "#FEF9F3"
-const BLUSH     = "#EED4BC"
+
+// ── Palette — aligned with entourage.tsx ──────────────────────────────────────
+const DARK_NAVY = "#1C3050"
+const GOLD      = "#C4965A"
+const NAVY_MUTE = "rgba(65,90,115,0.78)"
+
+const FROSTED_CARD = {
+  background: "rgba(255,255,255,0.30)",
+  backdropFilter: "blur(14px)",
+  WebkitBackdropFilter: "blur(14px)",
+  border: "1.5px solid rgba(43,74,107,0.22)",
+  boxShadow: "0 4px 24px rgba(43,74,107,0.08), 0 1px 0 rgba(255,255,255,0.55) inset",
+} as const
 
 const toTitleCase = (str: string) =>
   str.toLowerCase().split(" ").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
 
+function OrnamentDivider({ width = "240px" }: { width?: string }) {
+  return (
+    <div className="flex items-center justify-center gap-2" style={{ maxWidth: width, margin: "0 auto" }}>
+      <div className="h-px flex-1" style={{ background: "linear-gradient(to left, rgba(196,152,88,0.45), transparent)" }} />
+      <div style={{ width: "6px", height: "6px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.68)", flexShrink: 0 }} />
+      <div className="h-px flex-1" style={{ background: "linear-gradient(to right, rgba(196,152,88,0.45), transparent)" }} />
+    </div>
+  )
+}
+
 // ── Floating bokeh orbs ───────────────────────────────────────────────────────
 function BokehOrbs() {
   const orbs = [
-    { w: 260, h: 260, top: "5%",  left: "2%",  color: BABY_BLUE, opacity: 0.07, blur: 80 },
-    { w: 200, h: 200, top: "20%", left: "74%", color: GOLD,      opacity: 0.08, blur: 65 },
-    { w: 220, h: 220, top: "60%", left: "5%",  color: BLUSH,     opacity: 0.09, blur: 75 },
-    { w: 160, h: 160, top: "70%", left: "77%", color: BABY_BLUE, opacity: 0.07, blur: 58 },
-    { w: 130, h: 130, top: "40%", left: "46%", color: GOLD,      opacity: 0.05, blur: 48 },
+    { w: 380, h: 380, top: "4%",  left: "2%",  color: "rgba(120,175,215,1)", opacity: 0.08, blur: 100 },
+    { w: 260, h: 260, top: "18%", left: "70%", color: "rgba(196,152,88,1)",  opacity: 0.08, blur: 80  },
+    { w: 300, h: 300, top: "55%", left: "8%",  color: "rgba(196,152,88,1)",  opacity: 0.07, blur: 90  },
+    { w: 220, h: 220, top: "70%", left: "76%", color: "rgba(120,175,215,1)", opacity: 0.08, blur: 70  },
+    { w: 170, h: 170, top: "38%", left: "44%", color: "rgba(196,152,88,1)",  opacity: 0.06, blur: 60  },
   ]
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden>
@@ -102,55 +117,26 @@ export function Footer() {
     { label: "FAQ",      href: "#faq"        },
   ] as const
 
-  // Shared card style
-  const cardStyle: React.CSSProperties = {
-    background: "rgba(254,249,243,0.92)",
-    backdropFilter: "blur(12px)",
-    WebkitBackdropFilter: "blur(12px)",
-    border: `1.5px solid ${BABY_BLUE}28`,
-    boxShadow: `0 6px 24px ${BABY_BLUE}12, 0 2px 8px rgba(61,40,16,0.05), inset 0 1px 0 rgba(255,255,255,0.75)`,
-  }
+  const cardStyle: React.CSSProperties = FROSTED_CARD
 
   return (
     <footer id="footer" className="relative w-full overflow-hidden">
 
-      {/* Solid ivory base */}
-      <div className="absolute inset-0 -z-10" style={{ background: IVORY }} />
+      {/* Solid base — aligned with entourage */}
+      <div className="absolute inset-0 -z-10" style={{ background: "#FFFFFF" }} />
 
-      {/* Multi-stop tinted vertical gradient */}
       <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: `linear-gradient(180deg,
-          rgba(213,238,248,0.38) 0%,
-          rgba(251,244,234,0.0)  20%,
-          rgba(238,212,188,0.26) 55%,
-          rgba(251,244,234,0.0)  78%,
-          rgba(213,238,248,0.32) 100%
-        )`,
+        background: "radial-gradient(ellipse 55% 45% at 50% 30%, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.6) 45%, transparent 75%)",
       }} />
 
-      {/* Diagonal warm-to-cool wash */}
       <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: `linear-gradient(112deg, rgba(238,212,188,0.12) 0%, transparent 44%, rgba(213,238,248,0.12) 100%)`,
+        background: "linear-gradient(to top, rgba(120,175,215,0.10) 0%, rgba(120,175,215,0.04) 25%, transparent 55%)",
       }} />
 
-      {/* Fine diagonal shimmer */}
-      <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: `repeating-linear-gradient(125deg, transparent 0px, transparent 160px, rgba(255,255,255,0.16) 160px, rgba(255,255,255,0.16) 162px)`,
-      }} />
-
-      {/* Soft dot grid */}
-      <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        backgroundImage: `radial-gradient(circle, rgba(63,163,200,0.07) 1px, transparent 1px)`,
-        backgroundSize: "28px 28px",
-      }} />
-
-      {/* Corner radial glows */}
       <div className="absolute inset-0 pointer-events-none z-0" aria-hidden style={{
         background: `
-          radial-gradient(ellipse 50% 38% at 0%   0%,   rgba(213,238,248,0.28) 0%, transparent 60%),
-          radial-gradient(ellipse 40% 34% at 100% 0%,   rgba(238,212,188,0.22) 0%, transparent 55%),
-          radial-gradient(ellipse 44% 36% at 0%   100%, rgba(238,212,188,0.20) 0%, transparent 55%),
-          radial-gradient(ellipse 40% 34% at 100% 100%, rgba(213,238,248,0.24) 0%, transparent 55%)
+          radial-gradient(ellipse 50% 40% at 50% 28%, rgba(196,152,88,0.06) 0%, transparent 70%),
+          radial-gradient(ellipse 38% 32% at 50% 78%, rgba(120,175,215,0.08) 0%, transparent 65%)
         `,
       }} />
 
@@ -186,33 +172,28 @@ export function Footer() {
           </motion.div>
 
           {/* Name */}
-          <p
-            className="gistesy"
-            style={{
-              fontSize: "clamp(1.6rem, 6vw, 2.8rem)",
-              color: DEEP,
-              lineHeight: 1.15,
-              overflow: "visible",
-              paddingTop: "0.08em",
-              marginBottom: "0.3rem",
-            }}
-          >
+          <p style={{
+            fontFamily: '"Cinzel", serif',
+            fontSize: "clamp(1.6rem, 5.5vw, 2.8rem)",
+            color: GOLD,
+            lineHeight: 1.0,
+            marginBottom: "0.35rem",
+            filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))",
+          }}>
             {childName}
           </p>
-          <p
-            className="garamond"
-            style={{ fontSize: "clamp(0.68rem, 2vw, 0.82rem)", color: MEDIUM, fontStyle: "italic", letterSpacing: "0.04em" }}
-          >
+          <p style={{
+            fontFamily: '"Fahkwang", sans-serif',
+            fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
+            color: NAVY_MUTE,
+            fontStyle: "italic",
+            letterSpacing: "0.04em",
+          }}>
             {toTitleCase(siteConfig.ceremony.location || siteConfig.reception.location)}
           </p>
 
-          {/* Ornamental divider */}
-          <div className="flex items-center gap-3 mt-4 sm:mt-5">
-            <div className="h-px w-14 sm:w-24" style={{ background: `linear-gradient(to left, ${GOLD}88, transparent)` }} />
-            <Sparkles className="h-3.5 w-3.5 opacity-55" style={{ color: GOLD }} />
-            <span style={{ color: GOLD, fontSize: "9px", opacity: 0.8 }}>✦</span>
-            <Sparkles className="h-3.5 w-3.5 opacity-55" style={{ color: GOLD }} />
-            <div className="h-px w-14 sm:w-24" style={{ background: `linear-gradient(to right, ${GOLD}88, transparent)` }} />
+          <div className="mt-4 sm:mt-5 w-full max-w-xs">
+            <OrnamentDivider />
           </div>
         </div>
 
@@ -229,35 +210,34 @@ export function Footer() {
             <motion.div className="lg:col-span-2 flex flex-col gap-5" variants={fadeInUp}>
 
               {/* Event summary */}
-              <div className="rounded-2xl p-4 sm:p-5" style={cardStyle}>
-                <div className="h-[2px] w-full rounded-full mb-4"
-                  style={{ background: `linear-gradient(to right, transparent, ${GOLD}77, ${BABY_BLUE}66, transparent)` }} />
+              <div className="rounded-3xl p-4 sm:p-5" style={cardStyle}>
+                <div className="h-px w-full mb-4" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
 
                 <div className="space-y-3">
                   <div className="flex items-center gap-2.5">
                     <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
-                      style={{ background: BABY_BLUE, boxShadow: `0 2px 8px ${BABY_BLUE}44` }}>
+                      style={{ background: GOLD, boxShadow: "0 2px 8px rgba(196,152,88,0.30)" }}>
                       <Calendar className="w-3.5 h-3.5 text-white" />
                     </div>
-                    <span className="garamond" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.92rem)", color: DEEP, fontWeight: 600 }}>
+                    <span style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(0.72rem, 2.4vw, 0.88rem)", color: DARK_NAVY, fontWeight: 500 }}>
                       {ceremonyDate} · {siteConfig.ceremony.day}
                     </span>
                   </div>
                   <div className="flex items-start gap-2.5">
                     <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                      style={{ background: BABY_BLUE, boxShadow: `0 2px 8px ${BABY_BLUE}44` }}>
+                      style={{ background: "rgba(43,74,107,0.85)", boxShadow: "0 2px 8px rgba(43,74,107,0.20)" }}>
                       <MapPin className="w-3.5 h-3.5 text-white" />
                     </div>
-                    <span className="garamond" style={{ fontSize: "clamp(0.72rem, 2.2vw, 0.86rem)", color: DEEP, lineHeight: 1.65 }}>
+                    <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: NAVY_MUTE, lineHeight: 1.75 }}>
                       {toTitleCase(ceremonyVenue)}
                     </span>
                   </div>
                   <div className="flex items-center gap-2.5">
                     <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
-                      style={{ background: GOLD, boxShadow: `0 2px 8px ${GOLD}44` }}>
+                      style={{ background: GOLD, boxShadow: "0 2px 8px rgba(196,152,88,0.30)" }}>
                       <Clock className="w-3.5 h-3.5 text-white" />
                     </div>
-                    <span className="garamond" style={{ fontSize: "clamp(0.72rem, 2.2vw, 0.86rem)", color: DEEP }}>
+                    <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: NAVY_MUTE }}>
                       Ceremony: {ceremonyTime} &nbsp;·&nbsp; Reception: {receptionTime}
                     </span>
                   </div>
@@ -266,37 +246,34 @@ export function Footer() {
 
               {/* Typewriter quote card */}
               <motion.div
-                className="rounded-2xl p-4 sm:p-5 md:p-6 flex-1"
+                className="rounded-3xl p-4 sm:p-5 md:p-6 flex-1"
                 style={cardStyle}
                 whileHover={{ scale: 1.012 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="h-[2px] w-full rounded-full mb-4"
-                  style={{ background: `linear-gradient(to right, transparent, ${BLUE_MID}77, transparent)` }} />
+                <div className="h-px w-full mb-4" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
 
-                <div className="mb-1" style={{ fontSize: "2.2rem", color: BABY_BLUE, opacity: 0.20, fontFamily: "Georgia, serif", lineHeight: 1 }}>
+                <div className="mb-1" style={{ fontSize: "2.2rem", color: GOLD, opacity: 0.18, fontFamily: "Georgia, serif", lineHeight: 1 }}>
                   &#8220;
                 </div>
-                <blockquote
-                  className="garamond"
-                  style={{
-                    fontSize: "clamp(0.8rem, 2.6vw, 0.96rem)",
-                    color: DEEP,
-                    fontStyle: "italic",
-                    lineHeight: 1.9,
-                    minHeight: "clamp(3.5rem, 10vw, 5rem)",
-                  }}
-                >
+                <blockquote style={{
+                  fontFamily: '"Fahkwang", sans-serif',
+                  fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
+                  color: NAVY_MUTE,
+                  fontStyle: "italic",
+                  lineHeight: 1.75,
+                  minHeight: "clamp(3.5rem, 10vw, 5rem)",
+                }}>
                   {displayedText}
                   <span
                     className="inline-block w-px h-4 ml-0.5 animate-pulse align-middle"
-                    style={{ backgroundColor: BABY_BLUE }}
+                    style={{ backgroundColor: GOLD }}
                   >|</span>
                 </blockquote>
                 <div className="flex items-center gap-1.5 mt-3">
-                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: BABY_BLUE, opacity: 0.65 }} />
-                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: GOLD, opacity: 0.45 }} />
-                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: BABY_BLUE, opacity: 0.65 }} />
+                  <div style={{ width: "5px", height: "5px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.68)" }} />
+                  <div style={{ width: "5px", height: "5px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.40)" }} />
+                  <div style={{ width: "5px", height: "5px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.68)" }} />
                 </div>
               </motion.div>
             </motion.div>
@@ -304,25 +281,25 @@ export function Footer() {
             {/* ── Col 3: event detail tiles ── */}
             <motion.div className="space-y-4" variants={fadeInUp}>
               {isSameVenue ? (
-                <motion.div className="rounded-2xl p-4 sm:p-5" style={cardStyle} whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-                  <div className="h-[2px] w-full rounded-full mb-3" style={{ background: `linear-gradient(to right, transparent, ${BABY_BLUE}55, transparent)` }} />
+                <motion.div className="rounded-3xl p-4 sm:p-5" style={cardStyle} whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
+                  <div className="h-px w-full mb-3" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
                   <div className="flex items-center gap-2.5 mb-3">
                     <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                      style={{ background: BABY_BLUE, boxShadow: `0 2px 10px ${BABY_BLUE}44` }}>
+                      style={{ background: GOLD, boxShadow: "0 2px 10px rgba(196,152,88,0.30)" }}>
                       <MapPin className="w-4 h-4 text-white" />
                     </div>
-                    <h4 className="gistesy" style={{ fontSize: "clamp(0.95rem, 3vw, 1.15rem)", color: DEEP }}>Christening &amp; Reception</h4>
+                    <h4 style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(1rem, 3.5vw, 1.4rem)", color: GOLD }}>Christening &amp; Reception</h4>
                   </div>
                   <div className="space-y-2 pl-0.5">
                     <div className="flex items-start gap-2">
-                      <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: BABY_BLUE }} />
-                      <span className="garamond" style={{ fontSize: "clamp(0.7rem, 2vw, 0.8rem)", color: DEEP, lineHeight: 1.65 }}>
+                      <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: GOLD }} />
+                      <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: NAVY_MUTE, lineHeight: 1.75 }}>
                         {toTitleCase(siteConfig.ceremony.location || siteConfig.reception.location)}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: GOLD }} />
-                      <span className="garamond" style={{ fontSize: "clamp(0.7rem, 2vw, 0.8rem)", color: DEEP }}>
+                      <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: NAVY_MUTE }}>
                         {ceremonyTime} · {receptionTime}
                       </span>
                     </div>
@@ -330,48 +307,48 @@ export function Footer() {
                 </motion.div>
               ) : (
                 <>
-                  <motion.div className="rounded-2xl p-4 sm:p-4.5" style={cardStyle} whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-                    <div className="h-[2px] w-full rounded-full mb-3" style={{ background: `linear-gradient(to right, transparent, ${BABY_BLUE}55, transparent)` }} />
+                  <motion.div className="rounded-3xl p-4 sm:p-4.5" style={cardStyle} whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
+                    <div className="h-px w-full mb-3" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
                     <div className="flex items-center gap-2.5 mb-3">
                       <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                        style={{ background: BABY_BLUE, boxShadow: `0 2px 10px ${BABY_BLUE}44` }}>
+                        style={{ background: GOLD, boxShadow: "0 2px 10px rgba(196,152,88,0.30)" }}>
                         <Clock className="w-4 h-4 text-white" />
                       </div>
-                      <h4 className="gistesy" style={{ fontSize: "clamp(0.9rem, 2.8vw, 1.05rem)", color: DEEP }}>Christening Ceremony</h4>
+                      <h4 style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(1rem, 3.5vw, 1.4rem)", color: GOLD }}>Christening Ceremony</h4>
                     </div>
                     <div className="space-y-1.5">
                       <div className="flex items-start gap-2">
-                        <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: BABY_BLUE }} />
-                        <span className="garamond" style={{ fontSize: "clamp(0.68rem, 1.9vw, 0.78rem)", color: DEEP, lineHeight: 1.65 }}>
+                        <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: GOLD }} />
+                        <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: NAVY_MUTE, lineHeight: 1.75 }}>
                           {toTitleCase(siteConfig.ceremony.location)}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: GOLD }} />
-                        <span className="garamond" style={{ fontSize: "clamp(0.68rem, 1.9vw, 0.78rem)", color: DEEP }}>{ceremonyTime}</span>
+                        <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: NAVY_MUTE }}>{ceremonyTime}</span>
                       </div>
                     </div>
                   </motion.div>
 
-                  <motion.div className="rounded-2xl p-4 sm:p-4.5" style={cardStyle} whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-                    <div className="h-[2px] w-full rounded-full mb-3" style={{ background: `linear-gradient(to right, transparent, ${GOLD}55, transparent)` }} />
+                  <motion.div className="rounded-3xl p-4 sm:p-4.5" style={cardStyle} whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
+                    <div className="h-px w-full mb-3" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
                     <div className="flex items-center gap-2.5 mb-3">
                       <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                        style={{ background: GOLD, boxShadow: `0 2px 10px ${GOLD}44` }}>
+                        style={{ background: "rgba(43,74,107,0.85)", boxShadow: "0 2px 10px rgba(43,74,107,0.20)" }}>
                         <Heart className="w-4 h-4 text-white" fill="white" />
                       </div>
-                      <h4 className="gistesy" style={{ fontSize: "clamp(0.9rem, 2.8vw, 1.05rem)", color: DEEP }}>Celebration Reception</h4>
+                      <h4 style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(1rem, 3.5vw, 1.4rem)", color: GOLD }}>Celebration Reception</h4>
                     </div>
                     <div className="space-y-1.5">
                       <div className="flex items-start gap-2">
-                        <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: BABY_BLUE }} />
-                        <span className="garamond" style={{ fontSize: "clamp(0.68rem, 1.9vw, 0.78rem)", color: DEEP, lineHeight: 1.65 }}>
+                        <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: GOLD }} />
+                        <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: NAVY_MUTE, lineHeight: 1.75 }}>
                           {toTitleCase(siteConfig.reception.location)}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: GOLD }} />
-                        <span className="garamond" style={{ fontSize: "clamp(0.68rem, 1.9vw, 0.78rem)", color: DEEP }}>{receptionTime}</span>
+                        <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: NAVY_MUTE }}>{receptionTime}</span>
                       </div>
                     </div>
                   </motion.div>
@@ -379,23 +356,23 @@ export function Footer() {
               )}
 
               {/* RSVP deadline */}
-              <motion.div className="rounded-2xl p-4 sm:p-4.5" style={cardStyle} whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-                <div className="h-[2px] w-full rounded-full mb-3" style={{ background: `linear-gradient(to right, transparent, ${GOLD}55, transparent)` }} />
+              <motion.div className="rounded-3xl p-4 sm:p-4.5" style={cardStyle} whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
+                <div className="h-px w-full mb-3" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
                 <div className="flex items-center gap-2.5 mb-3">
                   <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{ background: GOLD, boxShadow: `0 2px 10px ${GOLD}44` }}>
+                    style={{ background: GOLD, boxShadow: "0 2px 10px rgba(196,152,88,0.30)" }}>
                     <Calendar className="w-4 h-4 text-white" />
                   </div>
-                  <h4 className="gistesy" style={{ fontSize: "clamp(0.9rem, 2.8vw, 1.05rem)", color: DEEP }}>RSVP Deadline</h4>
+                  <h4 style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(1rem, 3.5vw, 1.4rem)", color: GOLD }}>RSVP Deadline</h4>
                 </div>
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2">
                     <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: GOLD }} />
-                    <span className="garamond font-semibold" style={{ fontSize: "clamp(0.68rem, 1.9vw, 0.78rem)", color: DEEP }}>
+                    <span style={{ fontFamily: '"Cinzel", serif', fontWeight: 500, fontSize: "clamp(0.72rem, 2.4vw, 0.88rem)", color: DARK_NAVY }}>
                       {siteConfig.details.rsvp.deadline}
                     </span>
                   </div>
-                  <p className="garamond" style={{ fontSize: "clamp(0.64rem, 1.7vw, 0.74rem)", color: MEDIUM, fontStyle: "italic", paddingLeft: "1.375rem" }}>
+                  <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: NAVY_MUTE, fontStyle: "italic", paddingLeft: "1.375rem" }}>
                     Please confirm your attendance by this date.
                   </p>
                 </div>
@@ -406,12 +383,11 @@ export function Footer() {
             <motion.div className="space-y-6" variants={fadeInUp}>
 
               {/* Quick links */}
-              <div className="rounded-2xl p-4 sm:p-5" style={cardStyle}>
-                <div className="h-[2px] w-full rounded-full mb-4"
-                  style={{ background: `linear-gradient(to right, transparent, ${BABY_BLUE}55, transparent)` }} />
+              <div className="rounded-3xl p-4 sm:p-5" style={cardStyle}>
+                <div className="h-px w-full mb-4" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
                 <div className="flex items-center gap-2 mb-3.5">
-                  <div className="w-1 h-5 rounded-full flex-shrink-0" style={{ background: BABY_BLUE }} />
-                  <h4 className="garamond font-bold" style={{ fontSize: "clamp(0.68rem, 1.9vw, 0.78rem)", color: DEEP, letterSpacing: "0.30em", textTransform: "uppercase" }}>
+                  <div className="w-1 h-5 rounded-full flex-shrink-0" style={{ background: GOLD }} />
+                  <h4 style={{ fontFamily: '"Cinzel", serif', fontWeight: 500, fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)", color: "rgba(72,112,148,0.80)", letterSpacing: "0.30em", textTransform: "uppercase" }}>
                     Quick Links
                   </h4>
                 </div>
@@ -420,10 +396,10 @@ export function Footer() {
                     <a
                       key={item.href}
                       href={item.href}
-                      className="garamond flex items-center gap-1.5 transition-all duration-200 hover:translate-x-1.5 group"
-                      style={{ fontSize: "clamp(0.75rem, 2.2vw, 0.88rem)", color: MEDIUM }}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = BABY_BLUE)}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = MEDIUM)}
+                      className="flex items-center gap-1.5 transition-all duration-200 hover:translate-x-1.5 group"
+                      style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: NAVY_MUTE }}
+                      onMouseEnter={(e) => { e.currentTarget.style.color = GOLD }}
+                      onMouseLeave={(e) => { e.currentTarget.style.color = NAVY_MUTE }}
                     >
                       <span className="w-1 h-1 rounded-full flex-shrink-0 opacity-50" style={{ background: GOLD }} />
                       {item.label}
@@ -433,12 +409,11 @@ export function Footer() {
               </div>
 
               {/* Stay connected */}
-              <div className="rounded-2xl p-4 sm:p-5" style={cardStyle}>
-                <div className="h-[2px] w-full rounded-full mb-4"
-                  style={{ background: `linear-gradient(to right, transparent, ${GOLD}55, transparent)` }} />
+              <div className="rounded-3xl p-4 sm:p-5" style={cardStyle}>
+                <div className="h-px w-full mb-4" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
                 <div className="flex items-center gap-2 mb-3.5">
                   <div className="w-1 h-5 rounded-full flex-shrink-0" style={{ background: GOLD }} />
-                  <h4 className="garamond font-bold" style={{ fontSize: "clamp(0.68rem, 1.9vw, 0.78rem)", color: DEEP, letterSpacing: "0.30em", textTransform: "uppercase" }}>
+                  <h4 style={{ fontFamily: '"Cinzel", serif', fontWeight: 500, fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)", color: "rgba(72,112,148,0.80)", letterSpacing: "0.30em", textTransform: "uppercase" }}>
                     Stay Connected
                   </h4>
                 </div>
@@ -457,12 +432,12 @@ export function Footer() {
                       aria-label={label}
                       className="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full border transition-all duration-200 hover:scale-110"
                       style={{
-                        background: `${BABY_BLUE}12`,
-                        borderColor: `${BABY_BLUE}33`,
-                        color: DEEP,
+                        background: "rgba(196,152,88,0.10)",
+                        borderColor: "rgba(196,152,88,0.30)",
+                        color: DARK_NAVY,
                       }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = BABY_BLUE; e.currentTarget.style.borderColor = BABY_BLUE; e.currentTarget.style.color = "white" }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = `${BABY_BLUE}12`; e.currentTarget.style.borderColor = `${BABY_BLUE}33`; e.currentTarget.style.color = DEEP }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = GOLD; e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.color = "white" }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(196,152,88,0.10)"; e.currentTarget.style.borderColor = "rgba(196,152,88,0.30)"; e.currentTarget.style.color = DARK_NAVY }}
                     >
                       <Icon className="w-4 h-4" />
                     </a>
@@ -472,53 +447,45 @@ export function Footer() {
             </motion.div>
           </motion.div>
 
-          {/* ══════════════════════════════════════════════════════════════
-              BOTTOM DIVIDER + COPYRIGHT
-          ══════════════════════════════════════════════════════════════ */}
+          {/* ── Bottom divider + copyright ── */}
           <motion.div variants={fadeInUp}>
-            <div className="flex items-center justify-center gap-3 mb-6 sm:mb-7">
-              <div className="h-px flex-1" style={{ background: `linear-gradient(to right, transparent, ${GOLD}44)` }} />
-              <span style={{ color: BLUE_MID, fontSize: "5px", opacity: 0.7 }}>◆</span>
-              <span style={{ color: GOLD, fontSize: "8px", opacity: 0.65 }}>✦</span>
-              <Heart className="h-3 w-3 opacity-50" style={{ color: BABY_BLUE }} />
-              <span style={{ color: GOLD, fontSize: "8px", opacity: 0.65 }}>✦</span>
-              <span style={{ color: BLUE_MID, fontSize: "5px", opacity: 0.7 }}>◆</span>
-              <div className="h-px flex-1" style={{ background: `linear-gradient(to left, transparent, ${GOLD}44)` }} />
+            <div className="mb-6 sm:mb-7">
+              <OrnamentDivider width="100%" />
             </div>
 
             <div className="flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 pb-2">
               <div className="text-center md:text-left">
-                <p className="garamond" style={{ fontSize: "clamp(0.65rem, 1.8vw, 0.76rem)", color: MEDIUM }}>
+                <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: NAVY_MUTE }}>
                   © {year} — {parentNames} — crafted with love, prayers, and gratitude.
                 </p>
-                <p className="garamond" style={{ fontSize: "clamp(0.62rem, 1.6vw, 0.72rem)", color: MEDIUM, opacity: 0.8, fontStyle: "italic", marginTop: "0.2rem" }}>
+                <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: NAVY_MUTE, opacity: 0.85, fontStyle: "italic", marginTop: "0.2rem" }}>
                   In celebration of {childName}&apos;s christening.
                 </p>
               </div>
 
               <div className="text-center md:text-right space-y-0.5">
-                <p className="garamond" style={{ fontSize: "clamp(0.62rem, 1.6vw, 0.72rem)", color: MEDIUM, opacity: 0.9 }}>
+                <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: NAVY_MUTE }}>
                   Developed by{" "}
                   <a
                     href="https://lance28-beep.github.io/portfolio-website/"
                     target="_blank" rel="noopener noreferrer"
                     className="underline transition-colors duration-200"
-                    style={{ color: BABY_BLUE }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = DEEP)}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = BABY_BLUE)}
+                    style={{ color: GOLD }}
+                    onMouseEnter={(e) => { e.currentTarget.style.color = DARK_NAVY }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = GOLD }}
                   >
                     Lance Valle
                   </a>
                 </p>
-                <p className="garamond" style={{ fontSize: "clamp(0.62rem, 1.6vw, 0.72rem)", color: MEDIUM, opacity: 0.9 }}>
+                <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: NAVY_MUTE }}>
                   Want a site like this?{" "}
                   <a
                     href="https://www.facebook.com/WeddingInvitationNaga"
                     target="_blank" rel="noopener noreferrer"
                     className="underline transition-colors duration-200"
                     style={{ color: GOLD }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = DEEP)}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = GOLD)}
+                    onMouseEnter={(e) => { e.currentTarget.style.color = DARK_NAVY }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = GOLD }}
                   >
                     Wedding Invitation Naga
                   </a>

@@ -6,15 +6,29 @@ import Image from "next/image"
 import { useRef, useEffect } from "react"
 import { Heart, Star } from "lucide-react"
 
-// ── Palette ───────────────────────────────────────────────────────────────────
-const DEEP      = "#3D2810"   // deeper brown for stronger text contrast
-const MEDIUM    = "#8C6035"
-const BABY_BLUE = "#3FA3C8"
-const BLUE_SOFT = "#D5EEF8"
-const BLUE_MID  = "#7BBEDD"
-const GOLD      = "#B8822A"
-const BLUSH     = "#EED4BC"
-const IVORY     = "#FEF9F3"  // solid base
+// ── Palette — aligned with loader/Hero.tsx ────────────────────────────────────
+const DARK_NAVY   = "#1C3050"
+const GOLD        = "#C4965A"
+const NAVY_MUTE   = "rgba(65,90,115,0.78)"
+const GOLD_BORDER = "rgba(196,152,88,0.28)"
+
+const FROSTED_CARD = {
+  background: "rgba(255,255,255,0.30)",
+  backdropFilter: "blur(12px)",
+  WebkitBackdropFilter: "blur(12px)",
+  border: "1.5px solid rgba(43,74,107,0.22)",
+  boxShadow: "0 4px 24px rgba(43,74,107,0.08), 0 1px 0 rgba(255,255,255,0.55) inset",
+} as const
+
+function OrnamentDivider() {
+  return (
+    <div className="flex items-center justify-center gap-2" style={{ maxWidth: "240px", margin: "0 auto" }}>
+      <div className="h-px flex-1" style={{ background: "linear-gradient(to left, rgba(196,152,88,0.45), transparent)" }} />
+      <div style={{ width: "6px", height: "6px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.68)", flexShrink: 0 }} />
+      <div className="h-px flex-1" style={{ background: "linear-gradient(to right, rgba(196,152,88,0.45), transparent)" }} />
+    </div>
+  )
+}
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface Milestone {
@@ -28,12 +42,12 @@ interface Milestone {
 
 // ── Timeline data ─────────────────────────────────────────────────────────────
 const milestones: Milestone[] = [
-  {
-    date: "May 5, 2025",
-    title: "The Day My Miracle Began",
-    caption: "IUI Procedure — with Doctor & Nurse",
-    media: { type: "photo", src: "/desktop_background/image00001.jpeg" },
-  },
+  // {
+  //   date: "May 5, 2025",
+  //   title: "The Day My Miracle Began",
+  //   caption: "IUI Procedure — with Doctor & Nurse",
+  //   media: { type: "photo", src: "/desktop_background/image00001.jpeg" },
+  // },
   {
     date: "May 23, 2025",
     title: "The Day Heaven Answered Their Prayers",
@@ -69,7 +83,6 @@ const milestones: Milestone[] = [
     title: "And Now I Am Getting Baptized",
     caption: "Family Photo with Rosary",
     media: { type: "photo", src: "/desktop_background/image00005.jpeg" },
-    isFinal: true,
   },
 ]
 
@@ -100,8 +113,8 @@ function AutoPlayVideo({ src, caption }: { src: string; caption?: string }) {
 
   return (
     <div
-      className="rounded-2xl overflow-hidden border-2 shadow-[0_8px_32px_rgba(91,181,213,0.30)]"
-      style={{ borderColor: BLUE_MID, background: "#fff" }}
+      className="rounded-2xl overflow-hidden border-2 shadow-[0_8px_32px_rgba(43,74,107,0.12)]"
+      style={{ borderColor: GOLD_BORDER, background: "#fff" }}
     >
       <div className="relative">
         <video
@@ -114,15 +127,14 @@ function AutoPlayVideo({ src, caption }: { src: string; caption?: string }) {
           preload="metadata"
           controls
         />
-        {/* Shimmer ring on top */}
         <div
           className="absolute inset-0 pointer-events-none rounded-t-2xl"
-          style={{ boxShadow: `inset 0 0 0 1.5px rgba(91,181,213,0.18)` }}
+          style={{ boxShadow: "inset 0 0 0 1.5px rgba(196,152,88,0.18)" }}
         />
       </div>
       {caption && (
-        <div className="px-3 py-2.5" style={{ background: `linear-gradient(to bottom, #fff, ${BLUE_SOFT}88)` }}>
-          <p className="garamond text-center" style={{ fontSize: "clamp(0.58rem, 1.8vw, 0.68rem)", color: `${DEEP}99` }}>
+        <div className="px-3 py-2.5" style={{ background: "linear-gradient(to bottom, #fff, rgba(255,255,255,0.85))" }}>
+          <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.58rem, 1.8vw, 0.68rem)", color: NAVY_MUTE, textAlign: "center" }}>
             {caption}
           </p>
         </div>
@@ -153,7 +165,8 @@ function MediaSlot({
             background: "#fff",
             padding: "7px",
             paddingBottom: "34px",
-            boxShadow: "0 8px 32px rgba(107,79,58,0.18), 0 2px 8px rgba(107,79,58,0.10)",
+            border: `1.5px solid ${GOLD_BORDER}`,
+            boxShadow: "0 8px 32px rgba(43,74,107,0.12), 0 2px 8px rgba(43,74,107,0.06)",
           }}
         >
           <div className="relative aspect-[3/4] overflow-hidden rounded-[2px]">
@@ -166,17 +179,22 @@ function MediaSlot({
                 sizes="215px"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center" style={{ background: BLUE_SOFT }}>
-                <Star className="w-8 h-8 opacity-30" style={{ color: BABY_BLUE }} />
+              <div className="w-full h-full flex items-center justify-center" style={{ background: "rgba(120,175,215,0.08)" }}>
+                <Star className="w-8 h-8 opacity-30" style={{ color: GOLD }} />
               </div>
             )}
-            {/* Subtle vignette */}
             <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: "inset 0 0 18px rgba(0,0,0,0.08)" }} />
           </div>
           {caption && (
             <p
-              className="garamond text-center mt-2"
-              style={{ fontSize: "clamp(0.58rem, 1.8vw, 0.68rem)", color: `${DEEP}99`, lineHeight: 1.4 }}
+              style={{
+                fontFamily: '"Fahkwang", sans-serif',
+                fontSize: "clamp(0.58rem, 1.8vw, 0.68rem)",
+                color: NAVY_MUTE,
+                lineHeight: 1.4,
+                textAlign: "center",
+                marginTop: "0.5rem",
+              }}
             >
               {caption}
             </p>
@@ -194,21 +212,21 @@ function MediaSlot({
       ) : (
         <div
           className="rounded-2xl overflow-hidden border-2"
-          style={{ borderColor: BLUE_MID }}
+          style={{ borderColor: GOLD_BORDER }}
         >
           <div
             className="relative aspect-[3/4] flex flex-col items-center justify-center gap-3"
-            style={{ background: `linear-gradient(160deg, ${BLUE_SOFT} 0%, #C8E8F8 100%)` }}
+            style={{ background: "linear-gradient(160deg, rgba(255,255,255,0.95) 0%, rgba(120,175,215,0.10) 100%)" }}
           >
             <div
               className="w-12 h-12 rounded-full flex items-center justify-center"
-              style={{ background: "rgba(91,181,213,0.18)", border: `2px solid ${BABY_BLUE}` }}
+              style={{ background: "rgba(196,152,88,0.10)", border: `2px solid ${GOLD_BORDER}` }}
             >
-              <svg className="w-5 h-5 ml-0.5" fill={BABY_BLUE} viewBox="0 0 24 24">
+              <svg className="w-5 h-5 ml-0.5" fill={GOLD} viewBox="0 0 24 24">
                 <path d="M8 5v14l11-7z" />
               </svg>
             </div>
-            <p className="garamond text-center px-4" style={{ fontSize: "clamp(0.6rem, 2vw, 0.7rem)", color: `${DEEP}88` }}>
+            <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.6rem, 2vw, 0.7rem)", color: NAVY_MUTE, textAlign: "center", paddingInline: "1rem" }}>
               Video coming soon
             </p>
           </div>
@@ -223,11 +241,15 @@ function TimelineDot({ isFinal }: { isFinal?: boolean }) {
   if (isFinal) {
     return (
       <div className="relative flex items-center justify-center w-12 h-12 flex-shrink-0">
-        <div className="absolute w-12 h-12 rounded-full animate-ping opacity-10" style={{ background: BABY_BLUE }} />
-        <div className="absolute w-10 h-10 rounded-full opacity-20 animate-pulse" style={{ background: BABY_BLUE }} />
+        <div className="absolute w-12 h-12 rounded-full animate-ping opacity-10" style={{ background: GOLD }} />
+        <div className="absolute w-10 h-10 rounded-full opacity-20 animate-pulse" style={{ background: GOLD }} />
         <div
-          className="w-7 h-7 rounded-full border-2 flex items-center justify-center shadow-[0_0_12px_rgba(91,181,213,0.55)]"
-          style={{ background: `linear-gradient(135deg, ${BABY_BLUE}, #3DA8CC)`, borderColor: "#fff" }}
+          className="w-7 h-7 rounded-full border-2 flex items-center justify-center"
+          style={{
+            background: "linear-gradient(135deg, #D4A860, #C4965A, #A87840)",
+            borderColor: "#fff",
+            boxShadow: "0 0 12px rgba(196,152,88,0.45)",
+          }}
         >
           <Heart className="w-3.5 h-3.5" fill="#fff" style={{ color: "#fff" }} />
         </div>
@@ -236,13 +258,12 @@ function TimelineDot({ isFinal }: { isFinal?: boolean }) {
   }
   return (
     <div className="relative flex items-center justify-center w-8 h-8 flex-shrink-0">
-      <div className="absolute w-8 h-8 rounded-full opacity-0 hover:opacity-25 transition-opacity duration-300" style={{ background: BABY_BLUE }} />
       <div
-        className="w-4 h-4 rounded-full border-2 shadow-[0_0_8px_rgba(91,181,213,0.45)]"
+        className="w-4 h-4 rounded-full border-2"
         style={{
-          background: `linear-gradient(135deg, ${BABY_BLUE}, #3DA8CC)`,
+          background: "linear-gradient(135deg, #D4A860, #C4965A)",
           borderColor: "#fff",
-          boxShadow: `0 0 0 3px ${BLUE_MID}, 0 0 12px rgba(91,181,213,0.35)`,
+          boxShadow: `0 0 0 3px rgba(196,152,88,0.35), 0 0 12px rgba(196,152,88,0.28)`,
         }}
       />
     </div>
@@ -257,21 +278,17 @@ function MilestoneEntry({ milestone, index }: { milestone: Milestone; index: num
   const textBlock = (
     <div
       className={`flex-1 min-w-0 rounded-2xl px-4 py-4 sm:px-5 sm:py-5 ${isEven ? "text-right" : "text-left"}`}
-      style={{
-        background: "rgba(254,249,243,0.88)",
-        backdropFilter: "blur(10px)",
-        WebkitBackdropFilter: "blur(10px)",
-        border: "1px solid rgba(184,130,42,0.15)",
-        boxShadow: "0 4px 24px rgba(61,40,16,0.07), 0 1px 6px rgba(61,40,16,0.04)",
-      }}
+      style={FROSTED_CARD}
     >
       {milestone.date && (
         <p
-          className="garamond uppercase mb-1.5"
           style={{
-            fontSize: "clamp(0.52rem, 1.8vw, 0.64rem)",
+            fontFamily: '"Cinzel", serif',
+            fontSize: "clamp(0.50rem, 1.7vw, 0.60rem)",
             letterSpacing: "0.36em",
-            color: BABY_BLUE,
+            textTransform: "uppercase",
+            color: "rgba(72,112,148,0.80)",
+            marginBottom: "0.375rem",
             paddingRight: isEven ? "0.36em" : 0,
             paddingLeft: isEven ? 0 : "0.36em",
           }}
@@ -280,16 +297,13 @@ function MilestoneEntry({ milestone, index }: { milestone: Milestone; index: num
         </p>
       )}
       <h3
-        className="gistesy"
         style={{
-          fontSize: "clamp(1.1rem, 3.5vw, 1.65rem)",
-          color: milestone.isFinal ? BABY_BLUE : DEEP,
+          fontFamily: milestone.isFinal ? '"LeJourScript", cursive' : '"Cinzel", serif',
+          fontWeight: milestone.isFinal ? 400 : 700,
+          fontSize: milestone.isFinal ? "clamp(1.2rem, 4vw, 1.75rem)" : "clamp(1rem, 3.2vw, 1.5rem)",
+          color: milestone.isFinal ? GOLD : DARK_NAVY,
           lineHeight: 1.15,
-          overflow: "visible",
-          paddingTop: "0.05em",
-          textShadow: milestone.isFinal
-            ? `0 2px 16px rgba(63,163,200,0.22)`
-            : "none",
+          filter: milestone.isFinal ? "drop-shadow(0 2px 8px rgba(196,152,88,0.16))" : "none",
         }}
       >
         {milestone.title}
@@ -299,19 +313,17 @@ function MilestoneEntry({ milestone, index }: { milestone: Milestone; index: num
           {milestone.details.map((d) => (
             <span
               key={d}
-              className="garamond"
-              style={{ fontSize: "clamp(0.68rem, 2.2vw, 0.8rem)", color: MEDIUM }}
+              style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.68rem, 2.2vw, 0.8rem)", color: NAVY_MUTE }}
             >
               {d}
             </span>
           ))}
         </div>
       )}
-      {/* Ornament */}
       <div className={`flex items-center gap-2 mt-3 ${isEven ? "justify-end" : "justify-start"}`}>
-        <div className="h-px w-10" style={{ background: `linear-gradient(to ${isEven ? "left" : "right"}, ${GOLD}88, transparent)` }} />
-        <span style={{ color: GOLD, fontSize: "5px", opacity: 0.8 }}>◆</span>
-        <div className="h-px w-10" style={{ background: `linear-gradient(to ${isEven ? "right" : "left"}, ${GOLD}88, transparent)` }} />
+        <div className="h-px w-10" style={{ background: `linear-gradient(to ${isEven ? "left" : "right"}, rgba(196,152,88,0.45), transparent)` }} />
+        <div style={{ width: "5px", height: "5px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.68)", flexShrink: 0 }} />
+        <div className="h-px w-10" style={{ background: `linear-gradient(to ${isEven ? "right" : "left"}, rgba(196,152,88,0.45), transparent)` }} />
       </div>
     </div>
   )
@@ -319,6 +331,38 @@ function MilestoneEntry({ milestone, index }: { milestone: Milestone; index: num
   const mediaBlock = (
     <div className={`flex ${isEven ? "justify-start pl-3 sm:pl-5" : "justify-end pr-3 sm:pr-5"} flex-1 min-w-0`}>
       <MediaSlot media={milestone.media} caption={milestone.caption} rotate={rotation} />
+    </div>
+  )
+
+  const mobileTextCard = (align: "left" | "right") => (
+    <div
+      className={`flex-1 min-w-0 rounded-xl px-3 py-3 ${align === "right" ? "text-right" : "text-left"}`}
+      style={FROSTED_CARD}
+    >
+      {milestone.date && (
+        <p style={{
+          fontFamily: '"Cinzel", serif',
+          fontSize: "0.54rem",
+          letterSpacing: "0.30em",
+          textTransform: "uppercase",
+          color: "rgba(72,112,148,0.80)",
+          marginBottom: "0.25rem",
+        }}>
+          {milestone.date}
+        </p>
+      )}
+      <h3 style={{
+        fontFamily: milestone.isFinal ? '"LeJourScript", cursive' : '"Cinzel", serif',
+        fontWeight: milestone.isFinal ? 400 : 700,
+        fontSize: "clamp(0.88rem, 4vw, 1.15rem)",
+        color: milestone.isFinal ? GOLD : DARK_NAVY,
+        lineHeight: 1.2,
+      }}>
+        {milestone.title}
+      </h3>
+      {milestone.details?.map((d) => (
+        <p key={d} style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "0.62rem", color: NAVY_MUTE }}>{d}</p>
+      ))}
     </div>
   )
 
@@ -346,30 +390,7 @@ function MilestoneEntry({ milestone, index }: { milestone: Milestone; index: num
       {/* Mobile */}
       <div className="md:hidden grid items-center" style={{ gridTemplateColumns: "1fr 44px 1fr" }}>
         <div className="flex items-center justify-end">
-          {isEven ? (
-            <div
-              className="flex-1 min-w-0 text-right rounded-xl px-3 py-3"
-              style={{
-                background: "rgba(254,249,243,0.90)",
-                backdropFilter: "blur(8px)",
-                WebkitBackdropFilter: "blur(8px)",
-                border: "1px solid rgba(184,130,42,0.13)",
-                boxShadow: "0 3px 14px rgba(61,40,16,0.07)",
-              }}
-            >
-              {milestone.date && (
-                <p className="garamond uppercase mb-0.5" style={{ fontSize: "0.54rem", letterSpacing: "0.26em", color: BABY_BLUE }}>
-                  {milestone.date}
-                </p>
-              )}
-              <h3 className="gistesy" style={{ fontSize: "clamp(0.88rem, 4vw, 1.15rem)", color: milestone.isFinal ? BABY_BLUE : DEEP, lineHeight: 1.2, overflow: "visible" }}>
-                {milestone.title}
-              </h3>
-              {milestone.details?.map((d) => (
-                <p key={d} className="garamond" style={{ fontSize: "0.62rem", color: MEDIUM }}>{d}</p>
-              ))}
-            </div>
-          ) : (
+          {isEven ? mobileTextCard("right") : (
             <div className="flex justify-end pr-1">
               <MediaSlot media={milestone.media} caption={milestone.caption} rotate={rotation} />
             </div>
@@ -383,30 +404,7 @@ function MilestoneEntry({ milestone, index }: { milestone: Milestone; index: num
             <div className="flex justify-start pl-1">
               <MediaSlot media={milestone.media} caption={milestone.caption} rotate={rotation} />
             </div>
-          ) : (
-            <div
-              className="flex-1 min-w-0 text-left rounded-xl px-3 py-3"
-              style={{
-                background: "rgba(254,249,243,0.90)",
-                backdropFilter: "blur(8px)",
-                WebkitBackdropFilter: "blur(8px)",
-                border: "1px solid rgba(184,130,42,0.13)",
-                boxShadow: "0 3px 14px rgba(61,40,16,0.07)",
-              }}
-            >
-              {milestone.date && (
-                <p className="garamond uppercase mb-0.5" style={{ fontSize: "0.54rem", letterSpacing: "0.26em", color: BABY_BLUE }}>
-                  {milestone.date}
-                </p>
-              )}
-              <h3 className="gistesy" style={{ fontSize: "clamp(0.88rem, 4vw, 1.15rem)", color: milestone.isFinal ? BABY_BLUE : DEEP, lineHeight: 1.2, overflow: "visible" }}>
-                {milestone.title}
-              </h3>
-              {milestone.details?.map((d) => (
-                <p key={d} className="garamond" style={{ fontSize: "0.62rem", color: MEDIUM }}>{d}</p>
-              ))}
-            </div>
-          )}
+          ) : mobileTextCard("left")}
         </div>
       </div>
     </motion.div>
@@ -416,11 +414,11 @@ function MilestoneEntry({ milestone, index }: { milestone: Milestone; index: num
 // ── Floating bokeh orbs ───────────────────────────────────────────────────────
 function BokehOrbs() {
   const orbs = [
-    { w: 380, h: 380, top: "5%",  left: "2%",  color: BABY_BLUE, opacity: 0.09, blur: 100 },
-    { w: 260, h: 260, top: "20%", left: "70%", color: GOLD,      opacity: 0.09, blur: 80  },
-    { w: 300, h: 300, top: "52%", left: "10%", color: BLUSH,     opacity: 0.12, blur: 90  },
-    { w: 220, h: 220, top: "68%", left: "74%", color: BABY_BLUE, opacity: 0.09, blur: 70  },
-    { w: 180, h: 180, top: "38%", left: "44%", color: GOLD,      opacity: 0.07, blur: 60  },
+    { w: 380, h: 380, top: "5%",  left: "2%",  color: "rgba(120,175,215,1)", opacity: 0.08, blur: 100 },
+    { w: 260, h: 260, top: "20%", left: "70%", color: "rgba(196,152,88,1)",  opacity: 0.08, blur: 80  },
+    { w: 300, h: 300, top: "52%", left: "10%", color: "rgba(196,152,88,1)",  opacity: 0.07, blur: 90  },
+    { w: 220, h: 220, top: "68%", left: "74%", color: "rgba(120,175,215,1)", opacity: 0.08, blur: 70  },
+    { w: 180, h: 180, top: "38%", left: "44%", color: "rgba(196,152,88,1)",  opacity: 0.06, blur: 60  },
   ]
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden>
@@ -452,30 +450,14 @@ export function WeddingTimeline() {
       bgColor="none"
     >
       {/* ── Solid base ── */}
-      <div className="absolute inset-0 -z-10" style={{ background: IVORY }} />
+      <div className="absolute inset-0 -z-10" style={{ background: "#FFFFFF" }} />
 
-      {/* Soft tinted gradient layer on top of solid base */}
       <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: `
-          linear-gradient(180deg,
-            rgba(215,237,248,0.45) 0%,
-            rgba(251,244,234,0.0)  25%,
-            rgba(213,238,248,0.30) 50%,
-            rgba(251,244,234,0.0)  75%,
-            rgba(238,212,188,0.35) 100%
-          )
-        `,
+        background: "radial-gradient(ellipse 55% 45% at 50% 30%, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.6) 45%, transparent 75%)",
       }} />
 
-      {/* Fine diagonal shimmer */}
       <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: `repeating-linear-gradient(
-          125deg,
-          transparent 0px,
-          transparent 160px,
-          rgba(255,255,255,0.22) 160px,
-          rgba(255,255,255,0.22) 162px
-        )`,
+        background: "linear-gradient(to top, rgba(120,175,215,0.10) 0%, rgba(120,175,215,0.04) 25%, transparent 55%)",
       }} />
 
       <BokehOrbs />
@@ -492,8 +474,8 @@ export function WeddingTimeline() {
       <div className="absolute inset-0 pointer-events-none z-0" aria-hidden>
         <div className="absolute inset-0" style={{
           background: `
-            radial-gradient(ellipse 50% 40% at 50% 28%, rgba(63,163,200,0.10) 0%, transparent 70%),
-            radial-gradient(ellipse 38% 32% at 50% 78%, rgba(184,130,42,0.08) 0%, transparent 65%)
+            radial-gradient(ellipse 50% 40% at 50% 28%, rgba(196,152,88,0.06) 0%, transparent 70%),
+            radial-gradient(ellipse 38% 32% at 50% 78%, rgba(120,175,215,0.08) 0%, transparent 65%)
           `,
         }} />
       </div>
@@ -506,40 +488,40 @@ export function WeddingTimeline() {
         viewport={{ once: true }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       >
-        <p
-          className="garamond uppercase mb-2"
-          style={{ fontSize: "clamp(0.52rem, 2vw, 0.66rem)", letterSpacing: "0.52em", color: BABY_BLUE, paddingRight: "0.52em" }}
-        >
+        {/* <p style={{
+          fontFamily: '"Cinzel", serif',
+          fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)",
+          letterSpacing: "0.40em",
+          textTransform: "uppercase",
+          color: "rgba(72,112,148,0.80)",
+          marginBottom: "0.4rem",
+          paddingRight: "0.40em",
+        }}>
           Before the Baptism
-        </p>
-        <div className="flex items-center justify-center gap-3 mb-3">
-          <div className="h-px w-10 sm:w-16" style={{ background: `linear-gradient(to left, ${GOLD}88, transparent)` }} />
-          <span style={{ color: GOLD, fontSize: "8px", opacity: 0.9 }}>✦</span>
-          <div className="h-px w-10 sm:w-16" style={{ background: `linear-gradient(to right, ${GOLD}88, transparent)` }} />
-        </div>
-        <h2
-          className="gistesy"
-          style={{
-            fontSize: "clamp(2.6rem, 10vw, 5.2rem)",
-            color: DEEP,
-            lineHeight: 1.1,
-            letterSpacing: "0.02em",
-            overflow: "visible",
-            paddingTop: "0.1em",
-            marginBottom: "0.5rem",
-          }}
-        >
+        </p> */}
+        {/* <OrnamentDivider /> */}
+        <h2 style={{
+          fontFamily: '"Cinzel", serif',
+          fontWeight: 600,
+          fontSize: "clamp(2.2rem, 10vw, 4.8rem)",
+          color: GOLD,
+          lineHeight: 1.1,
+          marginTop: "0.75rem",
+          marginBottom: "0.75rem",
+          filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))",
+        }}>
           My Little Timeline
         </h2>
-        <div className="flex items-center justify-center gap-2 mb-3">
-          <div className="h-px w-6 sm:w-10" style={{ background: `linear-gradient(to left, ${BLUE_MID}cc, transparent)` }} />
-          <span style={{ color: BLUE_MID, fontSize: "4px" }}>◆◆◆</span>
-          <div className="h-px w-6 sm:w-10" style={{ background: `linear-gradient(to right, ${BLUE_MID}cc, transparent)` }} />
-        </div>
-        <p
-          className="garamond"
-          style={{ fontSize: "clamp(0.78rem, 2.8vw, 0.96rem)", color: MEDIUM, fontStyle: "italic", lineHeight: 1.9, maxWidth: "400px", margin: "0 auto" }}
-        >
+        <OrnamentDivider />
+        <p style={{
+          fontFamily: '"Fahkwang", sans-serif',
+          fontSize: "clamp(0.80rem, 2.6vw, 0.96rem)",
+          color: NAVY_MUTE,
+          fontStyle: "italic",
+          lineHeight: 1.9,
+          maxWidth: "400px",
+          margin: "0.75rem auto 0",
+        }}>
           Every moment God was writing my story, long before I arrived.
         </p>
       </motion.div>
@@ -554,13 +536,13 @@ export function WeddingTimeline() {
             width: "2px",
             background: `linear-gradient(to bottom,
               transparent 0%,
-              ${BABY_BLUE}99 8%,
-              ${BABY_BLUE}cc 30%,
-              ${GOLD}66 60%,
-              ${BABY_BLUE}88 80%,
+              rgba(196,152,88,0.35) 8%,
+              rgba(196,152,88,0.55) 30%,
+              rgba(43,74,107,0.25) 60%,
+              rgba(196,152,88,0.45) 80%,
               transparent 100%
             )`,
-            boxShadow: `0 0 12px rgba(91,181,213,0.25)`,
+            boxShadow: "0 0 12px rgba(196,152,88,0.18)",
           }}
         />
 
@@ -580,23 +562,22 @@ export function WeddingTimeline() {
         >
           <div
             className="flex flex-col items-center gap-3 rounded-2xl px-8 py-5"
-            style={{
-              background: "rgba(254,249,243,0.85)",
-              backdropFilter: "blur(10px)",
-              WebkitBackdropFilter: "blur(10px)",
-              border: "1px solid rgba(184,130,42,0.15)",
-              boxShadow: "0 4px 20px rgba(61,40,16,0.07)",
-            }}
+            style={FROSTED_CARD}
           >
             <div className="flex items-center gap-3">
-              <div className="h-px w-14 sm:w-24" style={{ background: `linear-gradient(to left, ${GOLD}80, transparent)` }} />
-              <Heart className="w-5 h-5" fill={BABY_BLUE} style={{ color: BABY_BLUE, filter: `drop-shadow(0 0 6px rgba(63,163,200,0.5))` }} />
-              <div className="h-px w-14 sm:w-24" style={{ background: `linear-gradient(to right, ${GOLD}80, transparent)` }} />
+              <div className="h-px w-14 sm:w-24" style={{ background: "linear-gradient(to left, rgba(196,152,88,0.45), transparent)" }} />
+              <Heart className="w-5 h-5" fill={GOLD} style={{ color: GOLD, filter: "drop-shadow(0 0 6px rgba(196,152,88,0.35))" }} />
+              <div className="h-px w-14 sm:w-24" style={{ background: "linear-gradient(to right, rgba(196,152,88,0.45), transparent)" }} />
             </div>
-            <p
-              className="garamond text-center"
-              style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.92rem)", color: MEDIUM, fontStyle: "italic", lineHeight: 1.85 }}
-            >
+            <p style={{
+              fontFamily: '"Fahkwang", sans-serif',
+              fontWeight: 400,
+              fontSize: "clamp(0.78rem, 2.5vw, 0.92rem)",
+              color: NAVY_MUTE,
+              fontStyle: "italic",
+              lineHeight: 1.85,
+              textAlign: "center",
+            }}>
               Every step of the journey was a miracle in the making.
             </p>
           </div>

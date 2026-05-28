@@ -10,23 +10,37 @@ import { useToast } from "@/hooks/use-toast"
 import MessageWallDisplay from "./message-wall-display"
 import { siteConfig } from "@/content/site"
 
-// ── Motif palette (aligned with BookOfGuests) ─────────────────────────────────
-const DEEP      = "#3D2810"
-const MEDIUM    = "#8C6035"
-const GOLD      = "#B8822A"
-const BABY_BLUE = "#3FA3C8"
-const BLUE_MID  = "#7BBEDD"
-const IVORY     = "#FEF9F3"
-const BLUSH     = "#EED4BC"
+// ── Palette — aligned with entourage.tsx ──────────────────────────────────────
+const DARK_NAVY = "#1C3050"
+const GOLD      = "#C4965A"
+const NAVY_MUTE = "rgba(65,90,115,0.78)"
+const NAVY = "#2B4A6B"
+const FROSTED_CARD = {
+  background: "rgba(255,255,255,0.30)",
+  backdropFilter: "blur(14px)",
+  WebkitBackdropFilter: "blur(14px)",
+  border: "1.5px solid rgba(43,74,107,0.22)",
+  boxShadow: "0 4px 24px rgba(43,74,107,0.08), 0 1px 0 rgba(255,255,255,0.55) inset",
+} as const
+
+function OrnamentDivider({ width = "240px" }: { width?: string }) {
+  return (
+    <div className="flex items-center justify-center gap-2" style={{ maxWidth: width, margin: "0 auto" }}>
+      <div className="h-px flex-1" style={{ background: "linear-gradient(to left, rgba(196,152,88,0.45), transparent)" }} />
+      <div style={{ width: "6px", height: "6px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.68)", flexShrink: 0 }} />
+      <div className="h-px flex-1" style={{ background: "linear-gradient(to right, rgba(196,152,88,0.45), transparent)" }} />
+    </div>
+  )
+}
 
 // ── Floating bokeh orbs ───────────────────────────────────────────────────────
 function BokehOrbs() {
   const orbs = [
-    { w: 300, h: 300, top: "4%",  left: "2%",  color: BABY_BLUE, opacity: 0.08, blur: 85 },
-    { w: 220, h: 220, top: "18%", left: "74%", color: GOLD,      opacity: 0.09, blur: 70 },
-    { w: 260, h: 260, top: "55%", left: "5%",  color: BLUSH,     opacity: 0.11, blur: 80 },
-    { w: 190, h: 190, top: "70%", left: "76%", color: BABY_BLUE, opacity: 0.08, blur: 62 },
-    { w: 150, h: 150, top: "38%", left: "44%", color: GOLD,      opacity: 0.06, blur: 52 },
+    { w: 380, h: 380, top: "4%",  left: "2%",  color: "rgba(120,175,215,1)", opacity: 0.08, blur: 100 },
+    { w: 260, h: 260, top: "18%", left: "70%", color: "rgba(196,152,88,1)",  opacity: 0.08, blur: 80  },
+    { w: 300, h: 300, top: "55%", left: "8%",  color: "rgba(196,152,88,1)",  opacity: 0.07, blur: 90  },
+    { w: 220, h: 220, top: "70%", left: "76%", color: "rgba(120,175,215,1)", opacity: 0.08, blur: 70  },
+    { w: 170, h: 170, top: "38%", left: "44%", color: "rgba(196,152,88,1)",  opacity: 0.06, blur: 60  },
   ]
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden>
@@ -96,34 +110,25 @@ function MessageForm({ onSuccess, onMessageSent }: MessageFormProps) {
   return (
     <div className="relative w-full max-w-md mx-auto px-3 sm:px-0">
       <style>{`
-        .msg-input::placeholder    { color: ${MEDIUM}99 !important; opacity: 1 !important; font-style: italic; }
-        .msg-textarea::placeholder { color: ${MEDIUM}99 !important; opacity: 1 !important; font-style: italic; }
+        .msg-input::placeholder    { color: ${NAVY_MUTE} !important; opacity: 1 !important; font-style: italic; }
+        .msg-textarea::placeholder { color: ${NAVY_MUTE} !important; opacity: 1 !important; font-style: italic; }
       `}</style>
 
       {/* Card */}
       <div
-        className={`relative w-full border-2 rounded-2xl overflow-hidden transition-all duration-500 ${
+        className={`relative w-full rounded-3xl overflow-hidden transition-all duration-500 ${
           isFocused ? "scale-[1.01]" : ""
         } ${isSubmitted ? "animate-bounce" : ""}`}
-        style={{
-          background: "rgba(254,249,243,0.96)",
-          backdropFilter: "blur(14px)",
-          WebkitBackdropFilter: "blur(14px)",
-          borderColor: isFocused ? `${BABY_BLUE}66` : `${BABY_BLUE}33`,
-          boxShadow: `0 12px 40px rgba(63,163,200,0.12), 0 2px 10px rgba(61,40,16,0.06), inset 0 1px 0 rgba(255,255,255,0.80)`,
-        }}
+        style={FROSTED_CARD}
       >
-        {/* Top accent line */}
-        <div className="h-0.5 w-full" style={{ background: `linear-gradient(to right, transparent, ${GOLD}66, ${BABY_BLUE}66, transparent)` }} />
-
         {/* Success overlay */}
         {isSubmitted && (
-          <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none" style={{ background: "rgba(254,249,243,0.93)" }}>
+          <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none" style={{ background: "rgba(255,255,255,0.85)" }}>
             <div className="flex flex-col items-center gap-2 animate-pulse">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg" style={{ background: `linear-gradient(135deg, ${BABY_BLUE}, ${DEEP})` }}>
+              <div className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg" style={{ background: GOLD, boxShadow: "0 3px 12px rgba(196,152,88,0.35)" }}>
                 <Sparkles className="h-8 w-8 text-white" />
               </div>
-              <p className="gistesy" style={{ fontSize: "1.4rem", color: DEEP }}>Sent!</p>
+              <p style={{ fontFamily: '"LeJourScript", cursive', fontSize: "clamp(1.6rem, 5vw, 2.2rem)", color: GOLD, lineHeight: 1.1 }}>Sent!</p>
             </div>
           </div>
         )}
@@ -131,17 +136,39 @@ function MessageForm({ onSuccess, onMessageSent }: MessageFormProps) {
         <div className="p-4 sm:p-5 md:p-6 lg:p-8">
           {/* Form header */}
           <div className="text-center mb-4 sm:mb-5">
-            <div className="relative inline-block mb-2 sm:mb-3">
-              <div className="absolute inset-0 rounded-full blur-lg scale-150 opacity-20" style={{ background: BABY_BLUE }} />
-              <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center mx-auto shadow-md" style={{ background: `linear-gradient(135deg, ${BABY_BLUE}, ${DEEP})` }}>
-                <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-              </div>
-            </div>
+            <p style={{
+              fontFamily: '"Cinzel", serif',
+              fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)",
+              letterSpacing: "0.40em",
+              textTransform: "uppercase",
+              color: "rgba(72,112,148,0.80)",
+              marginBottom: "0.5rem",
+              paddingRight: "0.40em",
+            }}>
+              Share Your Heart
+            </p>
 
-            <h3 className="gistesy" style={{ fontSize: "clamp(1.6rem, 6vw, 2.4rem)", color: DEEP, lineHeight: 1.2, marginBottom: "0.25rem" }}>
+            <h3 style={{
+              fontFamily: '"Cinzel", serif',
+              fontSize: "clamp(1.6rem, 5.5vw, 2.8rem)",
+              color: NAVY,
+              lineHeight: 1.0,
+              marginBottom: "0.35rem",
+              filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))",
+            }}>
               Leave a Blessing
             </h3>
-            <p className="garamond" style={{ fontSize: "clamp(0.72rem, 2.2vw, 0.84rem)", color: MEDIUM, fontStyle: "italic" }}>
+
+            <OrnamentDivider width="180px" />
+
+            <p style={{
+              fontFamily: '"Fahkwang", sans-serif',
+              fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
+              color: NAVY_MUTE,
+              fontStyle: "italic",
+              lineHeight: 1.75,
+              marginTop: "0.75rem",
+            }}>
               Your words will be treasured by this little family forever.
             </p>
           </div>
@@ -155,8 +182,8 @@ function MessageForm({ onSuccess, onMessageSent }: MessageFormProps) {
           >
             {/* Name */}
             <div className="space-y-1.5">
-              <label className="garamond flex items-center gap-1.5 text-xs sm:text-sm font-semibold" style={{ color: DEEP }}>
-                <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-transform ${focusedField === "name" ? "scale-110" : ""}`} style={{ background: `${GOLD}22` }}>
+              <label className="flex items-center gap-1.5 font-medium" style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(0.72rem, 2.4vw, 0.88rem)", color: DARK_NAVY }}>
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-transform ${focusedField === "name" ? "scale-110" : ""}`} style={{ background: "rgba(196,152,88,0.15)" }}>
                   <Heart className="h-2.5 w-2.5" style={{ color: GOLD }} />
                 </div>
                 Your Name
@@ -170,10 +197,11 @@ function MessageForm({ onSuccess, onMessageSent }: MessageFormProps) {
                   onFocus={() => setFocusedField("name")}
                   onBlur={() => setFocusedField(null)}
                   placeholder="Your full name"
-                  className="msg-input garamond w-full border-2 rounded-xl py-2.5 px-4 text-xs sm:text-sm bg-white/80 transition-all duration-300 shadow-sm"
+                  className="msg-input w-full border rounded-xl py-2.5 px-4 text-xs sm:text-sm bg-white/70 transition-all duration-300 shadow-sm"
                   style={{
-                    color: DEEP,
-                    borderColor: focusedField === "name" ? `${BABY_BLUE}77` : `${BABY_BLUE}33`,
+                    fontFamily: '"Fahkwang", sans-serif',
+                    color: DARK_NAVY,
+                    borderColor: focusedField === "name" ? "rgba(196,152,88,0.45)" : "rgba(43,74,107,0.22)",
                   }}
                 />
                 {nameValue && <div className="absolute right-3 top-1/2 -translate-y-1/2 w-2 h-2 bg-green-400 rounded-full animate-pulse" />}
@@ -183,14 +211,14 @@ function MessageForm({ onSuccess, onMessageSent }: MessageFormProps) {
             {/* Message */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="garamond flex items-center gap-1.5 text-xs sm:text-sm font-semibold" style={{ color: DEEP }}>
-                  <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-transform ${focusedField === "message" ? "scale-110" : ""}`} style={{ background: `${BABY_BLUE}18` }}>
-                    <MessageCircle className="h-2.5 w-2.5" style={{ color: BABY_BLUE }} />
+                <label className="flex items-center gap-1.5 font-medium" style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(0.72rem, 2.4vw, 0.88rem)", color: DARK_NAVY }}>
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-transform ${focusedField === "message" ? "scale-110" : ""}`} style={{ background: "rgba(43,74,107,0.08)" }}>
+                    <MessageCircle className="h-2.5 w-2.5" style={{ color: DARK_NAVY }} />
                   </div>
                   Your Blessing
                 </label>
                 {messageValue && (
-                  <span className="garamond" style={{ fontSize: "0.65rem", color: messageValue.length > 500 ? "#ef4444" : MEDIUM, opacity: 0.75 }}>
+                  <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "0.65rem", color: messageValue.length > 500 ? "#ef4444" : NAVY_MUTE, opacity: 0.75 }}>
                     {messageValue.length}/500
                   </span>
                 )}
@@ -204,10 +232,11 @@ function MessageForm({ onSuccess, onMessageSent }: MessageFormProps) {
                   onFocus={() => setFocusedField("message")}
                   onBlur={() => setFocusedField(null)}
                   placeholder="Share a prayer, a wish, or words of love for Kaezar Isaiahnuel..."
-                  className="msg-textarea garamond w-full border-2 rounded-xl min-h-[90px] sm:min-h-[110px] text-xs sm:text-sm resize-none bg-white/80 transition-all duration-300 shadow-sm py-3 px-4"
+                  className="msg-textarea w-full border rounded-xl min-h-[90px] sm:min-h-[110px] text-xs sm:text-sm resize-none bg-white/70 transition-all duration-300 shadow-sm py-3 px-4"
                   style={{
-                    color: DEEP,
-                    borderColor: focusedField === "message" ? `${BABY_BLUE}77` : `${BABY_BLUE}33`,
+                    fontFamily: '"Fahkwang", sans-serif',
+                    color: DARK_NAVY,
+                    borderColor: focusedField === "message" ? "rgba(196,152,88,0.45)" : "rgba(43,74,107,0.22)",
                   }}
                 />
                 {messageValue && <div className="absolute right-3 top-3 w-2 h-2 bg-green-400 rounded-full animate-pulse" />}
@@ -218,15 +247,18 @@ function MessageForm({ onSuccess, onMessageSent }: MessageFormProps) {
             <Button
               type="submit"
               disabled={isSubmitting || !nameValue.trim() || !messageValue.trim()}
-              className="garamond w-full rounded-xl py-2.5 sm:py-3 text-xs sm:text-sm font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full rounded-xl py-2.5 sm:py-3 text-xs sm:text-sm font-medium transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
               style={{
-                background: BABY_BLUE,
+                fontFamily: '"Cinzel", serif',
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                background: GOLD,
                 color: "white",
                 border: "none",
-                boxShadow: `0 6px 20px ${BABY_BLUE}44`,
+                boxShadow: "0 6px 20px rgba(196,152,88,0.30)",
               }}
-              onMouseEnter={(e) => { if (!e.currentTarget.disabled) { e.currentTarget.style.background = DEEP; e.currentTarget.style.boxShadow = `0 8px 26px ${BABY_BLUE}55` } }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = BABY_BLUE; e.currentTarget.style.boxShadow = `0 6px 20px ${BABY_BLUE}44` }}
+              onMouseEnter={(e) => { if (!e.currentTarget.disabled) { e.currentTarget.style.background = DARK_NAVY; e.currentTarget.style.boxShadow = "0 8px 26px rgba(28,48,80,0.25)" } }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = GOLD; e.currentTarget.style.boxShadow = "0 6px 20px rgba(196,152,88,0.30)" }}
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center gap-2">
@@ -245,9 +277,6 @@ function MessageForm({ onSuccess, onMessageSent }: MessageFormProps) {
             </Button>
           </form>
         </div>
-
-        {/* Bottom accent line */}
-        <div className="h-0.5 w-full" style={{ background: `linear-gradient(to right, transparent, ${BABY_BLUE}44, transparent)` }} />
       </div>
     </div>
   )
@@ -274,43 +303,21 @@ export function Messages() {
   return (
     <section id="messages" className="relative w-full overflow-hidden">
 
-      {/* Solid ivory base */}
-      <div className="absolute inset-0 -z-10" style={{ background: IVORY }} />
+      {/* Solid base — aligned with entourage */}
+      <div className="absolute inset-0 -z-10" style={{ background: "#FFFFFF" }} />
 
-      {/* Multi-stop tinted vertical gradient */}
       <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: `linear-gradient(180deg,
-          rgba(238,212,188,0.38) 0%,
-          rgba(251,244,234,0.0)  22%,
-          rgba(213,238,248,0.26) 52%,
-          rgba(251,244,234,0.0)  78%,
-          rgba(213,238,248,0.36) 100%
-        )`,
+        background: "radial-gradient(ellipse 55% 45% at 50% 30%, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.6) 45%, transparent 75%)",
       }} />
 
-      {/* Diagonal warm-to-cool wash */}
       <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: `linear-gradient(112deg, rgba(238,212,188,0.14) 0%, transparent 44%, rgba(213,238,248,0.14) 100%)`,
+        background: "linear-gradient(to top, rgba(120,175,215,0.10) 0%, rgba(120,175,215,0.04) 25%, transparent 55%)",
       }} />
 
-      {/* Fine diagonal shimmer */}
-      <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: `repeating-linear-gradient(125deg, transparent 0px, transparent 160px, rgba(255,255,255,0.18) 160px, rgba(255,255,255,0.18) 162px)`,
-      }} />
-
-      {/* Soft dot grid */}
-      <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        backgroundImage: `radial-gradient(circle, rgba(63,163,200,0.08) 1px, transparent 1px)`,
-        backgroundSize: "28px 28px",
-      }} />
-
-      {/* Corner radial glows */}
       <div className="absolute inset-0 pointer-events-none z-0" aria-hidden style={{
         background: `
-          radial-gradient(ellipse 50% 38% at 0%   0%,   rgba(238,212,188,0.28) 0%, transparent 60%),
-          radial-gradient(ellipse 40% 34% at 100% 0%,   rgba(213,238,248,0.26) 0%, transparent 55%),
-          radial-gradient(ellipse 44% 36% at 0%   100%, rgba(213,238,248,0.24) 0%, transparent 55%),
-          radial-gradient(ellipse 40% 34% at 100% 100%, rgba(238,212,188,0.24) 0%, transparent 55%)
+          radial-gradient(ellipse 50% 40% at 50% 28%, rgba(196,152,88,0.06) 0%, transparent 70%),
+          radial-gradient(ellipse 38% 32% at 50% 78%, rgba(120,175,215,0.08) 0%, transparent 65%)
         `,
       }} />
 
@@ -324,74 +331,50 @@ export function Messages() {
         <Image src="/decoration/bottom-right-removebg-preview.png" alt="" width={200} height={200} className="absolute bottom-0 right-0 w-auto h-auto max-w-[100px] sm:max-w-[145px] md:max-w-[190px] opacity-40" />
       </div>
 
-      <div className="relative z-10 py-12 sm:py-16 md:py-20">
-        <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+      {/* ── Section header — aligned with entourage ── */}
+      <div className="relative z-10 text-center pt-12 sm:pt-16 pb-8 sm:pb-10 px-4 max-w-3xl mx-auto">
 
-          {/* ══════════════════════════════════════════════════════════════
-              SECTION HEADER
-          ══════════════════════════════════════════════════════════════ */}
-          <div className="text-center mb-8 sm:mb-10 md:mb-12">
-
-            <p
-              className="garamond"
-              style={{
-                fontSize: "clamp(0.56rem, 2.2vw, 0.68rem)",
-                letterSpacing: "0.52em",
-                textTransform: "uppercase",
-                color: BABY_BLUE,
-                marginBottom: "0.75rem",
-                paddingRight: "0.52em",
-              }}
-            >
+            <p style={{
+              fontFamily: '"Cinzel", serif',
+              fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)",
+              letterSpacing: "0.40em",
+              textTransform: "uppercase",
+              color: "rgba(72,112,148,0.80)",
+              marginBottom: "0.4rem",
+              paddingRight: "0.40em",
+            }}>
               Blessings for Kaezar Isaiahnuel
             </p>
 
-            <div className="flex items-center justify-center gap-3 mb-3">
-              <div className="h-px w-12 sm:w-20" style={{ background: `linear-gradient(to left, ${GOLD}99, transparent)` }} />
-              <span style={{ color: GOLD, fontSize: "9px", opacity: 0.9 }}>✦</span>
-              <div className="h-px w-12 sm:w-20" style={{ background: `linear-gradient(to right, ${GOLD}99, transparent)` }} />
-            </div>
+            <OrnamentDivider />
 
-            <h2
-              className="gistesy"
-              style={{
-                fontSize: "clamp(2.4rem, 10vw, 5rem)",
-                color: DEEP,
-                lineHeight: 1.1,
-                overflow: "visible",
-                paddingTop: "0.1em",
-                marginBottom: "0.5rem",
-              }}
-            >
+            <h2 style={{
+              fontFamily: '"Cinzel", serif',
+              fontSize: "clamp(1.6rem, 5.5vw, 2.8rem)",
+              color: GOLD,
+              lineHeight: 1.0,
+              marginTop: "1rem",
+              marginBottom: "0.5rem",
+              filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))",
+            }}>
               Love Notes &amp; Prayers
             </h2>
 
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <div className="h-px w-8 sm:w-14" style={{ background: `linear-gradient(to left, ${BLUE_MID}cc, transparent)` }} />
-              <span style={{ color: BLUE_MID, fontSize: "5px", letterSpacing: "0.25em" }}>◆◆◆</span>
-              <div className="h-px w-8 sm:w-14" style={{ background: `linear-gradient(to right, ${BLUE_MID}cc, transparent)` }} />
-            </div>
-
-            <p
-              className="garamond"
-              style={{
-                fontSize: "clamp(0.78rem, 2.5vw, 0.94rem)",
-                color: MEDIUM,
-                fontStyle: "italic",
-                lineHeight: 1.9,
-                maxWidth: "460px",
-                margin: "0 auto",
-              }}
-            >
+            <p style={{
+              fontFamily: '"Fahkwang", sans-serif',
+              fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
+              color: NAVY_MUTE,
+              lineHeight: 1.75,
+              fontStyle: "italic",
+              maxWidth: "32rem",
+              margin: "0.75rem auto 0",
+            }}>
               Leave a short note or a prayer. Every blessing becomes part of Kaezar&apos;s forever story.
             </p>
+      </div>
 
-            <div className="flex items-center justify-center gap-3 mt-5">
-              <div className="h-px flex-1 max-w-[80px]" style={{ background: `linear-gradient(to left, ${GOLD}55, transparent)` }} />
-              <Sparkles className="h-3.5 w-3.5 opacity-60" style={{ color: GOLD }} />
-              <div className="h-px flex-1 max-w-[80px]" style={{ background: `linear-gradient(to right, ${GOLD}55, transparent)` }} />
-            </div>
-          </div>
+      <div className="relative z-10 pb-12 sm:pb-16">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
 
           {/* ── Form ── */}
           <div className="flex justify-center mb-10 sm:mb-12">
@@ -405,47 +388,41 @@ export function Messages() {
 
             {/* Wall sub-header */}
             <div className="text-center mb-6 sm:mb-8">
-              <div className="relative inline-block mb-3">
-                <div className="absolute inset-0 rounded-full blur-xl scale-150 opacity-20" style={{ background: BABY_BLUE }} />
-                <div
-                  className="relative w-11 h-11 rounded-full flex items-center justify-center mx-auto shadow-lg hover:scale-110 transition-transform"
-                  style={{ background: `linear-gradient(135deg, ${BABY_BLUE}, ${DEEP})`, boxShadow: `0 4px 16px ${BABY_BLUE}44` }}
-                >
-                  <MessageCircle className="h-5 w-5 text-white" />
-                </div>
-              </div>
+              <p style={{
+                fontFamily: '"Cinzel", serif',
+                fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)",
+                letterSpacing: "0.40em",
+                textTransform: "uppercase",
+                color: "rgba(72,112,148,0.80)",
+                marginBottom: "0.4rem",
+                paddingRight: "0.40em",
+              }}>
+                From Our Guests
+              </p>
 
-              <h3
-                className="gistesy"
-                style={{
-                  fontSize: "clamp(1.6rem, 6vw, 2.8rem)",
-                  color: DEEP,
-                  lineHeight: 1.2,
-                  overflow: "visible",
-                  paddingTop: "0.1em",
-                  marginBottom: "0.3rem",
-                }}
-              >
+              <OrnamentDivider width="180px" />
+
+              <h3 style={{
+                fontFamily: '"LeJourScript", cursive',
+                fontSize: "clamp(1.4rem, 4.5vw, 2.2rem)",
+                color: GOLD,
+                lineHeight: 1.0,
+                marginTop: "0.75rem",
+                marginBottom: "0.35rem",
+                filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))",
+              }}>
                 Messages from the Heart
               </h3>
 
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <div className="h-px w-6 sm:w-10" style={{ background: `linear-gradient(to left, ${GOLD}77, transparent)` }} />
-                <span style={{ color: GOLD, fontSize: "5px", opacity: 0.75 }}>◆</span>
-                <div className="h-px w-6 sm:w-10" style={{ background: `linear-gradient(to right, ${GOLD}77, transparent)` }} />
-              </div>
-
-              <p
-                className="garamond"
-                style={{
-                  fontSize: "clamp(0.72rem, 2.2vw, 0.86rem)",
-                  color: MEDIUM,
-                  fontStyle: "italic",
-                  opacity: 0.85,
-                  maxWidth: "360px",
-                  margin: "0 auto",
-                }}
-              >
+              <p style={{
+                fontFamily: '"Fahkwang", sans-serif',
+                fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
+                color: NAVY_MUTE,
+                fontStyle: "italic",
+                lineHeight: 1.75,
+                maxWidth: "28rem",
+                margin: "0 auto",
+              }}>
                 Read the beautiful blessings shared by family and friends
               </p>
             </div>

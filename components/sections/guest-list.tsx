@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
+import { createPortal } from "react-dom"
 import { Section } from "@/components/section"
 import {
   Search,
@@ -17,14 +18,75 @@ import {
   Phone,
   UserPlus,
   Users,
+  ChevronRight,
 } from "lucide-react"
 import { siteConfig } from "@/content/site"
 
-// ── Motif palette ─────────────────────────────────────────────────────────────
-const DEEP      = "#3D2810"
-const MEDIUM    = "#8C6035"
-const ACCENT    = "#B8822A"
-const BABY_BLUE = "#3FA3C8"
+// ── Palette — aligned with entourage.tsx ───────────────────────────────────────
+const DARK_NAVY   = "#1C3050"
+const GOLD        = "#C4965A"
+const NAVY_MUTE   = "rgba(65,90,115,0.78)"
+const STEEL       = "rgba(72,112,148,0.80)"
+const GOLD_BORDER = "rgba(196,152,88,0.28)"
+
+const FROSTED_CARD = {
+  background: "rgba(255,255,255,0.30)",
+  backdropFilter: "blur(14px)",
+  WebkitBackdropFilter: "blur(14px)",
+  border: "1.5px solid rgba(43,74,107,0.22)",
+  boxShadow: "0 4px 24px rgba(43,74,107,0.08), 0 1px 0 rgba(255,255,255,0.55) inset",
+} as const
+
+const SUGGESTION_PANEL = {
+  background: "rgba(255,255,255,0.94)",
+  backdropFilter: "blur(16px)",
+  WebkitBackdropFilter: "blur(16px)",
+  border: `1.5px solid ${GOLD_BORDER}`,
+  boxShadow: "0 8px 32px rgba(43,74,107,0.14), 0 1px 0 rgba(255,255,255,0.65) inset",
+} as const
+
+const MODAL_SHELL = {
+  background: "#FFFFFF",
+  border: "1.5px solid rgba(43,74,107,0.22)",
+  boxShadow: "0 16px 48px rgba(28,48,80,0.18), 0 1px 0 rgba(255,255,255,0.55) inset",
+} as const
+
+const MODAL_BODY_BG = "linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(248,250,252,0.97) 100%)"
+
+const ICON_WRAP = {
+  background: "rgba(196,152,88,0.10)",
+  border: `1.5px solid ${GOLD_BORDER}`,
+} as const
+
+const LAYER_TOP = 9999
+
+function highlightName(name: string, query: string) {
+  const q = query.trim()
+  if (!q) return name
+  const idx = name.toLowerCase().indexOf(q.toLowerCase())
+  if (idx === -1) return name
+  return (
+    <>
+      {name.slice(0, idx)}
+      <span style={{ color: GOLD, fontWeight: 600 }}>{name.slice(idx, idx + q.length)}</span>
+      {name.slice(idx + q.length)}
+    </>
+  )
+}
+
+// ── Fonts — aligned with entourage.tsx ───────────────────────────────────────
+const FONT_LABEL   = '"Cinzel", serif'
+const FONT_DISPLAY = '"LeJourScript", cursive'
+const FONT_BODY    = '"Fahkwang", sans-serif'
+
+const INPUT_CLASS =
+  "w-full rounded-lg transition-all duration-300 shadow-sm focus:shadow-md"
+const INPUT_STYLE = {
+  fontFamily: FONT_LABEL,
+  color: DARK_NAVY,
+  background: "rgba(255,255,255,0.55)",
+  border: `1.5px solid ${GOLD_BORDER}`,
+} as const
 
 interface ApiGuest {
   id: string | number
@@ -63,7 +125,7 @@ export function GuestList() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [isSearching, setIsSearching] = useState(false)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [requestSuccess, setRequestSuccess] = useState<string | null>(null)
@@ -94,6 +156,43 @@ export function GuestList() {
   })
 
   const searchRef = useRef<HTMLDivElement>(null)
+  const inputAnchorRef = useRef<HTMLDivElement>(null)
+  const dropdownPortalRef = useRef<HTMLDivElement>(null)
+  const [dropdownRect, setDropdownRect] = useState<{ top: number; left: number; width: number } | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  const showMatchDropdown = isDropdownOpen && filteredGuests.length > 0
+  const showEmptyDropdown = isDropdownOpen && Boolean(searchQuery.trim() && filteredGuests.length === 0)
+  const showDropdownPortal = showMatchDropdown || showEmptyDropdown
+
+  const updateDropdownPosition = useCallback(() => {
+    const el = inputAnchorRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    setDropdownRect({
+      top: rect.bottom + 6,
+      left: rect.left,
+      width: rect.width,
+    })
+  }, [])
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!showDropdownPortal) {
+      setDropdownRect(null)
+      return
+    }
+    updateDropdownPosition()
+    window.addEventListener("scroll", updateDropdownPosition, true)
+    window.addEventListener("resize", updateDropdownPosition)
+    return () => {
+      window.removeEventListener("scroll", updateDropdownPosition, true)
+      window.removeEventListener("resize", updateDropdownPosition)
+    }
+  }, [showDropdownPortal, searchQuery, filteredGuests.length, updateDropdownPosition])
 
   // Update companions array based on allowedGuests when a guest is selected
   useEffect(() => {
@@ -138,7 +237,7 @@ export function GuestList() {
     // Don't show suggestions if search is empty
     if (!searchQuery.trim()) {
       setFilteredGuests([])
-      setIsSearching(false)
+      setIsDropdownOpen(false)
       return
     }
 
@@ -176,15 +275,15 @@ export function GuestList() {
     })
 
     setFilteredGuests(sorted)
-    setIsSearching(sorted.length > 0)
   }, [searchQuery, guests])
 
-  // Close search dropdown when clicking outside
+  // Close search dropdown when clicking outside (includes portaled panel)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setIsSearching(false)
-      }
+      const target = event.target as Node
+      if (searchRef.current?.contains(target)) return
+      if (dropdownPortalRef.current?.contains(target)) return
+      setIsDropdownOpen(false)
     }
 
     document.addEventListener("mousedown", handleClickOutside)
@@ -232,7 +331,8 @@ export function GuestList() {
   const handleSearchSelect = (guest: Guest) => {
     setSelectedGuest(guest)
     setSearchQuery(guest.Name)
-    setIsSearching(false)
+    setIsDropdownOpen(false)
+    setDropdownRect(null)
     
     // Set form data with existing guest info
     setFormData({
@@ -256,6 +356,13 @@ export function GuestList() {
     
     // Show modal
     setShowModal(true)
+  }
+
+  const handleOpenRequestModal = () => {
+    setRequestFormData((prev) => ({ ...prev, Name: searchQuery }))
+    setIsDropdownOpen(false)
+    setDropdownRect(null)
+    setShowRequestModal(true)
   }
 
   const handleFormChange = (
@@ -397,30 +504,33 @@ export function GuestList() {
   }
 
   return (
-    <Section id="guest-list" className="relative z-30 py-6 sm:py-10 md:py-12 lg:py-16">
+    <Section id="guest-list" className="relative z-30 py-6 sm:py-10 md:py-12 lg:py-16 overflow-visible" bgColor="none">
+      {/* Section background — aligned with entourage.tsx */}
+      <div className="absolute inset-0 -z-10" style={{ background: "#FFFFFF" }} />
+      <div className="absolute inset-0 -z-10 pointer-events-none" style={{
+        background: "radial-gradient(ellipse 55% 45% at 50% 30%, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.6) 45%, transparent 75%)",
+      }} />
+      <div className="absolute inset-0 -z-10 pointer-events-none" style={{
+        background: "linear-gradient(to top, rgba(120,175,215,0.10) 0%, rgba(120,175,215,0.04) 25%, transparent 55%)",
+      }} />
+
       {/* Header */}
       <div className="relative z-10 text-center mb-6 sm:mb-8 md:mb-10 px-2 sm:px-3 md:px-4">
         {/* Frosted glass header card */}
         <div
           className="inline-block rounded-3xl px-8 py-7 sm:px-14 sm:py-9"
-          style={{
-            background: "rgba(254,249,243,0.88)",
-            backdropFilter: "blur(16px)",
-            WebkitBackdropFilter: "blur(16px)",
-            border: "1px solid rgba(184,130,42,0.20)",
-            boxShadow: "0 8px 40px rgba(0,0,0,0.22), 0 2px 10px rgba(0,0,0,0.12)",
-          }}
+          style={FROSTED_CARD}
         >
           {/* Eyebrow */}
           <p
-            className="garamond"
             style={{
-              fontSize: "clamp(0.56rem, 2.2vw, 0.68rem)",
-              letterSpacing: "0.52em",
+              fontFamily: FONT_LABEL,
+              fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)",
+              letterSpacing: "0.40em",
               textTransform: "uppercase",
-              color: BABY_BLUE,
+              color: STEEL,
               marginBottom: "0.5rem",
-              paddingRight: "0.52em",
+              paddingRight: "0.40em",
             }}
           >
             Confirm Your Attendance
@@ -428,39 +538,40 @@ export function GuestList() {
 
           {/* Ornament */}
           <div className="flex items-center justify-center gap-3 mb-3">
-            <div className="h-px w-10 sm:w-16" style={{ background: `linear-gradient(to left, ${ACCENT}88, transparent)` }} />
-            <span style={{ color: ACCENT, fontSize: "8px", opacity: 0.9 }}>✦</span>
-            <div className="h-px w-10 sm:w-16" style={{ background: `linear-gradient(to right, ${ACCENT}88, transparent)` }} />
+            <div className="h-px w-10 sm:w-16" style={{ background: "linear-gradient(to left, rgba(196,152,88,0.45), transparent)" }} />
+            <span style={{ color: GOLD, fontSize: "8px", opacity: 0.9 }}>✦</span>
+            <div className="h-px w-10 sm:w-16" style={{ background: "linear-gradient(to right, rgba(196,152,88,0.45), transparent)" }} />
           </div>
 
           {/* Title */}
           <h2
-            className="gistesy"
             style={{
+              fontFamily: "cinzel",
               fontSize: "clamp(2.8rem, 12vw, 5.5rem)",
-              color: DEEP,
+              color: GOLD,
               lineHeight: 1.1,
               overflow: "visible",
               paddingTop: "0.1em",
               marginBottom: "0.5rem",
+              filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))",
             }}
           >
             RSVP
           </h2>
 
           <div className="flex items-center justify-center gap-2 mb-3">
-            <div className="h-px w-6 sm:w-10" style={{ background: `linear-gradient(to left, ${BABY_BLUE}cc, transparent)` }} />
-            <span style={{ color: BABY_BLUE, fontSize: "5px", letterSpacing: "0.2em" }}>◆◆◆</span>
-            <div className="h-px w-6 sm:w-10" style={{ background: `linear-gradient(to right, ${BABY_BLUE}cc, transparent)` }} />
+            <div className="h-px w-6 sm:w-10" style={{ background: "linear-gradient(to left, rgba(196,152,88,0.45), transparent)" }} />
+            <span style={{ color: GOLD, fontSize: "5px", letterSpacing: "0.2em" }}>◆◆◆</span>
+            <div className="h-px w-6 sm:w-10" style={{ background: "linear-gradient(to right, rgba(196,152,88,0.45), transparent)" }} />
           </div>
 
           <p
-            className="garamond"
             style={{
-              fontSize: "clamp(0.78rem, 2.8vw, 0.96rem)",
-              color: MEDIUM,
+              fontFamily: FONT_BODY,
+              fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
+              color: NAVY_MUTE,
               fontStyle: "italic",
-              lineHeight: 1.8,
+              lineHeight: 1.75,
               maxWidth: "420px",
               margin: "0 auto 0.5rem",
             }}
@@ -469,15 +580,15 @@ export function GuestList() {
           </p>
 
           <p
-            className="garamond"
             style={{
-              fontSize: "clamp(0.78rem, 2.8vw, 0.9rem)",
-              color: DEEP,
-              fontWeight: 600,
+              fontFamily: FONT_LABEL,
+              fontSize: "clamp(0.72rem, 2.4vw, 0.88rem)",
+              color: DARK_NAVY,
+              fontWeight: 500,
               letterSpacing: "0.04em",
             }}
           >
-            RSVP Deadline: <span style={{ color: BABY_BLUE }}>{siteConfig.details.rsvp.deadline}</span>
+            RSVP Deadline: <span style={{ color: GOLD }}>{siteConfig.details.rsvp.deadline}</span>
           </p>
         </div>
       </div>
@@ -486,159 +597,186 @@ export function GuestList() {
       <div className="relative z-10 max-w-2xl mx-auto px-2 sm:px-4 md:px-6 overflow-visible">
         {/* Card with frosted ivory background */}
         <div
-          className="relative rounded-2xl overflow-visible"
-          style={{
-            background: "rgba(254,249,243,0.92)",
-            backdropFilter: "blur(16px)",
-            WebkitBackdropFilter: "blur(16px)",
-            border: "1px solid rgba(184,130,42,0.22)",
-            boxShadow: "0 12px 40px rgba(0,0,0,0.22), 0 3px 10px rgba(0,0,0,0.10)",
-          }}
+          className="relative rounded-3xl overflow-visible"
+          style={FROSTED_CARD}
         >
-          {/* Top accent stripe */}
-          {/* <div className="h-[3px] w-full rounded-t-2xl" style={{ background: `linear-gradient(to right, ${ACCENT}, ${BABY_BLUE})` }} /> */}
-          {/* Card content */}
           <div className="relative p-3 sm:p-5 md:p-6 overflow-visible">
             <div className="relative z-10 space-y-3 sm:space-y-4 overflow-visible">
               <div className="flex items-center gap-2 sm:gap-3">
-                <div className="p-1.5 sm:p-2 rounded-lg shadow-md" style={{ background: BABY_BLUE }}>
-                  <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-white" />
+                <div
+                  className="p-1.5 sm:p-2 rounded-lg"
+                  style={{ background: "rgba(196,152,88,0.10)", border: `1.5px solid ${GOLD_BORDER}` }}
+                >
+                  <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" style={{ color: GOLD }} />
                 </div>
                 <div>
-                  <label className="garamond block mb-0.5 sm:mb-1" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.94rem)", color: DEEP, fontWeight: 600 }}>
+                  <label className="block mb-0.5 sm:mb-1" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.78rem, 2.5vw, 0.94rem)", color: DARK_NAVY, fontWeight: 500 }}>
                     Find Your Name
                   </label>
-                  <p className="garamond" style={{ fontSize: "clamp(0.65rem, 2vw, 0.76rem)", color: MEDIUM, fontStyle: "italic" }}>
+                  <p style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.65rem, 2vw, 0.76rem)", color: NAVY_MUTE, fontStyle: "italic" }}>
                     Type as you search to see instant results
                   </p>
                 </div>
               </div>
-              <div ref={searchRef} className="relative z-[100]">
-                <div className="relative">
-                  <Search className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-motif-deep/70 pointer-events-none transition-colors duration-200" />
+              <div ref={searchRef} className="relative">
+                <div ref={inputAnchorRef} className="relative">
+                  <Search className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 pointer-events-none" style={{ color: NAVY_MUTE }} />
                   <input
                     type="text"
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      setSearchQuery(value)
+                      setIsDropdownOpen(value.trim().length > 0)
+                    }}
+                    onFocus={() => {
+                      updateDropdownPosition()
+                      if (searchQuery.trim()) setIsDropdownOpen(true)
+                    }}
                     placeholder="Type your name..."
-                    className="w-full pl-8 sm:pl-10 pr-2.5 sm:pr-3 py-2 sm:py-2.5 md:py-3 border-2 border-motif-deep/60 focus:border-motif-deep rounded-lg text-xs sm:text-sm font-sans text-motif-deep placeholder:text-motif-medium/70 transition-all duration-300 hover:border-motif-deep/70 focus:ring-2 focus:ring-motif-deep/20 bg-motif-cream shadow-sm focus:shadow-md"
+                    className={`${INPUT_CLASS} pl-8 sm:pl-10 pr-2.5 sm:pr-3 py-2 sm:py-2.5 md:py-3 text-xs sm:text-sm`}
+                    style={INPUT_STYLE}
+                    aria-autocomplete="list"
+                    aria-expanded={showDropdownPortal}
+                    aria-controls="guest-name-suggestions"
                   />
                 </div>
-                {/* Autocomplete dropdown */}
-                {isSearching && filteredGuests.length > 0 && (
-                  <div 
-                    className="absolute z-[9999] w-full mt-1 sm:mt-1.5 md:mt-2 bg-motif-cream/95 backdrop-blur-lg border border-motif-deep/70 rounded-lg sm:rounded-xl shadow-xl overflow-hidden" 
-                    style={{ 
-                      position: 'absolute', 
-                      top: '100%',
-                      left: 0,
-                      right: 0
-                    }}
-                  >
-                    {filteredGuests.map((guest, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handleSearchSelect(guest)}
-                        className="w-full px-2.5 sm:px-3 py-2 sm:py-2.5 text-left hover:bg-motif-cream/40 active:bg-motif-deep/40 transition-all duration-200 flex items-center gap-2 sm:gap-3 border-b border-motif-deep/40 last:border-b-0 group"
-                      >
-                        <div className="relative flex-shrink-0">
-                          <div className="bg-motif-deep p-1 sm:p-1.5 rounded-full shadow-sm group-hover:shadow-md transition-all duration-300">
-                            <User className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-white" />
-                          </div>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-semibold text-xs sm:text-sm text-motif-deep group-hover:text-motif-deep transition-colors duration-200 truncate">
-                            {guest.Name}
-                          </div>
-                          {guest.Email && guest.Email !== "Pending" && (
-                            <div className="text-[10px] sm:text-xs text-motif-medium/80 truncate mt-0.5">
-                              {guest.Email}
-                            </div>
-                          )}
-                        </div>
-                        <div className="text-motif-medium/70 group-hover:text-motif-deep group-hover:translate-x-1 transition-all duration-200 flex-shrink-0">
-                          <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
-                {searchQuery && filteredGuests.length === 0 && (
-                  <div 
-                    className="absolute z-[9999] w-full mt-1.5 sm:mt-2 bg-motif-cream/95 backdrop-blur-lg border-2 border-motif-deep/80 rounded-lg shadow-xl overflow-hidden" 
-                    style={{ 
-                      position: 'absolute', 
-                      top: '100%',
-                      left: 0,
-                      right: 0
-                    }}
-                  >
-                    <div className="p-2.5 sm:p-3 md:p-4">
-                      <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
-                        <div className="bg-motif-deep p-1.5 sm:p-2 rounded-lg flex-shrink-0 shadow-sm">
-                          <UserPlus className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="garamond mb-1" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP, fontWeight: 600 }}>Not finding your name?</h4>
-                          <p className="garamond" style={{ fontSize: "clamp(0.65rem, 2vw, 0.76rem)", color: MEDIUM, lineHeight: 1.6 }}>
-                            We'd love to have you with us! Send a request to join the celebration.
-                          </p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => {
-                          setRequestFormData({ ...requestFormData, Name: searchQuery })
-                          setShowRequestModal(true)
-                        }}
-                        className="w-full !bg-motif-deep hover:!bg-motif-deep/90 text-white py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-semibold shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center"
-                      >
-                        <UserPlus className="h-3 w-3 mr-1.5 sm:mr-2 inline" />
-                        Request to Join
-                      </button>
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Name suggestion dropdown — portaled above all sections */}
+      {mounted && showDropdownPortal && dropdownRect && createPortal(
+        <div
+          ref={dropdownPortalRef}
+          id="guest-name-suggestions"
+          role="listbox"
+          className="rounded-xl overflow-hidden animate-in fade-in slide-in-from-top-1 duration-200"
+          style={{
+            position: "fixed",
+            top: dropdownRect.top,
+            left: dropdownRect.left,
+            width: dropdownRect.width,
+            zIndex: LAYER_TOP,
+            ...SUGGESTION_PANEL,
+          }}
+        >
+          <div className="h-[3px] w-full" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.55), transparent)" }} />
+
+          {showMatchDropdown && (
+            <>
+              <div
+                className="px-3 py-2 flex items-center justify-between"
+                style={{ borderBottom: `1px solid ${GOLD_BORDER}`, background: "rgba(196,152,88,0.06)" }}
+              >
+                <span style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.58rem, 1.7vw, 0.68rem)", letterSpacing: "0.22em", textTransform: "uppercase", color: STEEL }}>
+                  Select your name
+                </span>
+                <span style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: NAVY_MUTE, fontStyle: "italic" }}>
+                  {filteredGuests.length} {filteredGuests.length === 1 ? "match" : "matches"}
+                </span>
+              </div>
+              <div className="max-h-[min(280px,50vh)] overflow-y-auto overscroll-contain">
+                {filteredGuests.map((guest, index) => (
+                  <button
+                    key={guest.id ?? index}
+                    role="option"
+                    onClick={() => handleSearchSelect(guest)}
+                    className="w-full px-2.5 sm:px-3 py-2.5 sm:py-3 text-left transition-all duration-200 flex items-center gap-2 sm:gap-3 group"
+                    style={{ borderBottom: index < filteredGuests.length - 1 ? `1px solid ${GOLD_BORDER}` : "none" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(196,152,88,0.10)" }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "transparent" }}
+                  >
+                    <div className="relative flex-shrink-0">
+                      <div className="p-1.5 sm:p-2 rounded-full" style={ICON_WRAP}>
+                        <User className="h-3.5 w-3.5 sm:h-4 sm:w-4" style={{ color: GOLD }} />
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div
+                        className="truncate transition-colors duration-200 group-hover:text-[#C4965A]"
+                        style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.78rem, 2.5vw, 0.92rem)", color: DARK_NAVY, fontWeight: 500 }}
+                      >
+                        {highlightName(guest.Name, searchQuery)}
+                      </div>
+                      {guest.Email && guest.Email !== "Pending" && (
+                        <div className="truncate mt-0.5" style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", fontStyle: "italic", color: NAVY_MUTE }}>
+                          {guest.Email}
+                        </div>
+                      )}
+                    </div>
+                    <ChevronRight className="h-4 w-4 flex-shrink-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-[#C4965A]" style={{ color: STEEL }} />
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+
+          {showEmptyDropdown && (
+            <div className="p-2.5 sm:p-3 md:p-4">
+              <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
+                <div className="p-1.5 sm:p-2 rounded-lg flex-shrink-0" style={ICON_WRAP}>
+                  <UserPlus className="h-3 w-3 sm:h-4 sm:w-4" style={{ color: GOLD }} />
+                </div>
+                <div className="flex-1">
+                  <h4 className="mb-1" style={{ fontFamily: "cinzel", fontSize: "clamp(1rem, 3.5vw, 1.25rem)", color: GOLD, lineHeight: 1.1, filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))" }}>
+                    Not finding your name?
+                  </h4>
+                  <p style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.65rem, 2vw, 0.76rem)", color: NAVY_MUTE, lineHeight: 1.6, fontStyle: "italic" }}>
+                    We'd love to have you with us! Send a request to join the celebration.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleOpenRequestModal}
+                className="w-full text-white py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-semibold shadow-md transition-all duration-300 hover:opacity-90 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center"
+                style={{ background: DARK_NAVY, fontFamily: "cinzel, serif" }}
+              >
+                <UserPlus className="h-3 w-3 mr-1.5 sm:mr-2 inline" />
+                Request to Join
+              </button>
+            </div>
+          )}
+        </div>,
+        document.body
+      )}
+
       {/* RSVP Modal */}
       {showModal && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-1 sm:p-2 md:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in"
+          className="fixed inset-0 flex items-center justify-center p-1 sm:p-2 md:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in"
+          style={{ zIndex: LAYER_TOP }}
           onClick={handleCloseModal}
         >
             <div 
               className="relative w-full max-w-md sm:max-w-lg mx-1 sm:mx-2 md:mx-4 rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 max-h-[95vh] flex flex-col"
-              style={{ background: "#FEF9F3", border: `2px solid ${BABY_BLUE}55` }}
+              style={{ ...MODAL_SHELL, borderRadius: "1rem" }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Modal Header — baby blue */}
+              {/* Modal Header */}
               <div
                 className="relative p-3 sm:p-4 md:p-5 lg:p-6 flex-shrink-0"
-                style={{ background: `linear-gradient(135deg, ${BABY_BLUE} 0%, #5BB8D8 100%)` }}
+                style={{ background: DARK_NAVY }}
               >
-                {/* Accent stripe */}
-                <div className="h-[3px] w-full absolute top-0 left-0" style={{ background: `linear-gradient(to right, ${ACCENT}, #fff8, ${ACCENT})` }} />
+                <div className="h-[3px] w-full absolute top-0 left-0" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.55), transparent)" }} />
                 <div className="relative flex items-start justify-between gap-1.5 sm:gap-2">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 mb-1 sm:mb-1.5 md:mb-2 lg:mb-3">
                       <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 bg-white/25 rounded-full flex items-center justify-center flex-shrink-0">
                         <Heart className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 lg:h-5 lg:w-5 text-white" />
                       </div>
-                      <h3 className="gistesy text-white" style={{ fontSize: "clamp(1.2rem, 5vw, 2rem)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em" }}>
+                      <h3 className="text-white" style={{ fontFamily: "cinzel, serif", fontSize: "clamp(1.2rem, 5vw, 2rem)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em", filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))" }}>
                         You Are Warmly Invited
                       </h3>
                     </div>
-                    <p className="garamond text-white/95" style={{ fontSize: "clamp(0.72rem, 2.5vw, 0.9rem)", lineHeight: 1.6 }}>
-                      Dear <span className="font-bold text-white">{selectedGuest?.Name}</span>, witness and celebrate the Christening!
+                    <p className="text-white/95" style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.72rem, 2.5vw, 0.9rem)", lineHeight: 1.6 }}>
+                      Dear <span className="font-bold text-white" style={{ fontFamily: FONT_LABEL }}>{selectedGuest?.Name}</span>, witness and celebrate the Christening!
                     </p>
-                    <p className="garamond text-white/85 mt-1" style={{ fontSize: "clamp(0.65rem, 2vw, 0.8rem)" }}>
-                      We've reserved <span className="font-bold text-white">{selectedGuest?.AllowedGuests || 1}</span> {selectedGuest?.AllowedGuests === 1 ? 'seat' : 'seats'} for you.
+                    <p className="text-white/85 mt-1" style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.65rem, 2vw, 0.8rem)" }}>
+                      We've reserved <span className="font-bold text-white" style={{ fontFamily: FONT_LABEL }}>{selectedGuest?.AllowedGuests || 1}</span> {selectedGuest?.AllowedGuests === 1 ? 'seat' : 'seats'} for you.
                     </p>
                   </div>
                   {!hasResponded && (
@@ -653,51 +791,51 @@ export function GuestList() {
               </div>
 
               {/* Modal Content */}
-              <div className="p-2.5 sm:p-3 md:p-4 lg:p-5 xl:p-6 overflow-y-auto flex-1 min-h-0">
+              <div className="p-2.5 sm:p-3 md:p-4 lg:p-5 xl:p-6 overflow-y-auto flex-1 min-h-0" style={{ background: MODAL_BODY_BG }}>
                 {hasResponded ? (
                   // Thank you message for guests who already responded
                   <div className="text-center py-3 sm:py-4 md:py-6">
-                    <div className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full mb-2 sm:mb-3 md:mb-4" style={{ background: BABY_BLUE }}>
+                    <div className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full mb-2 sm:mb-3 md:mb-4" style={{ background: DARK_NAVY }}>
                       <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 text-white" />
                     </div>
-                    <h4 className="gistesy mb-1.5 sm:mb-2 md:mb-3" style={{ fontSize: "clamp(1.3rem, 5vw, 1.9rem)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em", color: DEEP }}>
+                    <h4 className="mb-1.5 sm:mb-2 md:mb-3" style={{ fontFamily: FONT_DISPLAY, fontSize: "clamp(1.3rem, 5vw, 1.9rem)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em", color: GOLD, filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))" }}>
                       Thank You for Responding!
                     </h4>
-                    <p className="garamond text-[10px] sm:text-xs md:text-sm mb-2 sm:mb-3 md:mb-4 px-2" style={{ color: MEDIUM }}>
+                    <p className="mb-2 sm:mb-3 md:mb-4 px-2" style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.72rem, 2.5vw, 0.88rem)", color: NAVY_MUTE, fontStyle: "italic" }}>
                       We've received your RSVP and look forward to celebrating with you!
                     </p>
-                    <div className="rounded-lg p-2.5 sm:p-3 md:p-4 space-y-2 sm:space-y-2.5 md:space-y-3" style={{ background: `${BABY_BLUE}15`, border: `1px solid ${BABY_BLUE}44` }}>
+                    <div className="rounded-lg p-2.5 sm:p-3 md:p-4 space-y-2 sm:space-y-2.5 md:space-y-3" style={{ background: "rgba(196,152,88,0.08)", border: `1.5px solid ${GOLD_BORDER}` }}>
                       <div className="flex items-center justify-center gap-1.5 sm:gap-2 md:gap-3 mb-1.5 sm:mb-2">
                         {selectedGuest?.RSVP === "Yes" && (
                           <>
-                            <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-green-600" />
-                            <span className="text-xs sm:text-sm md:text-base font-semibold text-green-600">
+                            <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" style={{ color: GOLD }} />
+                            <span className="font-semibold" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.72rem, 2.4vw, 0.88rem)", color: DARK_NAVY }}>
                               You're Attending!
                             </span>
                           </>
                         )}
                         {selectedGuest?.RSVP === "No" && (
                           <>
-                            <XCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-red-600" />
-                            <span className="text-xs sm:text-sm md:text-base font-semibold text-red-600">
+                            <XCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" style={{ color: STEEL }} />
+                            <span className="font-semibold" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.72rem, 2.4vw, 0.88rem)", color: STEEL }}>
                               Unable to Attend
                             </span>
                           </>
                         )}
                       </div>
                       {selectedGuest?.RSVP === "Yes" && (
-                        <div className="rounded-lg p-2 sm:p-2.5 md:p-3" style={{ background: "rgba(254,249,243,0.8)", border: `1px solid ${BABY_BLUE}55` }}>
+                        <div className="rounded-lg p-2 sm:p-2.5 md:p-3" style={{ background: "rgba(255,255,255,0.55)", border: `1.5px solid ${GOLD_BORDER}` }}>
                           <div className="text-center">
-                            <p className="text-[10px] sm:text-xs mb-1 font-medium" style={{ color: MEDIUM }}>Number of Guests</p>
-                            <p className="text-lg sm:text-xl md:text-2xl font-bold" style={{ color: BABY_BLUE }}>
+                            <p className="mb-1 font-medium" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: NAVY_MUTE }}>Number of Guests</p>
+                            <p className="font-bold" style={{ fontFamily: FONT_DISPLAY, fontSize: "clamp(1.4rem, 5vw, 2rem)", color: GOLD, lineHeight: 1.1 }}>
                               {selectedGuest.AllowedGuests || 1}
                             </p>
                           </div>
                         </div>
                       )}
                       {selectedGuest && selectedGuest.Message && selectedGuest.Message.trim() !== "" && (
-                        <div className="pt-1.5 sm:pt-2" style={{ borderTop: `1px solid ${BABY_BLUE}44` }}>
-                          <p className="text-[10px] sm:text-xs italic px-1" style={{ color: MEDIUM }}>
+                        <div className="pt-1.5 sm:pt-2" style={{ borderTop: `1px solid ${GOLD_BORDER}` }}>
+                          <p className="italic px-1" style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.65rem, 2vw, 0.76rem)", color: NAVY_MUTE }}>
                             "{selectedGuest.Message}"
                           </p>
                         </div>
@@ -705,8 +843,8 @@ export function GuestList() {
                     </div>
                     <button
                       onClick={handleCloseModal}
-                      className="mt-3 sm:mt-4 md:mt-6 text-white px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300 hover:opacity-90"
-                      style={{ background: BABY_BLUE }}
+                      className="mt-3 sm:mt-4 md:mt-6 text-white px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-2.5 rounded-lg font-semibold transition-all duration-300 hover:opacity-90"
+                      style={{ background: DARK_NAVY, fontFamily: FONT_LABEL }}
                     >
                       Close
                     </button>
@@ -722,8 +860,8 @@ export function GuestList() {
                   >
                     {/* Can you attend? */}
                     <div>
-                    <label className="garamond flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP, fontWeight: 600 }}>
-                        <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: ACCENT }} />
+                    <label className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DARK_NAVY, fontWeight: 500 }}>
+                        <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: GOLD }} />
                         <span>Can you attend? *</span>
                       </label>
                       <div className="grid grid-cols-2 gap-1.5 sm:gap-2 md:gap-3">
@@ -734,16 +872,16 @@ export function GuestList() {
                           }
                           className="relative p-2 sm:p-2.5 md:p-3 lg:p-4 rounded-lg border-2 transition-all duration-300"
                           style={formData.RSVP === "Yes"
-                            ? { borderColor: BABY_BLUE, background: `${BABY_BLUE}18`, boxShadow: `0 4px 14px ${BABY_BLUE}33`, transform: "scale(1.05)" }
-                            : { borderColor: `${BABY_BLUE}55`, background: "rgba(254,249,243,0.7)" }
+                            ? { borderColor: GOLD, background: "rgba(196,152,88,0.10)", boxShadow: "0 4px 14px rgba(196,152,88,0.18)", transform: "scale(1.05)" }
+                            : { borderColor: GOLD_BORDER, background: "rgba(255,255,255,0.55)" }
                           }
                         >
                           <div className="flex items-center justify-center gap-1.5 sm:gap-2">
                             <CheckCircle
                               className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0"
-                              style={{ color: formData.RSVP === "Yes" ? BABY_BLUE : `${MEDIUM}99` }}
+                              style={{ color: formData.RSVP === "Yes" ? GOLD : `${NAVY_MUTE}99` }}
                             />
-                            <span className="text-xs sm:text-sm font-bold" style={{ color: formData.RSVP === "Yes" ? BABY_BLUE : DEEP }}>
+                            <span className="font-bold" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.72rem, 2.2vw, 0.86rem)", color: formData.RSVP === "Yes" ? GOLD : DARK_NAVY }}>
                               Yes!
                             </span>
                           </div>
@@ -754,19 +892,17 @@ export function GuestList() {
                           className="relative p-2 sm:p-2.5 md:p-3 lg:p-4 rounded-lg border-2 transition-all duration-300"
                           style={formData.RSVP === "No"
                             ? { borderColor: "#ef4444", background: "#fef2f2", transform: "scale(1.05)" }
-                            : { borderColor: `${BABY_BLUE}55`, background: "rgba(254,249,243,0.7)" }
+                            : { borderColor: GOLD_BORDER, background: "rgba(255,255,255,0.55)" }
                           }
                         >
                           <div className="flex items-center justify-center gap-1.5 sm:gap-2">
                             <XCircle
-                              className={`h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 ${
-                                formData.RSVP === "No" ? "text-red-600" : "text-motif-medium/60"
-                              }`}
+                              className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0"
+                              style={{ color: formData.RSVP === "No" ? "#ef4444" : NAVY_MUTE }}
                             />
                             <span
-                              className={`text-xs sm:text-sm font-bold ${
-                                formData.RSVP === "No" ? "text-red-600" : "text-motif-deep"
-                              }`}
+                              className="font-bold"
+                              style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.72rem, 2.2vw, 0.86rem)", color: formData.RSVP === "No" ? "#ef4444" : DARK_NAVY }}
                             >
                               Sorry, No
                             </span>
@@ -778,24 +914,24 @@ export function GuestList() {
                     {/* Who's Coming With You - Companion Names */}
                     {formData.RSVP === "Yes" && companions.length > 0 && (
                       <div className="space-y-2.5 sm:space-y-3">
-                        <label className="garamond flex items-center gap-1.5 sm:gap-2" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP, fontWeight: 600 }}>
-                          <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: ACCENT }} />
+                        <label className="flex items-center gap-1.5 sm:gap-2" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DARK_NAVY, fontWeight: 500 }}>
+                          <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: GOLD }} />
                           <span>Who's Coming With You?</span>
                         </label>
-                        <p className="garamond -mt-1 sm:-mt-1.5" style={{ fontSize: "clamp(0.65rem, 2vw, 0.76rem)", color: MEDIUM }}>
+                        <p className="-mt-1 sm:-mt-1.5" style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.65rem, 2vw, 0.76rem)", color: NAVY_MUTE, fontStyle: "italic" }}>
                           Please provide names and relationships for your <span className="font-semibold">{companions.length}</span> additional {companions.length === 1 ? 'guest' : 'guests'}
                         </p>
                         {companions.map((companion, index) => (
-                          <div key={index} className="rounded-lg p-2 sm:p-2.5 md:p-3 space-y-2 sm:space-y-2.5" style={{ background: `${BABY_BLUE}10`, border: `1px solid ${BABY_BLUE}33` }}>
+                          <div key={index} className="rounded-lg p-2 sm:p-2.5 md:p-3 space-y-2 sm:space-y-2.5" style={{ background: "rgba(196,152,88,0.08)", border: `1.5px solid ${GOLD_BORDER}` }}>
                             <div className="flex items-center gap-1.5 mb-1 sm:mb-1.5">
-                              <User className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-motif-deep" />
-                              <span className="text-[10px] sm:text-xs font-semibold text-motif-deep">
+                              <User className="h-3 w-3 sm:h-3.5 sm:w-3.5" style={{ color: GOLD }} />
+                              <span className="font-semibold" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: DARK_NAVY }}>
                                 Guest {index + 2}
                               </span>
                             </div>
                             <div className="space-y-1.5 sm:space-y-2">
                               <div>
-                                <label className="block text-[10px] sm:text-xs font-medium text-motif-deep mb-1">
+                                <label className="block font-medium mb-1" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: DARK_NAVY }}>
                                   Full Name
                                 </label>
                                 <input
@@ -807,11 +943,12 @@ export function GuestList() {
                                     setCompanions(newCompanions)
                                   }}
                                   placeholder={`Name of guest ${index + 2}`}
-                                  className="w-full px-2 sm:px-2.5 py-1.5 sm:py-2 border border-motif-deep/50 focus:border-motif-deep rounded text-[10px] sm:text-xs font-sans text-motif-deep placeholder:text-motif-medium/60 transition-all duration-300 focus:ring-1 focus:ring-motif-deep/20 bg-motif-cream"
+                                  className={`${INPUT_CLASS} px-2 sm:px-2.5 py-1.5 sm:py-2 text-[10px] sm:text-xs`}
+                                  style={{ ...INPUT_STYLE, fontSize: "clamp(0.65rem, 2vw, 0.76rem)" }}
                                 />
                               </div>
                               <div>
-                                <label className="block text-[10px] sm:text-xs font-medium text-motif-deep mb-1">
+                                <label className="block font-medium mb-1" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: DARK_NAVY }}>
                                   Relationship with {selectedGuest?.Name || 'Primary Guest'}
                                 </label>
                                 <input
@@ -823,7 +960,8 @@ export function GuestList() {
                                     setCompanions(newCompanions)
                                   }}
                                   placeholder="e.g., Spouse, Friend, Child, Parent"
-                                  className="w-full px-2 sm:px-2.5 py-1.5 sm:py-2 border border-motif-deep/50 focus:border-motif-deep rounded text-[10px] sm:text-xs font-sans text-motif-deep placeholder:text-motif-medium/60 transition-all duration-300 focus:ring-1 focus:ring-motif-deep/20 bg-motif-cream"
+                                  className={`${INPUT_CLASS} px-2 sm:px-2.5 py-1.5 sm:py-2 text-[10px] sm:text-xs`}
+                                  style={{ ...INPUT_STYLE, fontSize: "clamp(0.65rem, 2vw, 0.76rem)" }}
                                 />
                               </div>
                             </div>
@@ -833,28 +971,29 @@ export function GuestList() {
                     )}
 
                     {/* Message to the couple */}
-                    <div>
-                    <label className="garamond flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 flex-wrap" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP, fontWeight: 600 }}>
-                      <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: ACCENT }} />
-                        <span>Message for Niahna</span>
-                      <span className="garamond font-normal" style={{ fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: `${DEEP}90` }}>(Optional)</span>
+                    {/* <div>
+                    <label className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 flex-wrap" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DARK_NAVY, fontWeight: 500 }}>
+                      <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: GOLD }} />
+                        <span>Message for Kaezar</span>
+                      <span style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: NAVY_MUTE }}>(Optional)</span>
                       </label>
                       <textarea
                         name="Message"
                         value={formData.Message}
                         onChange={handleFormChange}
-                        placeholder="Leave a heartfelt message for Niahna to read and treasure in the future..."
+                        placeholder="Leave a heartfelt message for Kaezar to read and treasure in the future..."
                         rows={3}
-                      className="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 border-2 border-motif-deep/60 focus:border-motif-deep rounded-lg text-xs sm:text-sm font-sans text-motif-deep placeholder:text-motif-medium/70 transition-all duration-300 focus:ring-2 focus:ring-motif-deep/20 resize-none bg-motif-cream"
+                      className={`${INPUT_CLASS} px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm resize-none`}
+                      style={INPUT_STYLE}
                       />
-                    </div>
+                    </div> */}
 
                     {/* Email */}
                     <div>
-                    <label className="garamond flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 flex-wrap" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP, fontWeight: 600 }}>
-                        <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: ACCENT }} />
+                    <label className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 flex-wrap" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DARK_NAVY, fontWeight: 500 }}>
+                        <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: GOLD }} />
                         <span>Your Email Address</span>
-                        <span className="garamond font-normal" style={{ fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: `${DEEP}90` }}>(Optional)</span>
+                        <span style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: NAVY_MUTE }}>(Optional)</span>
                       </label>
                       <input
                         type="email"
@@ -862,7 +1001,8 @@ export function GuestList() {
                         value={formData.Email}
                         onChange={handleFormChange}
                         placeholder="your.email@example.com"
-                        className="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 border-2 border-motif-deep/60 focus:border-motif-deep rounded-lg text-xs sm:text-sm font-sans text-motif-deep placeholder:text-motif-medium/70 transition-all duration-300 focus:ring-2 focus:ring-motif-deep/20 bg-motif-cream"
+                        className={`${INPUT_CLASS} px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm`}
+                        style={INPUT_STYLE}
                       />
                     </div>
 
@@ -872,7 +1012,7 @@ export function GuestList() {
                         type="submit"
                         disabled={isLoading}
                         className="w-full text-white py-2 sm:py-2.5 md:py-3 rounded-lg text-xs sm:text-sm font-semibold shadow-md transition-all duration-300 hover:opacity-90 hover:shadow-lg disabled:opacity-70 flex items-center justify-center gap-1.5 sm:gap-2"
-                        style={{ background: `linear-gradient(135deg, ${BABY_BLUE} 0%, #5BB8D8 100%)` }}
+                        style={{ background: DARK_NAVY, fontFamily: FONT_LABEL }}
                       >
                         {isLoading ? (
                           <>
@@ -893,51 +1033,51 @@ export function GuestList() {
 
               {/* Success Overlay — light ivory */}
               {success && (
-                <div className="absolute inset-0 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-300 p-2 sm:p-3 md:p-4" style={{ background: "rgba(254,249,243,0.97)" }}>
+                <div className="absolute inset-0 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-300 p-2 sm:p-3 md:p-4" style={{ background: "rgba(255,255,255,0.92)" }}>
                   <div className="text-center p-3 sm:p-4 md:p-5 lg:p-6 max-w-sm mx-auto">
                     {/* Icon Circle */}
                     <div className="relative inline-flex items-center justify-center mb-3 sm:mb-4">
-                      <div className="absolute inset-0 rounded-full border-2 animate-ping" style={{ borderColor: `${BABY_BLUE}44` }} />
-                      <div className="absolute inset-0 rounded-full border-2" style={{ borderColor: `${BABY_BLUE}66` }} />
-                      <div className="relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full flex items-center justify-center shadow-xl" style={{ background: BABY_BLUE }}>
+                      <div className="absolute inset-0 rounded-full border-2 animate-ping" style={{ borderColor: `${GOLD}44` }} />
+                      <div className="absolute inset-0 rounded-full border-2" style={{ borderColor: `${GOLD}66` }} />
+                      <div className="relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full flex items-center justify-center shadow-xl" style={{ background: DARK_NAVY }}>
                         <CheckCircle className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-10 lg:w-10 text-white" strokeWidth={2.5} />
                       </div>
                     </div>
 
                     {/* Title */}
-                    <h4 className="gistesy mb-2 sm:mb-3" style={{ fontSize: "clamp(1.4rem, 5vw, 2rem)", color: DEEP, lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em" }}>
+                    <h4 className="mb-2 sm:mb-3" style={{ fontFamily: FONT_DISPLAY, fontSize: "clamp(1.4rem, 5vw, 2rem)", color: GOLD, lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em", filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))" }}>
                       RSVP Confirmed!
                     </h4>
 
                     {/* Message based on RSVP response */}
                     {formData.RSVP === "Yes" && (
                       <div className="space-y-1 sm:space-y-1.5 mb-2 sm:mb-3">
-                        <p className="text-xs sm:text-sm font-medium" style={{ color: BABY_BLUE }}>
+                        <p className="font-medium" style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DARK_NAVY }}>
                           We're thrilled you'll be joining us!
                         </p>
-                        <p className="text-[10px] sm:text-xs" style={{ color: MEDIUM }}>
+                        <p style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.65rem, 2vw, 0.76rem)", color: NAVY_MUTE, fontStyle: "italic" }}>
                           Your response has been recorded
                         </p>
                       </div>
                     )}
                     {formData.RSVP === "No" && (
-                      <p className="text-xs sm:text-sm mb-2 sm:mb-3" style={{ color: MEDIUM }}>
+                      <p className="mb-2 sm:mb-3" style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.72rem, 2.2vw, 0.86rem)", color: NAVY_MUTE, fontStyle: "italic" }}>
                         We'll miss you, but thank you for letting us know.
                       </p>
                     )}
                     {!formData.RSVP && (
-                      <p className="text-xs sm:text-sm mb-2 sm:mb-3" style={{ color: MEDIUM }}>
+                      <p className="mb-2 sm:mb-3" style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.72rem, 2.2vw, 0.86rem)", color: NAVY_MUTE, fontStyle: "italic" }}>
                         Thank you for your response!
                       </p>
                     )}
 
                     {/* Closing indicator */}
                     <div className="flex items-center justify-center gap-1 sm:gap-1.5 mt-2 sm:mt-3">
-                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full animate-pulse" style={{ background: `${BABY_BLUE}99` }} />
-                      <p className="text-[10px] sm:text-xs" style={{ color: `${MEDIUM}aa` }}>
+                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full animate-pulse" style={{ background: `${GOLD}99` }} />
+                      <p style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.6rem, 1.8vw, 0.7rem)", color: `${NAVY_MUTE}aa` }}>
                         This will close automatically
                       </p>
-                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full animate-pulse" style={{ background: `${BABY_BLUE}99` }} />
+                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full animate-pulse" style={{ background: `${GOLD}99` }} />
                     </div>
                   </div>
                 </div>
@@ -946,10 +1086,10 @@ export function GuestList() {
               {/* Error message */}
               {error && !success && (
                 <div className="px-2 sm:px-2.5 md:px-4 lg:px-6 xl:px-8 pb-2 sm:pb-2.5 md:pb-4 lg:pb-6">
-                  <div className="bg-red-50 border-2 border-red-200 rounded-xl p-2 sm:p-2.5 md:p-3 lg:p-4">
+                  <div className="rounded-xl p-2 sm:p-2.5 md:p-3 lg:p-4" style={{ background: "rgba(220,38,38,0.06)", border: "1.5px solid rgba(220,38,38,0.22)" }}>
                     <div className="flex items-center gap-1.5 sm:gap-2">
-                      <AlertCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-red-600 flex-shrink-0" />
-                      <span className="text-red-600 font-semibold text-[10px] sm:text-xs md:text-sm">{error}</span>
+                      <AlertCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 flex-shrink-0" style={{ color: "#b91c1c" }} />
+                      <span className="font-semibold" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.65rem, 2vw, 0.82rem)", color: "#b91c1c" }}>{error}</span>
                     </div>
                   </div>
                 </div>
@@ -961,33 +1101,33 @@ export function GuestList() {
         {/* Request to Join Modal */}
         {showRequestModal && (
           <div 
-            className="fixed inset-0 z-50 flex items-center justify-center p-1 sm:p-2 md:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in"
+            className="fixed inset-0 flex items-center justify-center p-1 sm:p-2 md:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in"
+          style={{ zIndex: LAYER_TOP }}
             onClick={handleCloseRequestModal}
           >
             <div 
               className="relative w-full max-w-md sm:max-w-lg mx-1 sm:mx-2 md:mx-4 rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 max-h-[95vh] flex flex-col"
-              style={{ background: "#FEF9F3", border: `2px solid ${BABY_BLUE}55` }}
-              onClick={(e) => e.stopPropagation()}
+              style={{ ...MODAL_SHELL, borderRadius: "1rem" }}              onClick={(e) => e.stopPropagation()}
             >
-              {/* Modal Header — baby blue */}
+              {/* Modal Header */}
               <div
                 className="relative p-3 sm:p-4 md:p-5 lg:p-6 flex-shrink-0"
-                style={{ background: `linear-gradient(135deg, ${BABY_BLUE} 0%, #5BB8D8 100%)` }}
+                style={{ background: DARK_NAVY }}
               >
-                <div className="h-[3px] w-full absolute top-0 left-0" style={{ background: `linear-gradient(to right, ${ACCENT}, #fff8, ${ACCENT})` }} />
+                <div className="h-[3px] w-full absolute top-0 left-0" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.55), transparent)" }} />
                 <div className="relative flex items-start justify-between gap-1.5 sm:gap-2">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 mb-1 sm:mb-1.5 md:mb-2 lg:mb-3">
                       <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 bg-white/25 rounded-full flex items-center justify-center flex-shrink-0">
                         <UserPlus className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 lg:h-5 lg:w-5 text-white" />
                       </div>
-                      <h3 className="gistesy text-white" style={{ fontSize: "clamp(1.2rem, 5vw, 2rem)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em" }}>
+                      <h3 className="text-white" style={{ fontFamily: "cinzel, serif", fontSize: "clamp(1.2rem, 5vw, 2rem)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em", filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))" }}>
                         Request to Join
                       </h3>
                     </div>
-                    <p className="text-white/95 text-[10px] sm:text-xs md:text-sm lg:text-base font-sans leading-tight sm:leading-normal">
+                    <p className="text-white/95 leading-tight sm:leading-normal" style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.72rem, 2.5vw, 0.9rem)" }}>
                       {requestFormData.Name ? (
-                        <>Hi <span className="font-extrabold text-white">{requestFormData.Name}</span> — want to celebrate with us? Send a request!</>
+                        <>Hi <span className="font-extrabold text-white" style={{ fontFamily: FONT_LABEL }}>{requestFormData.Name}</span> — want to celebrate with us? Send a request!</>
                       ) : (
                         <>Want to celebrate with us? Send a request!</>
                       )}
@@ -1003,7 +1143,7 @@ export function GuestList() {
               </div>
 
               {/* Modal Content */}
-              <div className="p-2.5 sm:p-3 md:p-4 lg:p-5 xl:p-6 overflow-y-auto flex-1 min-h-0">
+              <div className="p-2.5 sm:p-3 md:p-4 lg:p-5 xl:p-6 overflow-y-auto flex-1 min-h-0" style={{ background: MODAL_BODY_BG }}>
                 <form
                   onSubmit={(e) => {
                     e.preventDefault()
@@ -1013,8 +1153,8 @@ export function GuestList() {
                 >
                   {/* Name */}
                   <div>
-                    <label className="garamond flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP, fontWeight: 600 }}>
-                      <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: ACCENT }} />
+                    <label className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DARK_NAVY, fontWeight: 500 }}>
+                      <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: GOLD }} />
                       <span>Full Name *</span>
                     </label>
                     <input
@@ -1024,16 +1164,17 @@ export function GuestList() {
                       onChange={(e) => setRequestFormData({ ...requestFormData, Name: e.target.value })}
                       required
                       placeholder="Enter your full name"
-                      className="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 border-2 border-motif-deep/60 focus:border-motif-deep rounded-lg text-xs sm:text-sm font-sans text-motif-deep placeholder:text-motif-medium/70 transition-all duration-300 focus:ring-2 focus:ring-motif-deep/20 bg-motif-cream"
+                      className={`${INPUT_CLASS} px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm`}
+                      style={INPUT_STYLE}
                     />
                   </div>
 
                   {/* Email */}
                   <div>
-                    <label className="garamond flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 flex-wrap" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP, fontWeight: 600 }}>
-                      <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: ACCENT }} />
+                    <label className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 flex-wrap" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DARK_NAVY, fontWeight: 500 }}>
+                      <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: GOLD }} />
                       <span>Email Address</span>
-                      <span className="garamond font-normal" style={{ fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: `${DEEP}90` }}>(Optional)</span>
+                      <span style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: NAVY_MUTE }}>(Optional)</span>
                     </label>
                     <input
                       type="email"
@@ -1041,16 +1182,17 @@ export function GuestList() {
                       value={requestFormData.Email}
                       onChange={(e) => setRequestFormData({ ...requestFormData, Email: e.target.value })}
                       placeholder="your.email@example.com"
-                      className="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 border-2 border-motif-deep/60 focus:border-motif-deep rounded-lg text-xs sm:text-sm font-sans text-motif-deep placeholder:text-motif-medium/70 transition-all duration-300 focus:ring-2 focus:ring-motif-deep/20 bg-motif-cream"
+                      className={`${INPUT_CLASS} px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm`}
+                      style={INPUT_STYLE}
                     />
                   </div>
 
                   {/* Phone */}
                   <div>
-                    <label className="garamond flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 flex-wrap" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP, fontWeight: 600 }}>
-                      <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: ACCENT }} />
+                    <label className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 flex-wrap" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DARK_NAVY, fontWeight: 500 }}>
+                      <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: GOLD }} />
                       <span>Phone Number</span>
-                      <span className="garamond font-normal" style={{ fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: `${DEEP}90` }}>(Optional)</span>
+                      <span style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: NAVY_MUTE }}>(Optional)</span>
                     </label>
                     <input
                       type="tel"
@@ -1058,14 +1200,15 @@ export function GuestList() {
                       value={requestFormData.Phone}
                       onChange={(e) => setRequestFormData({ ...requestFormData, Phone: e.target.value })}
                       placeholder="+1 (555) 123-4567"
-                      className="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 border-2 border-motif-deep/60 focus:border-motif-deep rounded-lg text-xs sm:text-sm font-sans text-motif-deep placeholder:text-motif-medium/70 transition-all duration-300 focus:ring-2 focus:ring-motif-deep/20 bg-motif-cream"
+                      className={`${INPUT_CLASS} px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm`}
+                      style={INPUT_STYLE}
                     />
                   </div>
 
                   {/* Number of Guests */}
                   <div>
-                    <label className="garamond flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP, fontWeight: 600 }}>
-                      <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: ACCENT }} />
+                    <label className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DARK_NAVY, fontWeight: 500 }}>
+                      <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: GOLD }} />
                       <span>Number of Guests *</span>
                     </label>
                     <input
@@ -1076,16 +1219,17 @@ export function GuestList() {
                       min="1"
                       required
                       placeholder="How many guests?"
-                      className="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 border-2 border-motif-deep/60 focus:border-motif-deep rounded-lg text-xs sm:text-sm font-sans text-motif-deep placeholder:text-motif-medium/70 transition-all duration-300 focus:ring-2 focus:ring-motif-deep/20 bg-motif-cream"
+                      className={`${INPUT_CLASS} px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm`}
+                      style={INPUT_STYLE}
                     />
                   </div>
 
                   {/* Message */}
                   <div>
-                    <label className="garamond flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 flex-wrap" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DEEP, fontWeight: 600 }}>
-                      <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: ACCENT }} />
+                    <label className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 flex-wrap" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: DARK_NAVY, fontWeight: 500 }}>
+                      <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: GOLD }} />
                       <span>Message</span>
-                      <span className="garamond font-normal" style={{ fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: `${DEEP}90` }}>(Optional)</span>
+                      <span style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: NAVY_MUTE }}>(Optional)</span>
                     </label>
                     <textarea
                       name="Message"
@@ -1093,7 +1237,8 @@ export function GuestList() {
                       onChange={(e) => setRequestFormData({ ...requestFormData, Message: e.target.value })}
                       placeholder="Share why you'd like to join..."
                       rows={3}
-                        className="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 border-2 border-motif-deep/60 focus:border-motif-deep rounded-lg text-xs sm:text-sm font-sans text-motif-deep placeholder:text-motif-medium/70 transition-all duration-300 focus:ring-2 focus:ring-motif-deep/20 resize-none bg-motif-cream"
+                        className={`${INPUT_CLASS} px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm resize-none`}
+                        style={INPUT_STYLE}
                     />
                   </div>
 
@@ -1103,7 +1248,7 @@ export function GuestList() {
                       type="submit"
                       disabled={isLoading}
                       className="w-full text-white py-2 sm:py-2.5 md:py-3 rounded-lg text-xs sm:text-sm font-semibold shadow-md transition-all duration-300 hover:opacity-90 hover:shadow-lg disabled:opacity-70 flex items-center justify-center gap-1.5 sm:gap-2"
-                      style={{ background: `linear-gradient(135deg, ${BABY_BLUE} 0%, #5BB8D8 100%)` }}
+                      style={{ background: DARK_NAVY, fontFamily: FONT_LABEL }}
                     >
                       {isLoading ? (
                         <>
@@ -1123,39 +1268,39 @@ export function GuestList() {
 
               {/* Success Overlay — light ivory */}
               {requestSuccess && (
-                <div className="absolute inset-0 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-300 p-2 sm:p-3 md:p-4" style={{ background: "rgba(254,249,243,0.97)" }}>
+                <div className="absolute inset-0 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-300 p-2 sm:p-3 md:p-4" style={{ background: "rgba(255,255,255,0.92)" }}>
                   <div className="text-center p-3 sm:p-4 md:p-5 lg:p-6 max-w-sm mx-auto">
                     {/* Icon Circle */}
                     <div className="relative inline-flex items-center justify-center mb-3 sm:mb-4">
-                      <div className="absolute inset-0 rounded-full border-2 animate-ping" style={{ borderColor: `${BABY_BLUE}44` }} />
-                      <div className="absolute inset-0 rounded-full border-2" style={{ borderColor: `${BABY_BLUE}66` }} />
-                      <div className="relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full flex items-center justify-center shadow-xl" style={{ background: BABY_BLUE }}>
+                      <div className="absolute inset-0 rounded-full border-2 animate-ping" style={{ borderColor: `${GOLD}44` }} />
+                      <div className="absolute inset-0 rounded-full border-2" style={{ borderColor: `${GOLD}66` }} />
+                      <div className="relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full flex items-center justify-center shadow-xl" style={{ background: DARK_NAVY }}>
                         <CheckCircle className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-10 lg:w-10 text-white" strokeWidth={2.5} />
                       </div>
                     </div>
 
                     {/* Title */}
-                    <h4 className="gistesy mb-2 sm:mb-3" style={{ fontSize: "clamp(1.4rem, 5vw, 2rem)", color: DEEP, lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em" }}>
+                    <h4 className="mb-2 sm:mb-3" style={{ fontFamily: FONT_DISPLAY, fontSize: "clamp(1.4rem, 5vw, 2rem)", color: GOLD, lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em", filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))" }}>
                       Request Sent!
                     </h4>
 
                     {/* Message */}
                     <div className="space-y-1 sm:space-y-1.5 mb-2 sm:mb-3">
-                      <p className="garamond font-medium" style={{ fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: BABY_BLUE }}>
+                      <p className="font-medium" style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.78rem, 2.5vw, 0.9rem)", color: GOLD }}>
                         We've received your request
                       </p>
-                      <p className="garamond italic" style={{ fontSize: "clamp(0.65rem, 2vw, 0.76rem)", color: MEDIUM }}>
+                      <p className="italic" style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.65rem, 2vw, 0.76rem)", color: NAVY_MUTE }}>
                         We'll review it and get back to you soon
                       </p>
                     </div>
 
                     {/* Closing indicator */}
                     <div className="flex items-center justify-center gap-1 sm:gap-1.5 mt-2 sm:mt-3">
-                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full animate-pulse" style={{ background: `${BABY_BLUE}99` }} />
-                      <p className="garamond" style={{ fontSize: "clamp(0.6rem, 1.8vw, 0.7rem)", color: `${MEDIUM}aa` }}>
+                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full animate-pulse" style={{ background: `${GOLD}99` }} />
+                      <p style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.6rem, 1.8vw, 0.7rem)", color: `${NAVY_MUTE}aa` }}>
                         This will close automatically
                       </p>
-                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full animate-pulse" style={{ background: `${BABY_BLUE}99` }} />
+                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full animate-pulse" style={{ background: `${GOLD}99` }} />
                     </div>
                   </div>
                 </div>
@@ -1164,10 +1309,10 @@ export function GuestList() {
               {/* Error message */}
               {error && !requestSuccess && (
                 <div className="px-2 sm:px-2.5 md:px-4 lg:px-6 xl:px-8 pb-2 sm:pb-2.5 md:pb-4 lg:pb-6">
-                  <div className="bg-red-50 border-2 border-red-200 rounded-xl p-2 sm:p-2.5 md:p-3 lg:p-4">
+                  <div className="rounded-xl p-2 sm:p-2.5 md:p-3 lg:p-4" style={{ background: "rgba(220,38,38,0.06)", border: "1.5px solid rgba(220,38,38,0.22)" }}>
                     <div className="flex items-center gap-1.5 sm:gap-2">
-                      <AlertCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-red-600 flex-shrink-0" />
-                      <span className="text-red-600 font-semibold text-[10px] sm:text-xs md:text-sm">{error}</span>
+                      <AlertCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 flex-shrink-0" style={{ color: "#b91c1c" }} />
+                      <span className="font-semibold" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.65rem, 2vw, 0.82rem)", color: "#b91c1c" }}>{error}</span>
                     </div>
                   </div>
                 </div>
@@ -1178,11 +1323,11 @@ export function GuestList() {
 
       {/* Floating Status Messages (outside modals) */}
       {success && !showModal && !showRequestModal && !requestSuccess && (
-        <div className="fixed top-16 sm:top-20 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-2 sm:mx-4">
-          <div className="bg-green-50 border-2 border-green-200 rounded-xl p-2 sm:p-3 md:p-4 shadow-lg animate-in slide-in-from-top">
+        <div className="fixed top-16 sm:top-20 left-1/2 transform -translate-x-1/2 max-w-md w-full mx-2 sm:mx-4" style={{ zIndex: LAYER_TOP }}>
+          <div className="rounded-xl p-2 sm:p-3 md:p-4 shadow-lg animate-in slide-in-from-top" style={{ ...FROSTED_CARD, border: `1.5px solid ${GOLD_BORDER}` }}>
             <div className="flex items-center gap-1.5 sm:gap-2">
-              <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-green-600" />
-              <span className="text-green-600 font-semibold text-xs sm:text-sm md:text-base">{success}</span>
+              <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" style={{ color: GOLD }} />
+              <span className="font-semibold" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.72rem, 2.2vw, 0.9rem)", color: DARK_NAVY }}>{success}</span>
             </div>
           </div>
         </div>

@@ -2,31 +2,45 @@
 
 import { useEffect, useState } from "react"
 import { motion } from "motion/react"
-import { Instagram, Facebook, Twitter, Share2, Copy, Download, Check, Camera, Sparkles } from "lucide-react"
+import { Instagram, Facebook, Twitter, Share2, Copy, Download, Check } from "lucide-react"
 import Image from "next/image"
 import { QRCodeCanvas } from "qrcode.react"
 import { siteConfig } from "@/content/site"
 
-// ── Motif palette (aligned with BookOfGuests / Messages / FAQ) ────────────────
-const DEEP      = "#3D2810"
-const MEDIUM    = "#8C6035"
-const GOLD      = "#B8822A"
-const BABY_BLUE = "#3FA3C8"
-const BLUE_MID  = "#7BBEDD"
-const IVORY     = "#FEF9F3"
-const BLUSH     = "#EED4BC"
+// ── Palette — aligned with entourage.tsx ──────────────────────────────────────
+const DARK_NAVY = "#1C3050"
+const GOLD      = "#C4965A"
+const NAVY_MUTE = "rgba(65,90,115,0.78)"
+
+const FROSTED_CARD = {
+  background: "rgba(255,255,255,0.30)",
+  backdropFilter: "blur(14px)",
+  WebkitBackdropFilter: "blur(14px)",
+  border: "1.5px solid rgba(43,74,107,0.22)",
+  boxShadow: "0 4px 24px rgba(43,74,107,0.08), 0 1px 0 rgba(255,255,255,0.55) inset",
+} as const
 
 // QRCodeCanvas renders to <canvas> — must be a literal hex, no CSS vars
-const QR_FG_HEX = "#3FA3C8"
+const QR_FG_HEX = DARK_NAVY
+
+function OrnamentDivider({ width = "240px" }: { width?: string }) {
+  return (
+    <div className="flex items-center justify-center gap-2" style={{ maxWidth: width, margin: "0 auto" }}>
+      <div className="h-px flex-1" style={{ background: "linear-gradient(to left, rgba(196,152,88,0.45), transparent)" }} />
+      <div style={{ width: "6px", height: "6px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.68)", flexShrink: 0 }} />
+      <div className="h-px flex-1" style={{ background: "linear-gradient(to right, rgba(196,152,88,0.45), transparent)" }} />
+    </div>
+  )
+}
 
 // ── Floating bokeh orbs ───────────────────────────────────────────────────────
 function BokehOrbs() {
   const orbs = [
-    { w: 300, h: 300, top: "4%",  left: "2%",  color: BABY_BLUE, opacity: 0.08, blur: 85 },
-    { w: 220, h: 220, top: "18%", left: "76%", color: GOLD,      opacity: 0.09, blur: 68 },
-    { w: 250, h: 250, top: "58%", left: "4%",  color: BLUSH,     opacity: 0.10, blur: 78 },
-    { w: 180, h: 180, top: "72%", left: "78%", color: BABY_BLUE, opacity: 0.08, blur: 60 },
-    { w: 140, h: 140, top: "38%", left: "46%", color: GOLD,      opacity: 0.06, blur: 50 },
+    { w: 380, h: 380, top: "4%",  left: "2%",  color: "rgba(120,175,215,1)", opacity: 0.08, blur: 100 },
+    { w: 260, h: 260, top: "18%", left: "70%", color: "rgba(196,152,88,1)",  opacity: 0.08, blur: 80  },
+    { w: 300, h: 300, top: "55%", left: "8%",  color: "rgba(196,152,88,1)",  opacity: 0.07, blur: 90  },
+    { w: 220, h: 220, top: "70%", left: "76%", color: "rgba(120,175,215,1)", opacity: 0.08, blur: 70  },
+    { w: 170, h: 170, top: "38%", left: "44%", color: "rgba(196,152,88,1)",  opacity: 0.06, blur: 60  },
   ]
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden>
@@ -126,62 +140,34 @@ export function SnapShare() {
   const fadeInUp = { initial: { opacity: 0, y: 60 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.8 } }
   const staggerChildren = { animate: { transition: { staggerChildren: 0.2 } } }
 
-  // ── Shared card style ────────────────────────────────────────────────────────
-  const cardStyle: React.CSSProperties = {
-    background: "rgba(254,249,243,0.94)",
-    backdropFilter: "blur(14px)",
-    WebkitBackdropFilter: "blur(14px)",
-    border: `1.5px solid ${BABY_BLUE}30`,
-    boxShadow: `0 8px 32px ${BABY_BLUE}14, 0 2px 10px rgba(61,40,16,0.06), inset 0 1px 0 rgba(255,255,255,0.80)`,
-  }
+  const cardStyle: React.CSSProperties = FROSTED_CARD
 
   const btnPrimary: React.CSSProperties = {
-    background: BABY_BLUE,
+    fontFamily: '"Cinzel", serif',
+    background: GOLD,
     color: "white",
     border: "none",
-    boxShadow: `0 4px 14px ${BABY_BLUE}44`,
+    boxShadow: "0 4px 14px rgba(196,152,88,0.30)",
   }
 
   return (
     <section id="snap-share" className="relative w-full overflow-hidden">
 
-      {/* Solid ivory base */}
-      <div className="absolute inset-0 -z-10" style={{ background: IVORY }} />
+      {/* Solid base — aligned with entourage */}
+      <div className="absolute inset-0 -z-10" style={{ background: "#FFFFFF" }} />
 
-      {/* Multi-stop tinted vertical gradient */}
       <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: `linear-gradient(180deg,
-          rgba(238,212,188,0.36) 0%,
-          rgba(251,244,234,0.0)  20%,
-          rgba(213,238,248,0.28) 52%,
-          rgba(251,244,234,0.0)  76%,
-          rgba(238,212,188,0.32) 100%
-        )`,
+        background: "radial-gradient(ellipse 55% 45% at 50% 30%, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.6) 45%, transparent 75%)",
       }} />
 
-      {/* Diagonal warm-to-cool wash */}
       <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: `linear-gradient(112deg, rgba(213,238,248,0.14) 0%, transparent 44%, rgba(238,212,188,0.14) 100%)`,
+        background: "linear-gradient(to top, rgba(120,175,215,0.10) 0%, rgba(120,175,215,0.04) 25%, transparent 55%)",
       }} />
 
-      {/* Fine diagonal shimmer */}
-      <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: `repeating-linear-gradient(125deg, transparent 0px, transparent 160px, rgba(255,255,255,0.18) 160px, rgba(255,255,255,0.18) 162px)`,
-      }} />
-
-      {/* Soft dot grid */}
-      <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        backgroundImage: `radial-gradient(circle, rgba(63,163,200,0.08) 1px, transparent 1px)`,
-        backgroundSize: "28px 28px",
-      }} />
-
-      {/* Corner radial glows */}
       <div className="absolute inset-0 pointer-events-none z-0" aria-hidden style={{
         background: `
-          radial-gradient(ellipse 50% 38% at 0%   0%,   rgba(213,238,248,0.30) 0%, transparent 60%),
-          radial-gradient(ellipse 40% 34% at 100% 0%,   rgba(238,212,188,0.26) 0%, transparent 55%),
-          radial-gradient(ellipse 44% 36% at 0%   100%, rgba(238,212,188,0.22) 0%, transparent 55%),
-          radial-gradient(ellipse 40% 34% at 100% 100%, rgba(213,238,248,0.26) 0%, transparent 55%)
+          radial-gradient(ellipse 50% 40% at 50% 28%, rgba(196,152,88,0.06) 0%, transparent 70%),
+          radial-gradient(ellipse 38% 32% at 50% 78%, rgba(120,175,215,0.08) 0%, transparent 65%)
         `,
       }} />
 
@@ -202,69 +188,47 @@ export function SnapShare() {
               SECTION HEADER
           ══════════════════════════════════════════════════════════════ */}
           <motion.div
-            className="text-center mb-8 sm:mb-12"
+            className="text-center mb-8 sm:mb-12 max-w-3xl mx-auto"
             initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <p
-              className="garamond"
-              style={{
-                fontSize: "clamp(0.56rem, 2.2vw, 0.68rem)",
-                letterSpacing: "0.52em",
-                textTransform: "uppercase",
-                color: BABY_BLUE,
-                marginBottom: "0.75rem",
-                paddingRight: "0.52em",
-              }}
-            >
+            <p style={{
+              fontFamily: '"Cinzel", serif',
+              fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)",
+              letterSpacing: "0.40em",
+              textTransform: "uppercase",
+              color: "rgba(72,112,148,0.80)",
+              marginBottom: "0.4rem",
+              paddingRight: "0.40em",
+            }}>
               Share the Blessing
             </p>
 
-            <div className="flex items-center justify-center gap-3 mb-3">
-              <div className="h-px w-12 sm:w-20" style={{ background: `linear-gradient(to left, ${GOLD}99, transparent)` }} />
-              <span style={{ color: GOLD, fontSize: "9px", opacity: 0.9 }}>✦</span>
-              <div className="h-px w-12 sm:w-20" style={{ background: `linear-gradient(to right, ${GOLD}99, transparent)` }} />
-            </div>
+            <OrnamentDivider />
 
-            <h2
-              className="gistesy"
-              style={{
-                fontSize: "clamp(2.4rem, 9vw, 4.8rem)",
-                color: DEEP,
-                lineHeight: 1.1,
-                overflow: "visible",
-                paddingTop: "0.1em",
-                marginBottom: "0.5rem",
-              }}
-            >
+            <h2 style={{
+              fontFamily: '"Cinzel", serif',
+              fontSize: "clamp(1.6rem, 5.5vw, 2.8rem)",
+              color: GOLD,
+              lineHeight: 1.0,
+              marginTop: "1rem",
+              marginBottom: "0.5rem",
+              filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))",
+            }}>
               Capture &amp; Share the Joy
             </h2>
 
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <div className="h-px w-8 sm:w-14" style={{ background: `linear-gradient(to left, ${BLUE_MID}cc, transparent)` }} />
-              <span style={{ color: BLUE_MID, fontSize: "5px", letterSpacing: "0.25em" }}>◆◆◆</span>
-              <div className="h-px w-8 sm:w-14" style={{ background: `linear-gradient(to right, ${BLUE_MID}cc, transparent)` }} />
-            </div>
-
-            <p
-              className="garamond"
-              style={{
-                fontSize: "clamp(0.78rem, 2.5vw, 0.94rem)",
-                color: MEDIUM,
-                fontStyle: "italic",
-                lineHeight: 1.9,
-                maxWidth: "500px",
-                margin: "0 auto",
-              }}
-            >
+            <p style={{
+              fontFamily: '"Fahkwang", sans-serif',
+              fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
+              color: NAVY_MUTE,
+              lineHeight: 1.75,
+              fontStyle: "italic",
+              maxWidth: "32rem",
+              margin: "0.75rem auto 0",
+            }}>
               Help us remember the little moments of {childName}&apos;s blessed day — every smile, embrace, and candid laugh.
               Your photos and clips complete this cherished memory.
             </p>
-
-            <div className="flex items-center justify-center gap-3 mt-5">
-              <div className="h-px flex-1 max-w-[80px]" style={{ background: `linear-gradient(to left, ${GOLD}55, transparent)` }} />
-              <Sparkles className="h-3.5 w-3.5 opacity-60" style={{ color: GOLD }} />
-              <div className="h-px flex-1 max-w-[80px]" style={{ background: `linear-gradient(to right, ${GOLD}55, transparent)` }} />
-            </div>
           </motion.div>
 
           {/* ══════════════════════════════════════════════════════════════
@@ -282,27 +246,34 @@ export function SnapShare() {
             <motion.div className="space-y-4 flex flex-col lg:order-2" variants={fadeInUp}>
 
               {/* ── Share Website QR ── */}
-              <div className="rounded-2xl p-4 sm:p-5 md:p-7 text-center flex flex-col" style={cardStyle}>
-                <div className="h-[2px] w-full rounded-full mb-4"
-                  style={{ background: `linear-gradient(to right, transparent, ${GOLD}77, ${BABY_BLUE}66, transparent)` }} />
+              <div className="rounded-3xl p-4 sm:p-5 md:p-7 text-center flex flex-col" style={cardStyle}>
+                <div className="h-px w-full mb-4" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
 
-                <h4
-                  className="gistesy text-center mb-2"
-                  style={{ fontSize: "clamp(1.4rem, 5vw, 2.2rem)", color: DEEP, lineHeight: 1.2, overflow: "visible", paddingTop: "0.08em" }}
-                >
+                <h4 style={{
+                  fontFamily: '"Cinzel", serif',
+                  fontSize: "clamp(1rem, 3.5vw, 1.4rem)",
+                  color: GOLD,
+                  lineHeight: 1.2,
+                  textAlign: "center",
+                  marginBottom: "0.5rem",
+                }}>
                   Share Our Invitation
                 </h4>
-                <p
-                  className="garamond mb-4"
-                  style={{ fontSize: "clamp(0.72rem, 2.2vw, 0.84rem)", color: MEDIUM, fontStyle: "italic", lineHeight: 1.75 }}
-                >
+                <p style={{
+                  fontFamily: '"Fahkwang", sans-serif',
+                  fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
+                  color: NAVY_MUTE,
+                  fontStyle: "italic",
+                  lineHeight: 1.75,
+                  marginBottom: "1rem",
+                }}>
                   Spread the word about {childName}&apos;s christening. Share this QR code so loved ones can join the celebration.
                 </p>
 
                 {/* QR frame */}
                 <div className="mx-auto inline-flex flex-col items-center p-3 sm:p-5 rounded-2xl mb-4"
-                  style={{ background: "rgba(255,255,255,0.90)", border: `1.5px solid ${BABY_BLUE}28`, boxShadow: `0 4px 16px ${BABY_BLUE}18` }}>
-                  <div className="mb-2 sm:mb-3 p-2 sm:p-3 rounded-xl" style={{ background: `${BABY_BLUE}0a`, border: `1px solid ${BABY_BLUE}22` }}>
+                  style={{ background: "rgba(255,255,255,0.70)", border: "1.5px solid rgba(43,74,107,0.15)", boxShadow: "0 4px 16px rgba(43,74,107,0.06)" }}>
+                  <div className="mb-2 sm:mb-3 p-2 sm:p-3 rounded-xl" style={{ background: "rgba(196,152,88,0.06)", border: "1px solid rgba(43,74,107,0.12)" }}>
                     <div className="bg-white p-1.5 sm:p-2 rounded-lg shadow-sm">
                       <QRCodeCanvas
                         id="snapshare-qr"
@@ -316,28 +287,33 @@ export function SnapShare() {
                   </div>
                   <button
                     onClick={downloadQRCode}
-                    className="garamond flex items-center gap-1.5 mx-auto px-4 py-2 rounded-full transition-all duration-200 hover:scale-105 hover:shadow-lg"
-                    style={{ ...btnPrimary, fontSize: "clamp(0.65rem, 1.8vw, 0.74rem)", letterSpacing: "0.18em", textTransform: "uppercase" }}
+                    className="flex items-center gap-1.5 mx-auto px-4 py-2 rounded-full transition-all duration-200 hover:scale-105 hover:shadow-lg"
+                    style={{ ...btnPrimary, fontSize: "clamp(0.62rem, 1.6vw, 0.72rem)", letterSpacing: "0.12em", textTransform: "uppercase" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = DARK_NAVY }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = GOLD }}
                   >
                     <Download className="w-3.5 h-3.5" />
                     Download QR
                   </button>
                 </div>
 
-                <p className="garamond" style={{ fontSize: "clamp(0.65rem, 1.8vw, 0.74rem)", color: MEDIUM, fontStyle: "italic" }}>
+                <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: NAVY_MUTE, fontStyle: "italic" }}>
                   Scan with any camera app to open the full invitation.
                 </p>
               </div>
 
               {/* ── Hashtags ── */}
-              <div className="rounded-2xl p-4 sm:p-5 text-center" style={cardStyle}>
-                <div className="h-[2px] w-full rounded-full mb-4"
-                  style={{ background: `linear-gradient(to right, transparent, ${BABY_BLUE}66, transparent)` }} />
+              <div className="rounded-3xl p-4 sm:p-5 text-center" style={cardStyle}>
+                <div className="h-px w-full mb-4" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
 
-                <h5
-                  className="gistesy text-center mb-3"
-                  style={{ fontSize: "clamp(1.3rem, 4.5vw, 2rem)", color: DEEP, lineHeight: 1.2, overflow: "visible", paddingTop: "0.08em" }}
-                >
+                <h5 style={{
+                  fontFamily: '"Cinzel", serif',
+                  fontSize: "clamp(1rem, 3.5vw, 1.4rem)",
+                  color: GOLD,
+                  lineHeight: 1.2,
+                  textAlign: "center",
+                  marginBottom: "0.75rem",
+                }}>
                   Christening Hashtags
                 </h5>
 
@@ -348,23 +324,37 @@ export function SnapShare() {
                       onClick={() => copyHashtag(hashtag, index)}
                       className="w-full flex items-center justify-between gap-2 px-3 py-2 sm:py-2.5 rounded-xl border transition-all duration-200 active:scale-[0.98]"
                       style={{
-                        background: copiedHashtagIndex === index ? `${BABY_BLUE}14` : "rgba(255,255,255,0.75)",
-                        borderColor: copiedHashtagIndex === index ? `${BABY_BLUE}55` : `${BABY_BLUE}28`,
+                        background: copiedHashtagIndex === index ? "rgba(196,152,88,0.12)" : "rgba(255,255,255,0.55)",
+                        borderColor: copiedHashtagIndex === index ? "rgba(196,152,88,0.35)" : "rgba(43,74,107,0.15)",
                       }}
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.08 }}
                     >
-                      <span
-                        className="garamond font-semibold text-left truncate flex-1"
-                        style={{ fontSize: "clamp(0.78rem, 2.4vw, 0.9rem)", color: copiedHashtagIndex === index ? BABY_BLUE : DEEP }}
-                      >
+                      <span style={{
+                        fontFamily: '"Fahkwang", sans-serif',
+                        fontWeight: 500,
+                        fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
+                        color: copiedHashtagIndex === index ? GOLD : DARK_NAVY,
+                        textAlign: "left",
+                        flex: 1,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}>
                         {hashtag}
                       </span>
-                      <span
-                        className="garamond flex items-center gap-1 flex-shrink-0 font-semibold"
-                        style={{ fontSize: "clamp(0.6rem, 1.6vw, 0.68rem)", letterSpacing: "0.15em", textTransform: "uppercase", color: copiedHashtagIndex === index ? BABY_BLUE : MEDIUM }}
-                      >
+                      <span style={{
+                        fontFamily: '"Cinzel", serif',
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.25rem",
+                        flexShrink: 0,
+                        fontSize: "clamp(0.56rem, 1.5vw, 0.64rem)",
+                        letterSpacing: "0.12em",
+                        textTransform: "uppercase",
+                        color: copiedHashtagIndex === index ? GOLD : NAVY_MUTE,
+                      }}>
                         {copiedHashtagIndex === index
                           ? <><Check className="w-3 h-3" /> Copied</>
                           : <><Copy className="w-3 h-3" /> Copy</>}
@@ -375,18 +365,19 @@ export function SnapShare() {
 
                 <button
                   onClick={copyAllHashtags}
-                  className="garamond w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl border transition-all duration-200 active:scale-[0.98]"
+                  className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl border transition-all duration-200 active:scale-[0.98]"
                   style={{
-                    fontSize: "clamp(0.65rem, 1.8vw, 0.74rem)",
-                    letterSpacing: "0.15em",
+                    fontFamily: '"Cinzel", serif',
+                    fontSize: "clamp(0.62rem, 1.6vw, 0.72rem)",
+                    letterSpacing: "0.12em",
                     textTransform: "uppercase",
-                    fontWeight: 600,
+                    fontWeight: 500,
                     ...(copiedAllHashtags
-                      ? { background: `${BABY_BLUE}14`, borderColor: `${BABY_BLUE}55`, color: BABY_BLUE }
-                      : { background: `${BABY_BLUE}0e`, borderColor: `${BABY_BLUE}33`, color: DEEP }),
+                      ? { background: "rgba(196,152,88,0.12)", borderColor: "rgba(196,152,88,0.35)", color: GOLD }
+                      : { background: "rgba(196,152,88,0.08)", borderColor: "rgba(196,152,88,0.25)", color: DARK_NAVY }),
                   }}
-                  onMouseEnter={(e) => { if (!copiedAllHashtags) { e.currentTarget.style.background = BABY_BLUE; e.currentTarget.style.color = "white"; e.currentTarget.style.borderColor = "transparent" } }}
-                  onMouseLeave={(e) => { if (!copiedAllHashtags) { e.currentTarget.style.background = `${BABY_BLUE}0e`; e.currentTarget.style.color = DEEP; e.currentTarget.style.borderColor = `${BABY_BLUE}33` } }}
+                  onMouseEnter={(e) => { if (!copiedAllHashtags) { e.currentTarget.style.background = GOLD; e.currentTarget.style.color = "white"; e.currentTarget.style.borderColor = "transparent" } }}
+                  onMouseLeave={(e) => { if (!copiedAllHashtags) { e.currentTarget.style.background = "rgba(196,152,88,0.08)"; e.currentTarget.style.color = DARK_NAVY; e.currentTarget.style.borderColor = "rgba(196,152,88,0.25)" } }}
                 >
                   {copiedAllHashtags ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                   {copiedAllHashtags ? "All Copied!" : "Copy All Hashtags"}
@@ -394,20 +385,28 @@ export function SnapShare() {
               </div>
 
               {/* ── Social share ── */}
-              <div className="rounded-2xl p-4 sm:p-5 md:p-6" style={cardStyle}>
-                <div className="h-[2px] w-full rounded-full mb-4"
-                  style={{ background: `linear-gradient(to right, transparent, ${GOLD}66, transparent)` }} />
+              <div className="rounded-3xl p-4 sm:p-5 md:p-6" style={cardStyle}>
+                <div className="h-px w-full mb-4" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
 
-                <h5
-                  className="gistesy text-center mb-2"
-                  style={{ fontSize: "clamp(1.3rem, 4.5vw, 2rem)", color: DEEP, lineHeight: 1.2, overflow: "visible", paddingTop: "0.08em" }}
-                >
+                <h5 style={{
+                  fontFamily: '"Cinzel", serif',
+                  fontSize: "clamp(1rem, 3.5vw, 1.4rem)",
+                  color: GOLD,
+                  lineHeight: 1.2,
+                  textAlign: "center",
+                  marginBottom: "0.5rem",
+                }}>
                   Share on Social Media
                 </h5>
-                <p
-                  className="garamond text-center mb-4"
-                  style={{ fontSize: "clamp(0.7rem, 2vw, 0.82rem)", color: MEDIUM, fontStyle: "italic", lineHeight: 1.7 }}
-                >
+                <p style={{
+                  fontFamily: '"Fahkwang", sans-serif',
+                  fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
+                  color: NAVY_MUTE,
+                  fontStyle: "italic",
+                  lineHeight: 1.75,
+                  textAlign: "center",
+                  marginBottom: "1rem",
+                }}>
                   Help spread the joy of {childName}&apos;s christening across your favorite platforms.
                 </p>
 
@@ -421,18 +420,19 @@ export function SnapShare() {
                     <button
                       key={platform}
                       onClick={() => shareOnSocial(platform)}
-                      className="garamond group flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 sm:py-3 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
+                      className="group flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 sm:py-3 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
                       style={{
-                        background: "rgba(255,255,255,0.85)",
-                        border: `1.5px solid ${BABY_BLUE}28`,
-                        color: DEEP,
-                        fontSize: "clamp(0.65rem, 1.8vw, 0.76rem)",
-                        letterSpacing: "0.18em",
+                        fontFamily: '"Cinzel", serif',
+                        background: "rgba(255,255,255,0.55)",
+                        border: "1.5px solid rgba(43,74,107,0.15)",
+                        color: DARK_NAVY,
+                        fontSize: "clamp(0.56rem, 1.5vw, 0.64rem)",
+                        letterSpacing: "0.12em",
                         textTransform: "uppercase",
-                        fontWeight: 600,
+                        fontWeight: 500,
                       }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = BABY_BLUE; e.currentTarget.style.color = "white"; e.currentTarget.style.borderColor = "transparent" }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.85)"; e.currentTarget.style.color = DEEP; e.currentTarget.style.borderColor = `${BABY_BLUE}28` }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = GOLD; e.currentTarget.style.color = "white"; e.currentTarget.style.borderColor = "transparent" }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.55)"; e.currentTarget.style.color = DARK_NAVY; e.currentTarget.style.borderColor = "rgba(43,74,107,0.15)" }}
                     >
                       <Icon className="w-4 h-4 group-hover:scale-110 transition-transform flex-shrink-0" />
                       {label}
@@ -443,42 +443,45 @@ export function SnapShare() {
 
               {/* ── Drive upload ── */}
               {driveLink && (
-                <div className="rounded-2xl p-4 sm:p-5 md:p-7 text-center" style={cardStyle}>
-                  <div className="h-[2px] w-full rounded-full mb-4"
-                    style={{ background: `linear-gradient(to right, transparent, ${BABY_BLUE}77, ${GOLD}66, transparent)` }} />
+                <div className="rounded-3xl p-4 sm:p-5 md:p-7 text-center" style={cardStyle}>
+                  <div className="h-px w-full mb-4" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
 
-                  {/* Eyebrow pill */}
                   <div
-                    className="garamond inline-flex items-center gap-1.5 rounded-full border px-3 py-1 mb-4"
+                    className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 mb-4"
                     style={{
-                      fontSize: "clamp(0.56rem, 1.6vw, 0.64rem)",
-                      letterSpacing: "0.32em",
+                      fontFamily: '"Cinzel", serif',
+                      fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)",
+                      letterSpacing: "0.30em",
                       textTransform: "uppercase",
-                      background: BABY_BLUE,
+                      background: GOLD,
                       borderColor: "transparent",
                       color: "white",
-                      boxShadow: `0 2px 10px ${BABY_BLUE}44`,
+                      boxShadow: "0 2px 10px rgba(196,152,88,0.30)",
                     }}
                   >
                     Upload Your Photos &amp; Videos
                   </div>
 
-                  <p
-                    className="garamond mb-5"
-                    style={{ fontSize: "clamp(0.72rem, 2.2vw, 0.84rem)", color: MEDIUM, fontStyle: "italic", lineHeight: 1.75 }}
-                  >
+                  <p style={{
+                    fontFamily: '"Fahkwang", sans-serif',
+                    fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
+                    color: NAVY_MUTE,
+                    fontStyle: "italic",
+                    lineHeight: 1.75,
+                    marginBottom: "1.25rem",
+                  }}>
                     Help us capture this sacred day! Scan the QR or use the actions below to drop your photos and clips into our shared Drive.
                   </p>
 
                   {/* Drive QR */}
                   <div className="mx-auto inline-flex flex-col items-center p-3 sm:p-5 rounded-2xl mb-4"
-                    style={{ background: "rgba(255,255,255,0.90)", border: `1.5px solid ${BABY_BLUE}28`, boxShadow: `0 4px 16px ${BABY_BLUE}18` }}>
-                    <div className="mb-2 sm:mb-3 p-2 sm:p-3 rounded-xl" style={{ background: `${BABY_BLUE}0a`, border: `1px solid ${BABY_BLUE}22` }}>
+                    style={{ background: "rgba(255,255,255,0.70)", border: "1.5px solid rgba(43,74,107,0.15)", boxShadow: "0 4px 16px rgba(43,74,107,0.06)" }}>
+                    <div className="mb-2 sm:mb-3 p-2 sm:p-3 rounded-xl" style={{ background: "rgba(196,152,88,0.06)", border: "1px solid rgba(43,74,107,0.12)" }}>
                       <div className="bg-white p-1.5 sm:p-2 rounded-lg shadow-sm">
                         <QRCodeCanvas id="drive-qr" value={driveLink} size={isMobile ? 130 : 190} includeMargin className="bg-white" fgColor={QR_FG_HEX} />
                       </div>
                     </div>
-                    <p className="garamond" style={{ fontSize: "clamp(0.62rem, 1.6vw, 0.72rem)", color: MEDIUM, fontStyle: "italic" }}>
+                    <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: NAVY_MUTE, fontStyle: "italic" }}>
                       Scan with your camera app
                     </p>
                   </div>
@@ -486,23 +489,24 @@ export function SnapShare() {
                   <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-2.5">
                     <button
                       onClick={copyDriveLink}
-                      className="garamond flex items-center justify-center gap-1.5 px-4 py-2 rounded-full transition-all hover:scale-105"
+                      className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-full transition-all hover:scale-105"
                       style={{
                         fontSize: "clamp(0.62rem, 1.6vw, 0.72rem)",
-                        letterSpacing: "0.16em",
+                        letterSpacing: "0.12em",
                         textTransform: "uppercase",
-                        fontWeight: 600,
                         ...(copiedDriveLink
-                          ? { background: `${BABY_BLUE}18`, color: BABY_BLUE, border: `1px solid ${BABY_BLUE}55` }
-                          : { ...btnPrimary }),
+                          ? { fontFamily: '"Cinzel", serif', background: "rgba(196,152,88,0.12)", color: GOLD, border: "1px solid rgba(196,152,88,0.35)" }
+                          : btnPrimary),
                       }}
                     >
                       {copiedDriveLink ? <><Check className="w-3.5 h-3.5" /> Copied!</> : <><Copy className="w-3.5 h-3.5" /> Copy Link</>}
                     </button>
                     <button
                       onClick={downloadDriveQRCode}
-                      className="garamond flex items-center justify-center gap-1.5 px-4 py-2 rounded-full transition-all hover:scale-105"
-                      style={{ fontSize: "clamp(0.62rem, 1.6vw, 0.72rem)", letterSpacing: "0.16em", textTransform: "uppercase", fontWeight: 600, ...btnPrimary }}
+                      className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-full transition-all hover:scale-105"
+                      style={{ fontSize: "clamp(0.62rem, 1.6vw, 0.72rem)", letterSpacing: "0.12em", textTransform: "uppercase", ...btnPrimary }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = DARK_NAVY }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = GOLD }}
                     >
                       <Download className="w-3.5 h-3.5" />
                       Download QR
@@ -511,24 +515,25 @@ export function SnapShare() {
                       href={driveLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="garamond flex items-center justify-center gap-1.5 px-4 py-2 rounded-full border transition-all hover:scale-105"
+                      className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-full border transition-all hover:scale-105"
                       style={{
+                        fontFamily: '"Cinzel", serif',
                         fontSize: "clamp(0.62rem, 1.6vw, 0.72rem)",
-                        letterSpacing: "0.16em",
+                        letterSpacing: "0.12em",
                         textTransform: "uppercase",
-                        fontWeight: 600,
-                        background: "rgba(255,255,255,0.85)",
-                        borderColor: `${BABY_BLUE}33`,
-                        color: DEEP,
+                        fontWeight: 500,
+                        background: "rgba(255,255,255,0.55)",
+                        borderColor: "rgba(43,74,107,0.15)",
+                        color: DARK_NAVY,
                       }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = BABY_BLUE; e.currentTarget.style.color = "white"; e.currentTarget.style.borderColor = "transparent" }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.85)"; e.currentTarget.style.color = DEEP; e.currentTarget.style.borderColor = `${BABY_BLUE}33` }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = GOLD; e.currentTarget.style.color = "white"; e.currentTarget.style.borderColor = "transparent" }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.55)"; e.currentTarget.style.color = DARK_NAVY; e.currentTarget.style.borderColor = "rgba(43,74,107,0.15)" }}
                     >
                       <Share2 className="w-3.5 h-3.5" />
                       Open Drive
                     </a>
                   </div>
-                  <p className="garamond mt-3" style={{ fontSize: "clamp(0.6rem, 1.5vw, 0.68rem)", color: MEDIUM, fontStyle: "italic" }}>
+                  <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: NAVY_MUTE, fontStyle: "italic", marginTop: "0.75rem" }}>
                     or tap &quot;Open Google Drive Folder.&quot;
                   </p>
                 </div>
@@ -538,40 +543,20 @@ export function SnapShare() {
 
           {/* ── Closing card ── */}
           <motion.div className="text-center mt-8 sm:mt-12" variants={fadeInUp}>
-            <div
-              className="rounded-2xl p-5 sm:p-7 max-w-2xl mx-auto"
-              style={{
-                background: "rgba(254,249,243,0.88)",
-                backdropFilter: "blur(14px)",
-                WebkitBackdropFilter: "blur(14px)",
-                border: `1.5px solid ${BABY_BLUE}28`,
-                boxShadow: `0 6px 28px ${BABY_BLUE}12, inset 0 1px 0 rgba(255,255,255,0.70)`,
-              }}
-            >
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="h-px w-12 sm:w-20" style={{ background: `linear-gradient(to left, ${GOLD}88, transparent)` }} />
-                <span style={{ color: GOLD, fontSize: "8px", opacity: 0.85 }}>✦</span>
-                <div className="h-px w-12 sm:w-20" style={{ background: `linear-gradient(to right, ${GOLD}88, transparent)` }} />
-              </div>
+            <div className="rounded-3xl p-5 sm:p-7 max-w-2xl mx-auto" style={FROSTED_CARD}>
+              <OrnamentDivider width="180px" />
 
-              <p
-                className="garamond"
-                style={{
-                  fontSize: "clamp(0.84rem, 2.8vw, 1rem)",
-                  color: DEEP,
-                  fontStyle: "italic",
-                  lineHeight: 1.95,
-                }}
-              >
+              <p style={{
+                fontFamily: '"Fahkwang", sans-serif',
+                fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
+                color: NAVY_MUTE,
+                fontStyle: "italic",
+                lineHeight: 1.75,
+                marginTop: "1rem",
+              }}>
                 Thank you for helping make {childName}&apos;s christening a day to remember.
                 Your photos, prayers, and presence are the most beautiful gift.
               </p>
-
-              <div className="flex items-center justify-center gap-2 mt-4">
-                <div className="h-px w-8 sm:w-12" style={{ background: `linear-gradient(to left, ${BLUE_MID}88, transparent)` }} />
-                <span style={{ color: BLUE_MID, fontSize: "5px", opacity: 0.75 }}>◆</span>
-                <div className="h-px w-8 sm:w-12" style={{ background: `linear-gradient(to right, ${BLUE_MID}88, transparent)` }} />
-              </div>
             </div>
           </motion.div>
 

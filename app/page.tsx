@@ -105,8 +105,7 @@ export default function Home() {
               <Messages />
               {/* <PrincipalSponsors /> */}
               <FAQ />
-{/* 
-              <Registry /> */}
+              <Registry />
               <SnapShare />
               <Celebration />
 
