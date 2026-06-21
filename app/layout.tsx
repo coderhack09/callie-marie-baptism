@@ -6,7 +6,7 @@ import "./globals.css"
 import { siteConfig } from "@/content/site"
 import { ClientLayout } from "@/components/client-layout"
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://callie-marie-baptism.vercel.app/"
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://callie-marie-baptism.weddinginvitationrsvp.com/"
 const canonicalUrl = siteUrl.replace(/\/$/, "")
 const desktopHero = "/Details/LinkPreview.png"
 const mobileHero = "/Details/LinkPreview.png"
