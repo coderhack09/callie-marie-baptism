@@ -285,75 +285,55 @@ export function ChristeningProgressBar({ progress, label }: { progress: number; 
       aria-valuemin={0}
       aria-valuemax={100}
       aria-label={label.replace(/\.+$/, "")}
-      style={{ width: "100%", maxWidth: "min(320px, 88vw)", padding: "0 20px" }}
+      style={{ width: "min(360px, calc(100vw - 2.5rem))" }}
     >
-      {/* Label */}
       <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px" }}>
-        <div style={{ flex: 1, height: "1px", background: "linear-gradient(to right, transparent, rgba(196,160,168,0.55))" }} />
+        <div style={{ flex: 1, height: "1px", background: `linear-gradient(to right, transparent, ${C.blushDeep})`, opacity: 0.65 }} />
         <p style={{
           fontFamily: '"Cinzel", serif',
           fontSize: "clamp(0.58rem, 2vw, 0.70rem)",
           letterSpacing: "0.26em",
           textTransform: "uppercase",
-          color: "rgba(157,120,130,0.88)",
+          color: C.mauve,
           margin: 0,
           whiteSpace: "nowrap",
         }}>
           {label}
         </p>
-        <div style={{ flex: 1, height: "1px", background: "linear-gradient(to left, transparent, rgba(196,160,168,0.55))" }} />
+        <div style={{ flex: 1, height: "1px", background: `linear-gradient(to left, transparent, ${C.blushDeep})`, opacity: 0.65 }} />
       </div>
 
-      {/* Track */}
       <div
         className="relative w-full"
         style={{
-          height: "5px",
+          height: "6px",
           borderRadius: "999px",
-          background: "rgba(232,196,204,0.45)",
-          boxShadow: "inset 0 1px 3px rgba(107,61,79,0.08)",
-          overflow: "visible",
+          background: C.blushSoft,
+          border: `1px solid ${C.blushDeep}`,
+          boxShadow: "inset 0 1px 3px rgba(107,61,79,0.06)",
+          overflow: "hidden",
         }}
       >
-        {/* Fill — scaleX for smooth GPU animation */}
         <div
-          className="absolute inset-0 rounded-full origin-left overflow-hidden"
+          className="absolute inset-y-0 left-0 rounded-full origin-left"
           style={{
+            width: "100%",
             transform: `scaleX(${fillScale})`,
-            background: `linear-gradient(90deg, ${C.goldDeep} 0%, ${C.gold} 55%, ${C.goldLight} 100%)`,
-            boxShadow: clamped > 0 ? "0 0 12px rgba(201,168,108,0.40)" : "none",
+            background: `linear-gradient(90deg, ${C.roseDeep} 0%, ${C.goldDeep} 48%, ${C.gold} 100%)`,
+            boxShadow: clamped > 0 ? "0 0 10px rgba(201,168,108,0.28)" : "none",
             willChange: "transform",
           }}
         >
           <div
             className="absolute inset-0 animate-loader-shimmer"
             style={{
-              width: "80px",
-              background: "linear-gradient(90deg, transparent 0%, rgba(255,252,248,0.80) 50%, transparent 100%)",
+              width: "72px",
+              background: "linear-gradient(90deg, transparent 0%, rgba(255,252,248,0.55) 50%, transparent 100%)",
             }}
           />
         </div>
-
-        {/* Pearl cap — follows fill edge */}
-        {clamped > 1 && (
-          <div
-            className="absolute top-1/2 animate-pearl-pulse pointer-events-none"
-            style={{
-              left: `calc(${clamped}% - 5px)`,
-              transform: "translateY(-50%)",
-              width: "10px",
-              height: "10px",
-              borderRadius: "50%",
-              background: `radial-gradient(circle at 35% 35%, ${C.pearl}, ${C.gold})`,
-              border: "1px solid rgba(201,168,108,0.45)",
-              boxShadow: "0 0 10px rgba(201,168,108,0.85), 0 0 16px rgba(232,196,204,0.40)",
-            }}
-            aria-hidden
-          />
-        )}
       </div>
 
-      {/* Percentage */}
       <p
         className="tabular-nums"
         aria-live="polite"
@@ -361,9 +341,10 @@ export function ChristeningProgressBar({ progress, label }: { progress: number; 
           fontFamily: '"Cinzel", serif',
           fontSize: "clamp(0.58rem, 2vw, 0.68rem)",
           letterSpacing: "0.32em",
-          color: "rgba(184,146,78,0.80)",
+          color: C.goldDeep,
           textAlign: "center",
-          margin: "11px 0 0",
+          margin: "10px 0 0",
+          opacity: 0.88,
         }}
       >
         {display}%

@@ -53,8 +53,8 @@ interface TimeLeft {
 }
 
 function CountdownUnit({
-  value, label, index, isSeconds, digitFontSize,
-}: { value: number; label: string; index: number; isSeconds?: boolean; digitFontSize: number }) {
+  value, label, index, digitFontSize,
+}: { value: number; label: string; index: number; digitFontSize: number }) {
   const places = value >= 100 ? [100, 10, 1] : [10, 1]
 
   return (
@@ -65,19 +65,6 @@ function CountdownUnit({
       transition={{ duration: 0.7, delay: 0.55 + index * 0.1, ease: "easeOut" }}
     >
       <div className="relative w-full flex justify-center">
-        {isSeconds && (
-          <motion.div
-            className="absolute inset-0 rounded-md pointer-events-none"
-            animate={{
-              boxShadow: [
-                `0 0 0px 0px rgba(201,168,108,0)`,
-                `0 0 0px 3px rgba(201,168,108,0.35)`,
-                `0 0 0px 0px rgba(201,168,108,0)`,
-              ],
-            }}
-            transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
-          />
-        )}
         <div
           className="relative overflow-hidden rounded-md"
           style={{
@@ -358,7 +345,7 @@ export function Countdown() {
             <CountdownUnit value={timeLeft.days}    label="Days"    index={0} digitFontSize={digitFontSize} />
             <CountdownUnit value={timeLeft.hours}   label="Hours"   index={1} digitFontSize={digitFontSize} />
             <CountdownUnit value={timeLeft.minutes} label="Minutes" index={2} digitFontSize={digitFontSize} />
-            <CountdownUnit value={timeLeft.seconds} label="Seconds" index={3} isSeconds digitFontSize={digitFontSize} />
+            <CountdownUnit value={timeLeft.seconds} label="Seconds" index={3} digitFontSize={digitFontSize} />
           </div>
         </motion.div>
 

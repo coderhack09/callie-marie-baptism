@@ -164,10 +164,14 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
       </div>
 
       <div
-        className="absolute bottom-0 left-0 right-0 z-10 flex flex-col items-center"
-        style={{ paddingBottom: "clamp(1.8rem,5vw,3rem)" }}
+        className="fixed bottom-0 left-0 right-0 z-10 flex flex-col items-center pointer-events-none"
+        style={{
+          paddingBottom: "max(1.75rem, env(safe-area-inset-bottom, 0px))",
+          paddingTop: "1rem",
+          background: `linear-gradient(to top, ${C.ivory} 55%, transparent 100%)`,
+        }}
       >
-        <div style={vis(6, "0ms")}>
+        <div style={vis(6, "0ms")} className="pointer-events-auto">
           <ChristeningProgressBar
             progress={progress}
             label={`Loading Invitation${DOT_FRAMES[dotFrame]}`}
