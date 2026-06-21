@@ -3,44 +3,38 @@
 import { useEffect, useState } from "react"
 import { motion } from "motion/react"
 import { Instagram, Facebook, Twitter, Share2, Copy, Download, Check } from "lucide-react"
-import Image from "next/image"
 import { QRCodeCanvas } from "qrcode.react"
 import { siteConfig } from "@/content/site"
+import { C, text } from "@/components/loader/christening-theme"
+import { CornerFloralDecor } from "@/components/loader/ChristeningDecor"
 
-// ── Palette — aligned with entourage.tsx ──────────────────────────────────────
-const DARK_NAVY = "#1C3050"
-const GOLD      = "#C4965A"
-const NAVY_MUTE = "rgba(65,90,115,0.78)"
-
-const FROSTED_CARD = {
-  background: "rgba(255,255,255,0.30)",
-  backdropFilter: "blur(14px)",
-  WebkitBackdropFilter: "blur(14px)",
-  border: "1.5px solid rgba(43,74,107,0.22)",
-  boxShadow: "0 4px 24px rgba(43,74,107,0.08), 0 1px 0 rgba(255,255,255,0.55) inset",
+const cardStyle = {
+  background: `linear-gradient(170deg, ${C.ivory} 0%, ${C.blushSoft} 48%, ${C.champagne} 100%)`,
+  border: `1.5px solid ${C.blushDeep}`,
+  boxShadow: "0 20px 64px rgba(107,61,79,0.08), 0 2px 10px rgba(232,196,204,0.20), inset 0 1px 0 rgba(255,255,255,0.90)",
 } as const
 
-// QRCodeCanvas renders to <canvas> — must be a literal hex, no CSS vars
-const QR_FG_HEX = DARK_NAVY
+const goldLine = `linear-gradient(to right, transparent, ${C.gold}, transparent)`
 
-function OrnamentDivider({ width = "240px" }: { width?: string }) {
+const childName = siteConfig.couple.child
+const childSlug = childName.toLowerCase().replace(/\s+/g, "-")
+
+// QRCodeCanvas renders to <canvas> — must be a literal hex
+const QR_FG_HEX = C.roseDeep
+
+function GoldRule({ width = "240px" }: { width?: string }) {
   return (
-    <div className="flex items-center justify-center gap-2" style={{ maxWidth: width, margin: "0 auto" }}>
-      <div className="h-px flex-1" style={{ background: "linear-gradient(to left, rgba(196,152,88,0.45), transparent)" }} />
-      <div style={{ width: "6px", height: "6px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.68)", flexShrink: 0 }} />
-      <div className="h-px flex-1" style={{ background: "linear-gradient(to right, rgba(196,152,88,0.45), transparent)" }} />
-    </div>
+    <div className="h-px mx-auto" style={{ maxWidth: width, background: goldLine, opacity: 0.55 }} />
   )
 }
 
-// ── Floating bokeh orbs ───────────────────────────────────────────────────────
 function BokehOrbs() {
   const orbs = [
-    { w: 380, h: 380, top: "4%",  left: "2%",  color: "rgba(120,175,215,1)", opacity: 0.08, blur: 100 },
-    { w: 260, h: 260, top: "18%", left: "70%", color: "rgba(196,152,88,1)",  opacity: 0.08, blur: 80  },
-    { w: 300, h: 300, top: "55%", left: "8%",  color: "rgba(196,152,88,1)",  opacity: 0.07, blur: 90  },
-    { w: 220, h: 220, top: "70%", left: "76%", color: "rgba(120,175,215,1)", opacity: 0.08, blur: 70  },
-    { w: 170, h: 170, top: "38%", left: "44%", color: "rgba(196,152,88,1)",  opacity: 0.06, blur: 60  },
+    { w: 380, h: 380, top: "4%",  left: "2%",  color: "rgba(232,196,204,1)", opacity: 0.10, blur: 100 },
+    { w: 260, h: 260, top: "18%", left: "70%", color: "rgba(201,168,108,1)",  opacity: 0.09, blur: 80  },
+    { w: 300, h: 300, top: "55%", left: "8%",  color: "rgba(201,168,108,1)",  opacity: 0.08, blur: 90  },
+    { w: 220, h: 220, top: "70%", left: "76%", color: "rgba(232,196,204,1)", opacity: 0.09, blur: 70  },
+    { w: 170, h: 170, top: "38%", left: "44%", color: "rgba(201,168,108,1)",  opacity: 0.07, blur: 60  },
   ]
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden>
@@ -65,12 +59,6 @@ export function SnapShare() {
   const driveLink   = siteConfig.snapShare.googleDriveLink
   const hashtags    = siteConfig.snapShare.hashtag
   const allHashtags = hashtags.join(" ")
-
-  const groomNickname = siteConfig.couple.groomNickname
-  const brideNickname = siteConfig.couple.brideNickname
-  const childName     = siteConfig.couple.child ?? "Kaezar Isaiahnuel"
-  const sanitizedGroomName = groomNickname.replace(/\s+/g, "")
-  const sanitizedBrideName = brideNickname.replace(/\s+/g, "")
 
   const shareText = `Join us in blessing ${childName}! Explore our christening invitation and share your special memories: ${websiteUrl} ${allHashtags} 🕊️`
 
@@ -98,7 +86,7 @@ export function SnapShare() {
     const canvas = document.getElementById("snapshare-qr") as HTMLCanvasElement | null
     if (!canvas) return
     const link = document.createElement("a")
-    link.download = `${sanitizedGroomName.toLowerCase()}-${sanitizedBrideName.toLowerCase()}-christening-qr.png`
+    link.download = `${childSlug}-christening-qr.png`
     link.href = canvas.toDataURL("image/png")
     link.click()
   }
@@ -107,7 +95,7 @@ export function SnapShare() {
     const canvas = document.getElementById("drive-qr") as HTMLCanvasElement | null
     if (!canvas) return
     const link = document.createElement("a")
-    link.download = "drive-qr.png"
+    link.download = `${childSlug}-drive-qr.png`
     link.href = canvas.toDataURL("image/png")
     link.click()
   }
@@ -140,129 +128,119 @@ export function SnapShare() {
   const fadeInUp = { initial: { opacity: 0, y: 60 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.8 } }
   const staggerChildren = { animate: { transition: { staggerChildren: 0.2 } } }
 
-  const cardStyle: React.CSSProperties = FROSTED_CARD
-
   const btnPrimary: React.CSSProperties = {
     fontFamily: '"Cinzel", serif',
-    background: GOLD,
-    color: "white",
+    background: C.roseDeep,
+    color: C.pearl,
     border: "none",
-    boxShadow: "0 4px 14px rgba(196,152,88,0.30)",
+    boxShadow: "0 4px 14px rgba(107,61,79,0.22)",
+  }
+
+  const qrFrameStyle: React.CSSProperties = {
+    background: C.pearl,
+    border: `1.5px solid ${C.blushDeep}`,
+    boxShadow: "0 4px 16px rgba(107,61,79,0.06)",
   }
 
   return (
     <section id="snap-share" className="relative w-full overflow-hidden">
 
-      {/* Solid base — aligned with entourage */}
-      <div className="absolute inset-0 -z-10" style={{ background: "#FFFFFF" }} />
+      {/* Layered christening background */}
+      <div className="absolute inset-0 -z-10" style={{ background: C.ivory }} />
 
       <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: "radial-gradient(ellipse 55% 45% at 50% 30%, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.6) 45%, transparent 75%)",
+        background: `radial-gradient(ellipse 55% 45% at 50% 30%, rgba(255,253,249,0.95) 0%, rgba(250,232,236,0.45) 45%, transparent 75%)`,
       }} />
 
       <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: "linear-gradient(to top, rgba(120,175,215,0.10) 0%, rgba(120,175,215,0.04) 25%, transparent 55%)",
+        background: `linear-gradient(to top, rgba(232,196,204,0.12) 0%, rgba(247,239,228,0.06) 25%, transparent 55%)`,
       }} />
 
       <div className="absolute inset-0 pointer-events-none z-0" aria-hidden style={{
         background: `
-          radial-gradient(ellipse 50% 40% at 50% 28%, rgba(196,152,88,0.06) 0%, transparent 70%),
-          radial-gradient(ellipse 38% 32% at 50% 78%, rgba(120,175,215,0.08) 0%, transparent 65%)
+          radial-gradient(ellipse 50% 40% at 50% 28%, rgba(201,168,108,0.07) 0%, transparent 70%),
+          radial-gradient(ellipse 38% 32% at 50% 78%, rgba(232,196,204,0.10) 0%, transparent 65%)
         `,
       }} />
 
       <BokehOrbs />
-
-      {/* ── Corner floral decorations ── */}
-      <div className="absolute inset-0 pointer-events-none z-[1]" aria-hidden>
-        <Image src="/decoration/left-top-removebg-preview.png"    alt="" width={200} height={200} className="absolute top-0 left-0  w-auto h-auto max-w-[100px] sm:max-w-[145px] md:max-w-[190px] opacity-40" />
-        <Image src="/decoration/right-top-removebg-preview.png"   alt="" width={200} height={200} className="absolute top-0 right-0 w-auto h-auto max-w-[100px] sm:max-w-[145px] md:max-w-[190px] opacity-40" />
-        <Image src="/decoration/bottom-left-removebg-preview.png"  alt="" width={200} height={200} className="absolute bottom-0 left-0  w-auto h-auto max-w-[100px] sm:max-w-[145px] md:max-w-[190px] opacity-40" />
-        <Image src="/decoration/bottom-right-removebg-preview.png" alt="" width={200} height={200} className="absolute bottom-0 right-0 w-auto h-auto max-w-[100px] sm:max-w-[145px] md:max-w-[190px] opacity-40" />
-      </div>
+      <CornerFloralDecor opacity={0.65} sizeClass="w-20 sm:w-32 md:w-40 lg:w-48" />
 
       <div className="relative z-10 py-12 sm:py-16 md:py-20 lg:py-24">
         <div className="max-w-6xl mx-auto px-3 sm:px-6 md:px-8">
 
-          {/* ══════════════════════════════════════════════════════════════
-              SECTION HEADER
-          ══════════════════════════════════════════════════════════════ */}
+          {/* Section header */}
           <motion.div
             className="text-center mb-8 sm:mb-12 max-w-3xl mx-auto"
             initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <p style={{
-              fontFamily: '"Cinzel", serif',
-              fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)",
-              letterSpacing: "0.40em",
-              textTransform: "uppercase",
-              color: "rgba(72,112,148,0.80)",
-              marginBottom: "0.4rem",
-              paddingRight: "0.40em",
-            }}>
-              Share the Blessing
-            </p>
+            <div className="inline-block rounded-3xl px-8 py-7 sm:px-12 sm:py-9 isolate" style={cardStyle}>
+              <p style={{
+                fontFamily: '"Cinzel", serif',
+                fontSize: "clamp(0.58rem, 2vw, 0.72rem)",
+                fontWeight: 600,
+                letterSpacing: "0.36em",
+                textTransform: "uppercase",
+                color: C.goldDeep,
+                marginBottom: "0.5rem",
+                paddingRight: "0.36em",
+              }}>
+                Share the Blessing
+              </p>
 
-            <OrnamentDivider />
+              <h2 style={{
+                fontFamily: '"Cinzel", serif',
+                fontWeight: 700,
+                fontSize: "clamp(1.8rem, 7vw, 3rem)",
+                color: C.roseDeep,
+                lineHeight: 1.1,
+                letterSpacing: "0.06em",
+                textTransform: "uppercase",
+                marginBottom: "0.5rem",
+              }}>
+                Capture &amp; Share the Joy
+              </h2>
 
-            <h2 style={{
-              fontFamily: '"Cinzel", serif',
-              fontSize: "clamp(1.6rem, 5.5vw, 2.8rem)",
-              color: GOLD,
-              lineHeight: 1.0,
-              marginTop: "1rem",
-              marginBottom: "0.5rem",
-              filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))",
-            }}>
-              Capture &amp; Share the Joy
-            </h2>
+              <GoldRule width="100%" />
 
-            <p style={{
-              fontFamily: '"Fahkwang", sans-serif',
-              fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
-              color: NAVY_MUTE,
-              lineHeight: 1.75,
-              fontStyle: "italic",
-              maxWidth: "32rem",
-              margin: "0.75rem auto 0",
-            }}>
-              Help us remember the little moments of {childName}&apos;s blessed day — every smile, embrace, and candid laugh.
-              Your photos and clips complete this cherished memory.
-            </p>
+              <p style={{
+                fontFamily: '"Fahkwang", sans-serif',
+                fontSize: "clamp(0.88rem, 2.8vw, 1.02rem)",
+                color: text.body,
+                lineHeight: 1.8,
+                fontStyle: "italic",
+                maxWidth: "32rem",
+                margin: "0.75rem auto 0",
+              }}>
+                Help us remember the little moments of {childName}&apos;s blessed day — every smile, embrace, and candid laugh.
+                Your photos and clips complete this cherished memory.
+              </p>
+            </div>
           </motion.div>
 
-          {/* ══════════════════════════════════════════════════════════════
-              MAIN GRID
-          ══════════════════════════════════════════════════════════════ */}
           <motion.div
             className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8"
             variants={staggerChildren} initial="initial" animate="animate"
           >
-
-            {/* ── Left: photo moments card ── */}
-          
-
-            {/* ── Right: QR + hashtags + social + drive ── */}
             <motion.div className="space-y-4 flex flex-col lg:order-2" variants={fadeInUp}>
 
-              {/* ── Share Website QR ── */}
-              <div className="rounded-3xl p-4 sm:p-5 md:p-7 text-center flex flex-col" style={cardStyle}>
-                <div className="h-px w-full mb-4" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
+              {/* Share Website QR */}
+              <div className="rounded-3xl p-4 sm:p-5 md:p-7 text-center flex flex-col isolate" style={cardStyle}>
+                <div className="h-px w-full mb-4" style={{ background: goldLine, opacity: 0.5 }} />
 
                 <h4 style={{
                   fontFamily: '"Cinzel", serif',
                   fontSize: "clamp(1rem, 3.5vw, 1.4rem)",
-                  color: GOLD,
+                  color: C.goldDeep,
                   lineHeight: 1.2,
-                  textAlign: "center",
                   marginBottom: "0.5rem",
                 }}>
                   Share Our Invitation
                 </h4>
                 <p style={{
                   fontFamily: '"Fahkwang", sans-serif',
-                  fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
-                  color: NAVY_MUTE,
+                  fontSize: "clamp(0.88rem, 2.8vw, 1.02rem)",
+                  color: text.body,
                   fontStyle: "italic",
                   lineHeight: 1.75,
                   marginBottom: "1rem",
@@ -270,18 +248,16 @@ export function SnapShare() {
                   Spread the word about {childName}&apos;s christening. Share this QR code so loved ones can join the celebration.
                 </p>
 
-                {/* QR frame */}
-                <div className="mx-auto inline-flex flex-col items-center p-3 sm:p-5 rounded-2xl mb-4"
-                  style={{ background: "rgba(255,255,255,0.70)", border: "1.5px solid rgba(43,74,107,0.15)", boxShadow: "0 4px 16px rgba(43,74,107,0.06)" }}>
-                  <div className="mb-2 sm:mb-3 p-2 sm:p-3 rounded-xl" style={{ background: "rgba(196,152,88,0.06)", border: "1px solid rgba(43,74,107,0.12)" }}>
-                    <div className="bg-white p-1.5 sm:p-2 rounded-lg shadow-sm">
+                <div className="mx-auto inline-flex flex-col items-center p-3 sm:p-5 rounded-2xl mb-4" style={qrFrameStyle}>
+                  <div className="mb-2 sm:mb-3 p-2 sm:p-3 rounded-xl" style={{ background: C.blushSoft, border: `1px solid ${C.blushDeep}` }}>
+                    <div className="p-1.5 sm:p-2 rounded-lg shadow-sm" style={{ background: C.pearl }}>
                       <QRCodeCanvas
                         id="snapshare-qr"
                         value={websiteUrl}
                         size={isMobile ? 140 : 200}
                         includeMargin
-                        className="bg-white"
                         fgColor={QR_FG_HEX}
+                        bgColor={C.pearl}
                       />
                     </div>
                   </div>
@@ -289,29 +265,28 @@ export function SnapShare() {
                     onClick={downloadQRCode}
                     className="flex items-center gap-1.5 mx-auto px-4 py-2 rounded-full transition-all duration-200 hover:scale-105 hover:shadow-lg"
                     style={{ ...btnPrimary, fontSize: "clamp(0.62rem, 1.6vw, 0.72rem)", letterSpacing: "0.12em", textTransform: "uppercase" }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = DARK_NAVY }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = GOLD }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = C.goldDeep; e.currentTarget.style.boxShadow = "0 6px 18px rgba(201,168,108,0.28)" }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = C.roseDeep; e.currentTarget.style.boxShadow = "0 4px 14px rgba(107,61,79,0.22)" }}
                   >
                     <Download className="w-3.5 h-3.5" />
                     Download QR
                   </button>
                 </div>
 
-                <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: NAVY_MUTE, fontStyle: "italic" }}>
+                <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: text.caption, fontStyle: "italic" }}>
                   Scan with any camera app to open the full invitation.
                 </p>
               </div>
 
-              {/* ── Hashtags ── */}
-              <div className="rounded-3xl p-4 sm:p-5 text-center" style={cardStyle}>
-                <div className="h-px w-full mb-4" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
+              {/* Hashtags */}
+              <div className="rounded-3xl p-4 sm:p-5 text-center isolate" style={cardStyle}>
+                <div className="h-px w-full mb-4" style={{ background: goldLine, opacity: 0.5 }} />
 
                 <h5 style={{
                   fontFamily: '"Cinzel", serif',
                   fontSize: "clamp(1rem, 3.5vw, 1.4rem)",
-                  color: GOLD,
+                  color: C.goldDeep,
                   lineHeight: 1.2,
-                  textAlign: "center",
                   marginBottom: "0.75rem",
                 }}>
                   Christening Hashtags
@@ -324,8 +299,8 @@ export function SnapShare() {
                       onClick={() => copyHashtag(hashtag, index)}
                       className="w-full flex items-center justify-between gap-2 px-3 py-2 sm:py-2.5 rounded-xl border transition-all duration-200 active:scale-[0.98]"
                       style={{
-                        background: copiedHashtagIndex === index ? "rgba(196,152,88,0.12)" : "rgba(255,255,255,0.55)",
-                        borderColor: copiedHashtagIndex === index ? "rgba(196,152,88,0.35)" : "rgba(43,74,107,0.15)",
+                        background: copiedHashtagIndex === index ? C.blushSoft : C.pearl,
+                        borderColor: copiedHashtagIndex === index ? C.goldDeep : C.blushDeep,
                       }}
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -334,8 +309,8 @@ export function SnapShare() {
                       <span style={{
                         fontFamily: '"Fahkwang", sans-serif',
                         fontWeight: 500,
-                        fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
-                        color: copiedHashtagIndex === index ? GOLD : DARK_NAVY,
+                        fontSize: "clamp(0.88rem, 2.8vw, 1.02rem)",
+                        color: copiedHashtagIndex === index ? C.goldDeep : C.roseDeep,
                         textAlign: "left",
                         flex: 1,
                         overflow: "hidden",
@@ -353,7 +328,7 @@ export function SnapShare() {
                         fontSize: "clamp(0.56rem, 1.5vw, 0.64rem)",
                         letterSpacing: "0.12em",
                         textTransform: "uppercase",
-                        color: copiedHashtagIndex === index ? GOLD : NAVY_MUTE,
+                        color: copiedHashtagIndex === index ? C.goldDeep : text.caption,
                       }}>
                         {copiedHashtagIndex === index
                           ? <><Check className="w-3 h-3" /> Copied</>
@@ -373,25 +348,25 @@ export function SnapShare() {
                     textTransform: "uppercase",
                     fontWeight: 500,
                     ...(copiedAllHashtags
-                      ? { background: "rgba(196,152,88,0.12)", borderColor: "rgba(196,152,88,0.35)", color: GOLD }
-                      : { background: "rgba(196,152,88,0.08)", borderColor: "rgba(196,152,88,0.25)", color: DARK_NAVY }),
+                      ? { background: C.blushSoft, borderColor: C.goldDeep, color: C.goldDeep }
+                      : { background: C.blushSoft, borderColor: C.blushDeep, color: C.roseDeep }),
                   }}
-                  onMouseEnter={(e) => { if (!copiedAllHashtags) { e.currentTarget.style.background = GOLD; e.currentTarget.style.color = "white"; e.currentTarget.style.borderColor = "transparent" } }}
-                  onMouseLeave={(e) => { if (!copiedAllHashtags) { e.currentTarget.style.background = "rgba(196,152,88,0.08)"; e.currentTarget.style.color = DARK_NAVY; e.currentTarget.style.borderColor = "rgba(196,152,88,0.25)" } }}
+                  onMouseEnter={(e) => { if (!copiedAllHashtags) { e.currentTarget.style.background = C.goldDeep; e.currentTarget.style.color = C.pearl; e.currentTarget.style.borderColor = C.goldDeep } }}
+                  onMouseLeave={(e) => { if (!copiedAllHashtags) { e.currentTarget.style.background = C.blushSoft; e.currentTarget.style.color = C.roseDeep; e.currentTarget.style.borderColor = C.blushDeep } }}
                 >
                   {copiedAllHashtags ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                   {copiedAllHashtags ? "All Copied!" : "Copy All Hashtags"}
                 </button>
               </div>
 
-              {/* ── Social share ── */}
-              <div className="rounded-3xl p-4 sm:p-5 md:p-6" style={cardStyle}>
-                <div className="h-px w-full mb-4" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
+              {/* Social share */}
+              <div className="rounded-3xl p-4 sm:p-5 md:p-6 isolate" style={cardStyle}>
+                <div className="h-px w-full mb-4" style={{ background: goldLine, opacity: 0.5 }} />
 
                 <h5 style={{
                   fontFamily: '"Cinzel", serif',
                   fontSize: "clamp(1rem, 3.5vw, 1.4rem)",
-                  color: GOLD,
+                  color: C.goldDeep,
                   lineHeight: 1.2,
                   textAlign: "center",
                   marginBottom: "0.5rem",
@@ -400,8 +375,8 @@ export function SnapShare() {
                 </h5>
                 <p style={{
                   fontFamily: '"Fahkwang", sans-serif',
-                  fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
-                  color: NAVY_MUTE,
+                  fontSize: "clamp(0.88rem, 2.8vw, 1.02rem)",
+                  color: text.body,
                   fontStyle: "italic",
                   lineHeight: 1.75,
                   textAlign: "center",
@@ -423,16 +398,16 @@ export function SnapShare() {
                       className="group flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 sm:py-3 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
                       style={{
                         fontFamily: '"Cinzel", serif',
-                        background: "rgba(255,255,255,0.55)",
-                        border: "1.5px solid rgba(43,74,107,0.15)",
-                        color: DARK_NAVY,
+                        background: C.pearl,
+                        border: `1.5px solid ${C.blushDeep}`,
+                        color: C.roseDeep,
                         fontSize: "clamp(0.56rem, 1.5vw, 0.64rem)",
                         letterSpacing: "0.12em",
                         textTransform: "uppercase",
                         fontWeight: 500,
                       }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = GOLD; e.currentTarget.style.color = "white"; e.currentTarget.style.borderColor = "transparent" }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.55)"; e.currentTarget.style.color = DARK_NAVY; e.currentTarget.style.borderColor = "rgba(43,74,107,0.15)" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = C.goldDeep; e.currentTarget.style.color = C.pearl; e.currentTarget.style.borderColor = C.goldDeep }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = C.pearl; e.currentTarget.style.color = C.roseDeep; e.currentTarget.style.borderColor = C.blushDeep }}
                     >
                       <Icon className="w-4 h-4 group-hover:scale-110 transition-transform flex-shrink-0" />
                       {label}
@@ -441,10 +416,10 @@ export function SnapShare() {
                 </div>
               </div>
 
-              {/* ── Drive upload ── */}
+              {/* Drive upload */}
               {driveLink && (
-                <div className="rounded-3xl p-4 sm:p-5 md:p-7 text-center" style={cardStyle}>
-                  <div className="h-px w-full mb-4" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
+                <div className="rounded-3xl p-4 sm:p-5 md:p-7 text-center isolate" style={cardStyle}>
+                  <div className="h-px w-full mb-4" style={{ background: goldLine, opacity: 0.5 }} />
 
                   <div
                     className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 mb-4"
@@ -453,10 +428,10 @@ export function SnapShare() {
                       fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)",
                       letterSpacing: "0.30em",
                       textTransform: "uppercase",
-                      background: GOLD,
+                      background: C.roseDeep,
                       borderColor: "transparent",
-                      color: "white",
-                      boxShadow: "0 2px 10px rgba(196,152,88,0.30)",
+                      color: C.pearl,
+                      boxShadow: "0 2px 10px rgba(107,61,79,0.22)",
                     }}
                   >
                     Upload Your Photos &amp; Videos
@@ -464,8 +439,8 @@ export function SnapShare() {
 
                   <p style={{
                     fontFamily: '"Fahkwang", sans-serif',
-                    fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
-                    color: NAVY_MUTE,
+                    fontSize: "clamp(0.88rem, 2.8vw, 1.02rem)",
+                    color: text.body,
                     fontStyle: "italic",
                     lineHeight: 1.75,
                     marginBottom: "1.25rem",
@@ -473,15 +448,13 @@ export function SnapShare() {
                     Help us capture this sacred day! Scan the QR or use the actions below to drop your photos and clips into our shared Drive.
                   </p>
 
-                  {/* Drive QR */}
-                  <div className="mx-auto inline-flex flex-col items-center p-3 sm:p-5 rounded-2xl mb-4"
-                    style={{ background: "rgba(255,255,255,0.70)", border: "1.5px solid rgba(43,74,107,0.15)", boxShadow: "0 4px 16px rgba(43,74,107,0.06)" }}>
-                    <div className="mb-2 sm:mb-3 p-2 sm:p-3 rounded-xl" style={{ background: "rgba(196,152,88,0.06)", border: "1px solid rgba(43,74,107,0.12)" }}>
-                      <div className="bg-white p-1.5 sm:p-2 rounded-lg shadow-sm">
-                        <QRCodeCanvas id="drive-qr" value={driveLink} size={isMobile ? 130 : 190} includeMargin className="bg-white" fgColor={QR_FG_HEX} />
+                  <div className="mx-auto inline-flex flex-col items-center p-3 sm:p-5 rounded-2xl mb-4" style={qrFrameStyle}>
+                    <div className="mb-2 sm:mb-3 p-2 sm:p-3 rounded-xl" style={{ background: C.blushSoft, border: `1px solid ${C.blushDeep}` }}>
+                      <div className="p-1.5 sm:p-2 rounded-lg shadow-sm" style={{ background: C.pearl }}>
+                        <QRCodeCanvas id="drive-qr" value={driveLink} size={isMobile ? 130 : 190} includeMargin fgColor={QR_FG_HEX} bgColor={C.pearl} />
                       </div>
                     </div>
-                    <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: NAVY_MUTE, fontStyle: "italic" }}>
+                    <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: text.caption, fontStyle: "italic" }}>
                       Scan with your camera app
                     </p>
                   </div>
@@ -495,7 +468,7 @@ export function SnapShare() {
                         letterSpacing: "0.12em",
                         textTransform: "uppercase",
                         ...(copiedDriveLink
-                          ? { fontFamily: '"Cinzel", serif', background: "rgba(196,152,88,0.12)", color: GOLD, border: "1px solid rgba(196,152,88,0.35)" }
+                          ? { fontFamily: '"Cinzel", serif', background: C.blushSoft, color: C.goldDeep, border: `1px solid ${C.goldDeep}` }
                           : btnPrimary),
                       }}
                     >
@@ -505,8 +478,8 @@ export function SnapShare() {
                       onClick={downloadDriveQRCode}
                       className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-full transition-all hover:scale-105"
                       style={{ fontSize: "clamp(0.62rem, 1.6vw, 0.72rem)", letterSpacing: "0.12em", textTransform: "uppercase", ...btnPrimary }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = DARK_NAVY }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = GOLD }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = C.goldDeep }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = C.roseDeep }}
                     >
                       <Download className="w-3.5 h-3.5" />
                       Download QR
@@ -522,34 +495,34 @@ export function SnapShare() {
                         letterSpacing: "0.12em",
                         textTransform: "uppercase",
                         fontWeight: 500,
-                        background: "rgba(255,255,255,0.55)",
-                        borderColor: "rgba(43,74,107,0.15)",
-                        color: DARK_NAVY,
+                        background: C.pearl,
+                        borderColor: C.blushDeep,
+                        color: C.roseDeep,
                       }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = GOLD; e.currentTarget.style.color = "white"; e.currentTarget.style.borderColor = "transparent" }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.55)"; e.currentTarget.style.color = DARK_NAVY; e.currentTarget.style.borderColor = "rgba(43,74,107,0.15)" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = C.goldDeep; e.currentTarget.style.color = C.pearl; e.currentTarget.style.borderColor = C.goldDeep }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = C.pearl; e.currentTarget.style.color = C.roseDeep; e.currentTarget.style.borderColor = C.blushDeep }}
                     >
                       <Share2 className="w-3.5 h-3.5" />
                       Open Drive
                     </a>
                   </div>
-                  <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: NAVY_MUTE, fontStyle: "italic", marginTop: "0.75rem" }}>
-                    or tap &quot;Open Google Drive Folder.&quot;
+                  <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: text.caption, fontStyle: "italic", marginTop: "0.75rem" }}>
+                    or tap &quot;Open Drive.&quot;
                   </p>
                 </div>
               )}
             </motion.div>
           </motion.div>
 
-          {/* ── Closing card ── */}
+          {/* Closing card */}
           <motion.div className="text-center mt-8 sm:mt-12" variants={fadeInUp}>
-            <div className="rounded-3xl p-5 sm:p-7 max-w-2xl mx-auto" style={FROSTED_CARD}>
-              <OrnamentDivider width="180px" />
+            <div className="rounded-3xl p-5 sm:p-7 max-w-2xl mx-auto isolate" style={cardStyle}>
+              <GoldRule width="180px" />
 
               <p style={{
                 fontFamily: '"Fahkwang", sans-serif',
-                fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
-                color: NAVY_MUTE,
+                fontSize: "clamp(0.88rem, 2.8vw, 1.02rem)",
+                color: text.body,
                 fontStyle: "italic",
                 lineHeight: 1.75,
                 marginTop: "1rem",

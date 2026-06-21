@@ -2,58 +2,23 @@
 
 import { useRef, useState, useCallback, useEffect } from "react"
 import { MessageCircle, Heart, Sparkles, Send } from "lucide-react"
-import Image from "next/image"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import MessageWallDisplay from "./message-wall-display"
 import { siteConfig } from "@/content/site"
+import { C, text } from "@/components/loader/christening-theme"
+import { CornerFloralDecor } from "@/components/loader/ChristeningDecor"
+import { ChristeningParticles } from "@/components/loader/ChristeningParticles"
 
-// ── Palette — aligned with entourage.tsx ──────────────────────────────────────
-const DARK_NAVY = "#1C3050"
-const GOLD      = "#C4965A"
-const NAVY_MUTE = "rgba(65,90,115,0.78)"
-const NAVY = "#2B4A6B"
-const FROSTED_CARD = {
-  background: "rgba(255,255,255,0.30)",
-  backdropFilter: "blur(14px)",
-  WebkitBackdropFilter: "blur(14px)",
-  border: "1.5px solid rgba(43,74,107,0.22)",
-  boxShadow: "0 4px 24px rgba(43,74,107,0.08), 0 1px 0 rgba(255,255,255,0.55) inset",
+const cardStyle = {
+  background: `linear-gradient(170deg, ${C.ivory} 0%, ${C.blushSoft} 48%, ${C.champagne} 100%)`,
+  border: `1.5px solid ${C.blushDeep}`,
+  boxShadow: "0 20px 64px rgba(107,61,79,0.08), 0 2px 10px rgba(232,196,204,0.20), inset 0 1px 0 rgba(255,255,255,0.90)",
 } as const
 
-function OrnamentDivider({ width = "240px" }: { width?: string }) {
-  return (
-    <div className="flex items-center justify-center gap-2" style={{ maxWidth: width, margin: "0 auto" }}>
-      <div className="h-px flex-1" style={{ background: "linear-gradient(to left, rgba(196,152,88,0.45), transparent)" }} />
-      <div style={{ width: "6px", height: "6px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.68)", flexShrink: 0 }} />
-      <div className="h-px flex-1" style={{ background: "linear-gradient(to right, rgba(196,152,88,0.45), transparent)" }} />
-    </div>
-  )
-}
-
-// ── Floating bokeh orbs ───────────────────────────────────────────────────────
-function BokehOrbs() {
-  const orbs = [
-    { w: 380, h: 380, top: "4%",  left: "2%",  color: "rgba(120,175,215,1)", opacity: 0.08, blur: 100 },
-    { w: 260, h: 260, top: "18%", left: "70%", color: "rgba(196,152,88,1)",  opacity: 0.08, blur: 80  },
-    { w: 300, h: 300, top: "55%", left: "8%",  color: "rgba(196,152,88,1)",  opacity: 0.07, blur: 90  },
-    { w: 220, h: 220, top: "70%", left: "76%", color: "rgba(120,175,215,1)", opacity: 0.08, blur: 70  },
-    { w: 170, h: 170, top: "38%", left: "44%", color: "rgba(196,152,88,1)",  opacity: 0.06, blur: 60  },
-  ]
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden>
-      {orbs.map((o, i) => (
-        <div
-          key={i}
-          className="absolute rounded-full"
-          style={{ width: o.w, height: o.h, top: o.top, left: o.left, background: o.color, opacity: o.opacity, filter: `blur(${o.blur}px)` }}
-        />
-      ))}
-    </div>
-  )
-}
+const childName = siteConfig.couple.child
 
 interface Message {
   timestamp: string
@@ -110,64 +75,60 @@ function MessageForm({ onSuccess, onMessageSent }: MessageFormProps) {
   return (
     <div className="relative w-full max-w-md mx-auto px-3 sm:px-0">
       <style>{`
-        .msg-input::placeholder    { color: ${NAVY_MUTE} !important; opacity: 1 !important; font-style: italic; }
-        .msg-textarea::placeholder { color: ${NAVY_MUTE} !important; opacity: 1 !important; font-style: italic; }
+        .msg-input::placeholder    { color: ${text.caption} !important; opacity: 1 !important; font-style: italic; }
+        .msg-textarea::placeholder { color: ${text.caption} !important; opacity: 1 !important; font-style: italic; }
       `}</style>
 
-      {/* Card */}
       <div
-        className={`relative w-full rounded-3xl overflow-hidden transition-all duration-500 ${
+        className={`relative w-full rounded-3xl overflow-hidden transition-all duration-500 isolate ${
           isFocused ? "scale-[1.01]" : ""
         } ${isSubmitted ? "animate-bounce" : ""}`}
-        style={FROSTED_CARD}
+        style={cardStyle}
       >
-        {/* Success overlay */}
         {isSubmitted && (
-          <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none" style={{ background: "rgba(255,255,255,0.85)" }}>
+          <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none" style={{ background: "rgba(255,251,247,0.92)" }}>
             <div className="flex flex-col items-center gap-2 animate-pulse">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg" style={{ background: GOLD, boxShadow: "0 3px 12px rgba(196,152,88,0.35)" }}>
+              <div className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg" style={{ background: C.goldDeep, boxShadow: "0 4px 16px rgba(201,168,108,0.35)" }}>
                 <Sparkles className="h-8 w-8 text-white" />
               </div>
-              <p style={{ fontFamily: '"LeJourScript", cursive', fontSize: "clamp(1.6rem, 5vw, 2.2rem)", color: GOLD, lineHeight: 1.1 }}>Sent!</p>
+              <p style={{ fontFamily: '"LeJourScript", cursive', fontSize: "clamp(1.6rem, 5vw, 2.2rem)", color: C.roseDeep, lineHeight: 1.1 }}>Sent!</p>
             </div>
           </div>
         )}
 
         <div className="p-4 sm:p-5 md:p-6 lg:p-8">
-          {/* Form header */}
           <div className="text-center mb-4 sm:mb-5">
             <p style={{
               fontFamily: '"Cinzel", serif',
-              fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)",
-              letterSpacing: "0.40em",
+              fontSize: "clamp(0.58rem, 2vw, 0.72rem)",
+              fontWeight: 600,
+              letterSpacing: "0.36em",
               textTransform: "uppercase",
-              color: "rgba(72,112,148,0.80)",
+              color: C.goldDeep,
               marginBottom: "0.5rem",
-              paddingRight: "0.40em",
             }}>
               Share Your Heart
             </p>
 
             <h3 style={{
               fontFamily: '"Cinzel", serif',
-              fontSize: "clamp(1.6rem, 5.5vw, 2.8rem)",
-              color: NAVY,
-              lineHeight: 1.0,
+              fontWeight: 700,
+              fontSize: "clamp(1.5rem, 5.5vw, 2.4rem)",
+              color: C.roseDeep,
+              lineHeight: 1.1,
+              letterSpacing: "0.04em",
               marginBottom: "0.35rem",
-              filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))",
             }}>
               Leave a Blessing
             </h3>
 
-            <OrnamentDivider width="180px" />
-
             <p style={{
               fontFamily: '"Fahkwang", sans-serif',
-              fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
-              color: NAVY_MUTE,
+              fontSize: "clamp(0.88rem, 2.8vw, 1.02rem)",
+              color: text.body,
               fontStyle: "italic",
               lineHeight: 1.75,
-              marginTop: "0.75rem",
+              marginTop: "0.5rem",
             }}>
               Your words will be treasured by this little family forever.
             </p>
@@ -180,11 +141,10 @@ function MessageForm({ onSuccess, onMessageSent }: MessageFormProps) {
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
           >
-            {/* Name */}
             <div className="space-y-1.5">
-              <label className="flex items-center gap-1.5 font-medium" style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(0.72rem, 2.4vw, 0.88rem)", color: DARK_NAVY }}>
-                <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-transform ${focusedField === "name" ? "scale-110" : ""}`} style={{ background: "rgba(196,152,88,0.15)" }}>
-                  <Heart className="h-2.5 w-2.5" style={{ color: GOLD }} />
+              <label className="flex items-center gap-1.5 font-medium" style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(0.75rem, 2.4vw, 0.88rem)", color: C.roseDeep }}>
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-transform ${focusedField === "name" ? "scale-110" : ""}`} style={{ background: C.blushSoft }}>
+                  <Heart className="h-2.5 w-2.5" style={{ color: C.goldDeep }} />
                 </div>
                 Your Name
               </label>
@@ -197,28 +157,28 @@ function MessageForm({ onSuccess, onMessageSent }: MessageFormProps) {
                   onFocus={() => setFocusedField("name")}
                   onBlur={() => setFocusedField(null)}
                   placeholder="Your full name"
-                  className="msg-input w-full border rounded-xl py-2.5 px-4 text-xs sm:text-sm bg-white/70 transition-all duration-300 shadow-sm"
+                  className="msg-input w-full border rounded-xl py-2.5 px-4 text-xs sm:text-sm transition-all duration-300 shadow-sm"
                   style={{
                     fontFamily: '"Fahkwang", sans-serif',
-                    color: DARK_NAVY,
-                    borderColor: focusedField === "name" ? "rgba(196,152,88,0.45)" : "rgba(43,74,107,0.22)",
+                    color: C.roseDeep,
+                    background: C.pearl,
+                    borderColor: focusedField === "name" ? C.goldDeep : C.blushDeep,
                   }}
                 />
-                {nameValue && <div className="absolute right-3 top-1/2 -translate-y-1/2 w-2 h-2 bg-green-400 rounded-full animate-pulse" />}
+                {nameValue && <div className="absolute right-3 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full animate-pulse" style={{ background: C.gold }} />}
               </div>
             </div>
 
-            {/* Message */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="flex items-center gap-1.5 font-medium" style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(0.72rem, 2.4vw, 0.88rem)", color: DARK_NAVY }}>
-                  <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-transform ${focusedField === "message" ? "scale-110" : ""}`} style={{ background: "rgba(43,74,107,0.08)" }}>
-                    <MessageCircle className="h-2.5 w-2.5" style={{ color: DARK_NAVY }} />
+                <label className="flex items-center gap-1.5 font-medium" style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(0.75rem, 2.4vw, 0.88rem)", color: C.roseDeep }}>
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-transform ${focusedField === "message" ? "scale-110" : ""}`} style={{ background: C.blushSoft }}>
+                    <MessageCircle className="h-2.5 w-2.5" style={{ color: C.roseDeep }} />
                   </div>
                   Your Blessing
                 </label>
                 {messageValue && (
-                  <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "0.65rem", color: messageValue.length > 500 ? "#ef4444" : NAVY_MUTE, opacity: 0.75 }}>
+                  <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "0.65rem", color: messageValue.length > 500 ? "#ef4444" : text.caption }}>
                     {messageValue.length}/500
                   </span>
                 )}
@@ -231,19 +191,19 @@ function MessageForm({ onSuccess, onMessageSent }: MessageFormProps) {
                   onChange={(e) => { if (e.target.value.length <= 500) setMessageValue(e.target.value) }}
                   onFocus={() => setFocusedField("message")}
                   onBlur={() => setFocusedField(null)}
-                  placeholder="Share a prayer, a wish, or words of love for Kaezar Isaiahnuel..."
-                  className="msg-textarea w-full border rounded-xl min-h-[90px] sm:min-h-[110px] text-xs sm:text-sm resize-none bg-white/70 transition-all duration-300 shadow-sm py-3 px-4"
+                  placeholder={`Share a prayer, a wish, or words of love for ${childName}...`}
+                  className="msg-textarea w-full border rounded-xl min-h-[90px] sm:min-h-[110px] text-xs sm:text-sm resize-none transition-all duration-300 shadow-sm py-3 px-4"
                   style={{
                     fontFamily: '"Fahkwang", sans-serif',
-                    color: DARK_NAVY,
-                    borderColor: focusedField === "message" ? "rgba(196,152,88,0.45)" : "rgba(43,74,107,0.22)",
+                    color: C.roseDeep,
+                    background: C.pearl,
+                    borderColor: focusedField === "message" ? C.goldDeep : C.blushDeep,
                   }}
                 />
-                {messageValue && <div className="absolute right-3 top-3 w-2 h-2 bg-green-400 rounded-full animate-pulse" />}
+                {messageValue && <div className="absolute right-3 top-3 w-2 h-2 rounded-full animate-pulse" style={{ background: C.gold }} />}
               </div>
             </div>
 
-            {/* Submit */}
             <Button
               type="submit"
               disabled={isSubmitting || !nameValue.trim() || !messageValue.trim()}
@@ -252,13 +212,13 @@ function MessageForm({ onSuccess, onMessageSent }: MessageFormProps) {
                 fontFamily: '"Cinzel", serif',
                 letterSpacing: "0.12em",
                 textTransform: "uppercase",
-                background: GOLD,
-                color: "white",
+                background: C.roseDeep,
+                color: C.pearl,
                 border: "none",
-                boxShadow: "0 6px 20px rgba(196,152,88,0.30)",
+                boxShadow: "0 6px 20px rgba(107,61,79,0.22)",
               }}
-              onMouseEnter={(e) => { if (!e.currentTarget.disabled) { e.currentTarget.style.background = DARK_NAVY; e.currentTarget.style.boxShadow = "0 8px 26px rgba(28,48,80,0.25)" } }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = GOLD; e.currentTarget.style.boxShadow = "0 6px 20px rgba(196,152,88,0.30)" }}
+              onMouseEnter={(e) => { if (!e.currentTarget.disabled) { e.currentTarget.style.background = C.goldDeep; e.currentTarget.style.boxShadow = "0 8px 26px rgba(201,168,108,0.28)" } }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = C.roseDeep; e.currentTarget.style.boxShadow = "0 6px 20px rgba(107,61,79,0.22)" }}
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center gap-2">
@@ -301,125 +261,95 @@ export function Messages() {
   useEffect(() => { fetchMessages() }, [fetchMessages])
 
   return (
-    <section id="messages" className="relative w-full overflow-hidden">
+    <section id="messages" className="relative w-full overflow-hidden bg-transparent py-12 sm:py-16 md:py-20">
+      <ChristeningParticles scoped opacity={0.35} />
+      <CornerFloralDecor opacity={0.68} sizeClass="w-20 sm:w-32 md:w-40 lg:w-48" />
 
-      {/* Solid base — aligned with entourage */}
-      <div className="absolute inset-0 -z-10" style={{ background: "#FFFFFF" }} />
+      {/* Section header */}
+      <div className="relative z-10 text-center px-4 max-w-3xl mx-auto mb-8 sm:mb-10">
+        <div className="inline-block rounded-3xl px-8 py-7 sm:px-12 sm:py-9 isolate" style={cardStyle}>
+          <p style={{
+            fontFamily: '"Cinzel", serif',
+            fontSize: "clamp(0.58rem, 2vw, 0.72rem)",
+            fontWeight: 600,
+            letterSpacing: "0.36em",
+            textTransform: "uppercase",
+            color: C.goldDeep,
+            marginBottom: "0.5rem",
+          }}>
+            Blessings for {childName}
+          </p>
 
-      <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: "radial-gradient(ellipse 55% 45% at 50% 30%, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.6) 45%, transparent 75%)",
-      }} />
+          <h2 style={{
+            fontFamily: '"Cinzel", serif',
+            fontWeight: 700,
+            fontSize: "clamp(1.8rem, 7vw, 3rem)",
+            color: C.roseDeep,
+            lineHeight: 1.1,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            marginBottom: "0.5rem",
+          }}>
+            Love Notes &amp; Prayers
+          </h2>
 
-      <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: "linear-gradient(to top, rgba(120,175,215,0.10) 0%, rgba(120,175,215,0.04) 25%, transparent 55%)",
-      }} />
-
-      <div className="absolute inset-0 pointer-events-none z-0" aria-hidden style={{
-        background: `
-          radial-gradient(ellipse 50% 40% at 50% 28%, rgba(196,152,88,0.06) 0%, transparent 70%),
-          radial-gradient(ellipse 38% 32% at 50% 78%, rgba(120,175,215,0.08) 0%, transparent 65%)
-        `,
-      }} />
-
-      <BokehOrbs />
-
-      {/* ── Corner floral decorations ── */}
-      <div className="absolute inset-0 pointer-events-none z-[1]" aria-hidden>
-        <Image src="/decoration/left-top-removebg-preview.png"    alt="" width={200} height={200} className="absolute top-0 left-0  w-auto h-auto max-w-[100px] sm:max-w-[145px] md:max-w-[190px] opacity-40" />
-        <Image src="/decoration/right-top-removebg-preview.png"   alt="" width={200} height={200} className="absolute top-0 right-0 w-auto h-auto max-w-[100px] sm:max-w-[145px] md:max-w-[190px] opacity-40" />
-        <Image src="/decoration/bottom-left-removebg-preview.png"  alt="" width={200} height={200} className="absolute bottom-0 left-0  w-auto h-auto max-w-[100px] sm:max-w-[145px] md:max-w-[190px] opacity-40" />
-        <Image src="/decoration/bottom-right-removebg-preview.png" alt="" width={200} height={200} className="absolute bottom-0 right-0 w-auto h-auto max-w-[100px] sm:max-w-[145px] md:max-w-[190px] opacity-40" />
+          <p style={{
+            fontFamily: '"Fahkwang", sans-serif',
+            fontSize: "clamp(0.88rem, 2.8vw, 1.02rem)",
+            color: text.body,
+            lineHeight: 1.8,
+            fontStyle: "italic",
+            maxWidth: "32rem",
+            margin: "0 auto",
+          }}>
+            Leave a short note or a prayer. Every blessing becomes part of {childName.split(" ")[0]}&apos;s forever story.
+          </p>
+        </div>
       </div>
 
-      {/* ── Section header — aligned with entourage ── */}
-      <div className="relative z-10 text-center pt-12 sm:pt-16 pb-8 sm:pb-10 px-4 max-w-3xl mx-auto">
-
-            <p style={{
-              fontFamily: '"Cinzel", serif',
-              fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)",
-              letterSpacing: "0.40em",
-              textTransform: "uppercase",
-              color: "rgba(72,112,148,0.80)",
-              marginBottom: "0.4rem",
-              paddingRight: "0.40em",
-            }}>
-              Blessings for Kaezar Isaiahnuel
-            </p>
-
-            <OrnamentDivider />
-
-            <h2 style={{
-              fontFamily: '"Cinzel", serif',
-              fontSize: "clamp(1.6rem, 5.5vw, 2.8rem)",
-              color: GOLD,
-              lineHeight: 1.0,
-              marginTop: "1rem",
-              marginBottom: "0.5rem",
-              filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))",
-            }}>
-              Love Notes &amp; Prayers
-            </h2>
-
-            <p style={{
-              fontFamily: '"Fahkwang", sans-serif',
-              fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
-              color: NAVY_MUTE,
-              lineHeight: 1.75,
-              fontStyle: "italic",
-              maxWidth: "32rem",
-              margin: "0.75rem auto 0",
-            }}>
-              Leave a short note or a prayer. Every blessing becomes part of Kaezar&apos;s forever story.
-            </p>
-      </div>
-
-      <div className="relative z-10 pb-12 sm:pb-16">
+      <div className="relative z-10 pb-8 sm:pb-12">
         <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
 
-          {/* ── Form ── */}
           <div className="flex justify-center mb-10 sm:mb-12">
             <div className="relative max-w-xl w-full">
               <MessageForm onMessageSent={fetchMessages} />
             </div>
           </div>
 
-          {/* ── Messages wall ── */}
           <div className="relative max-w-2xl mx-auto">
-
-            {/* Wall sub-header */}
             <div className="text-center mb-6 sm:mb-8">
               <p style={{
                 fontFamily: '"Cinzel", serif',
-                fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)",
-                letterSpacing: "0.40em",
+                fontSize: "clamp(0.58rem, 2vw, 0.72rem)",
+                fontWeight: 500,
+                letterSpacing: "0.36em",
                 textTransform: "uppercase",
-                color: "rgba(72,112,148,0.80)",
-                marginBottom: "0.4rem",
-                paddingRight: "0.40em",
+                color: "rgba(255,253,249,0.82)",
+                textShadow: "0 1px 10px rgba(107,61,79,0.28)",
+                marginBottom: "0.5rem",
               }}>
                 From Our Guests
               </p>
 
-              <OrnamentDivider width="180px" />
-
               <h3 style={{
                 fontFamily: '"LeJourScript", cursive',
-                fontSize: "clamp(1.4rem, 4.5vw, 2.2rem)",
-                color: GOLD,
-                lineHeight: 1.0,
-                marginTop: "0.75rem",
+                fontSize: "clamp(1.6rem, 5vw, 2.4rem)",
+                color: C.pearl,
+                lineHeight: 1.15,
+                textShadow: "0 2px 16px rgba(107,61,79,0.32), 0 1px 4px rgba(0,0,0,0.10)",
                 marginBottom: "0.35rem",
-                filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))",
               }}>
                 Messages from the Heart
               </h3>
 
               <p style={{
                 fontFamily: '"Fahkwang", sans-serif',
-                fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
-                color: NAVY_MUTE,
+                fontSize: "clamp(0.88rem, 2.8vw, 1.02rem)",
+                fontWeight: 300,
+                color: "rgba(255,251,247,0.88)",
                 fontStyle: "italic",
                 lineHeight: 1.75,
+                textShadow: "0 1px 8px rgba(107,61,79,0.22)",
                 maxWidth: "28rem",
                 margin: "0 auto",
               }}>

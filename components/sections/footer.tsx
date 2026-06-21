@@ -5,41 +5,33 @@ import { motion } from "motion/react"
 import { Instagram, Facebook, MapPin, Calendar, Clock, Heart, Music2, Twitter } from "lucide-react"
 import Image from "next/image"
 import { siteConfig } from "@/content/site"
+import { C, text } from "@/components/loader/christening-theme"
+import { CornerFloralDecor } from "@/components/loader/ChristeningDecor"
 
-// ── Palette — aligned with entourage.tsx ──────────────────────────────────────
-const DARK_NAVY = "#1C3050"
-const GOLD      = "#C4965A"
-const NAVY_MUTE = "rgba(65,90,115,0.78)"
-
-const FROSTED_CARD = {
-  background: "rgba(255,255,255,0.30)",
-  backdropFilter: "blur(14px)",
-  WebkitBackdropFilter: "blur(14px)",
-  border: "1.5px solid rgba(43,74,107,0.22)",
-  boxShadow: "0 4px 24px rgba(43,74,107,0.08), 0 1px 0 rgba(255,255,255,0.55) inset",
+const cardStyle = {
+  background: `linear-gradient(170deg, ${C.ivory} 0%, ${C.blushSoft} 48%, ${C.champagne} 100%)`,
+  border: `1.5px solid ${C.blushDeep}`,
+  boxShadow: "0 20px 64px rgba(107,61,79,0.08), 0 2px 10px rgba(232,196,204,0.20), inset 0 1px 0 rgba(255,255,255,0.90)",
 } as const
+
+const goldLine = `linear-gradient(to right, transparent, ${C.gold}, transparent)`
 
 const toTitleCase = (str: string) =>
   str.toLowerCase().split(" ").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
 
-function OrnamentDivider({ width = "240px" }: { width?: string }) {
+function GoldRule({ width = "240px" }: { width?: string }) {
   return (
-    <div className="flex items-center justify-center gap-2" style={{ maxWidth: width, margin: "0 auto" }}>
-      <div className="h-px flex-1" style={{ background: "linear-gradient(to left, rgba(196,152,88,0.45), transparent)" }} />
-      <div style={{ width: "6px", height: "6px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.68)", flexShrink: 0 }} />
-      <div className="h-px flex-1" style={{ background: "linear-gradient(to right, rgba(196,152,88,0.45), transparent)" }} />
-    </div>
+    <div className="h-px mx-auto" style={{ maxWidth: width, background: goldLine, opacity: 0.55 }} />
   )
 }
 
-// ── Floating bokeh orbs ───────────────────────────────────────────────────────
 function BokehOrbs() {
   const orbs = [
-    { w: 380, h: 380, top: "4%",  left: "2%",  color: "rgba(120,175,215,1)", opacity: 0.08, blur: 100 },
-    { w: 260, h: 260, top: "18%", left: "70%", color: "rgba(196,152,88,1)",  opacity: 0.08, blur: 80  },
-    { w: 300, h: 300, top: "55%", left: "8%",  color: "rgba(196,152,88,1)",  opacity: 0.07, blur: 90  },
-    { w: 220, h: 220, top: "70%", left: "76%", color: "rgba(120,175,215,1)", opacity: 0.08, blur: 70  },
-    { w: 170, h: 170, top: "38%", left: "44%", color: "rgba(196,152,88,1)",  opacity: 0.06, blur: 60  },
+    { w: 380, h: 380, top: "4%",  left: "2%",  color: "rgba(232,196,204,1)", opacity: 0.10, blur: 100 },
+    { w: 260, h: 260, top: "18%", left: "70%", color: "rgba(201,168,108,1)",  opacity: 0.09, blur: 80  },
+    { w: 300, h: 300, top: "55%", left: "8%",  color: "rgba(201,168,108,1)",  opacity: 0.08, blur: 90  },
+    { w: 220, h: 220, top: "70%", left: "76%", color: "rgba(232,196,204,1)", opacity: 0.09, blur: 70  },
+    { w: 170, h: 170, top: "38%", left: "44%", color: "rgba(201,168,108,1)",  opacity: 0.07, blur: 60  },
   ]
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden>
@@ -117,38 +109,29 @@ export function Footer() {
     { label: "FAQ",      href: "#faq"        },
   ] as const
 
-  const cardStyle: React.CSSProperties = FROSTED_CARD
-
   return (
     <footer id="footer" className="relative w-full overflow-hidden">
 
-      {/* Solid base — aligned with entourage */}
-      <div className="absolute inset-0 -z-10" style={{ background: "#FFFFFF" }} />
+      {/* Layered solid base — original footer background style */}
+      <div className="absolute inset-0 -z-10" style={{ background: C.ivory }} />
 
       <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: "radial-gradient(ellipse 55% 45% at 50% 30%, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.6) 45%, transparent 75%)",
+        background: `radial-gradient(ellipse 55% 45% at 50% 30%, rgba(255,253,249,0.95) 0%, rgba(250,232,236,0.45) 45%, transparent 75%)`,
       }} />
 
       <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: "linear-gradient(to top, rgba(120,175,215,0.10) 0%, rgba(120,175,215,0.04) 25%, transparent 55%)",
+        background: `linear-gradient(to top, rgba(232,196,204,0.12) 0%, rgba(247,239,228,0.06) 25%, transparent 55%)`,
       }} />
 
       <div className="absolute inset-0 pointer-events-none z-0" aria-hidden style={{
         background: `
-          radial-gradient(ellipse 50% 40% at 50% 28%, rgba(196,152,88,0.06) 0%, transparent 70%),
-          radial-gradient(ellipse 38% 32% at 50% 78%, rgba(120,175,215,0.08) 0%, transparent 65%)
+          radial-gradient(ellipse 50% 40% at 50% 28%, rgba(201,168,108,0.07) 0%, transparent 70%),
+          radial-gradient(ellipse 38% 32% at 50% 78%, rgba(232,196,204,0.10) 0%, transparent 65%)
         `,
       }} />
 
       <BokehOrbs />
-
-      {/* ── Corner floral decorations ── */}
-      <div className="absolute inset-0 pointer-events-none z-[1]" aria-hidden>
-        <Image src="/decoration/left-top-removebg-preview.png"    alt="" width={200} height={200} className="absolute top-0 left-0  w-auto h-auto max-w-[90px] sm:max-w-[130px] md:max-w-[170px] opacity-35" />
-        <Image src="/decoration/right-top-removebg-preview.png"   alt="" width={200} height={200} className="absolute top-0 right-0 w-auto h-auto max-w-[90px] sm:max-w-[130px] md:max-w-[170px] opacity-35" />
-        <Image src="/decoration/bottom-left-removebg-preview.png"  alt="" width={200} height={200} className="absolute bottom-0 left-0  w-auto h-auto max-w-[90px] sm:max-w-[130px] md:max-w-[170px] opacity-35" />
-        <Image src="/decoration/bottom-right-removebg-preview.png" alt="" width={200} height={200} className="absolute bottom-0 right-0 w-auto h-auto max-w-[90px] sm:max-w-[130px] md:max-w-[170px] opacity-35" />
-      </div>
+      <CornerFloralDecor opacity={0.65} sizeClass="w-20 sm:w-32 md:w-40 lg:w-48" />
 
       <div className="relative z-10">
 
@@ -175,17 +158,17 @@ export function Footer() {
           <p style={{
             fontFamily: '"Cinzel", serif',
             fontSize: "clamp(1.6rem, 5.5vw, 2.8rem)",
-            color: GOLD,
+            color: C.goldDeep,
             lineHeight: 1.0,
             marginBottom: "0.35rem",
-            filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))",
+            filter: "drop-shadow(0 2px 8px rgba(201,168,108,0.22))",
           }}>
             {childName}
           </p>
           <p style={{
             fontFamily: '"Fahkwang", sans-serif',
             fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
-            color: NAVY_MUTE,
+            color: text.body,
             fontStyle: "italic",
             letterSpacing: "0.04em",
           }}>
@@ -193,7 +176,7 @@ export function Footer() {
           </p>
 
           <div className="mt-4 sm:mt-5 w-full max-w-xs">
-            <OrnamentDivider />
+            <GoldRule />
           </div>
         </div>
 
@@ -211,33 +194,33 @@ export function Footer() {
 
               {/* Event summary */}
               <div className="rounded-3xl p-4 sm:p-5" style={cardStyle}>
-                <div className="h-px w-full mb-4" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
+                <div className="h-px w-full mb-4" style={{ background: goldLine, opacity: 0.5 }} />
 
                 <div className="space-y-3">
                   <div className="flex items-center gap-2.5">
                     <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
-                      style={{ background: GOLD, boxShadow: "0 2px 8px rgba(196,152,88,0.30)" }}>
+                      style={{ background: C.goldDeep, boxShadow: "0 2px 8px rgba(201,168,108,0.28)" }}>
                       <Calendar className="w-3.5 h-3.5 text-white" />
                     </div>
-                    <span style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(0.72rem, 2.4vw, 0.88rem)", color: DARK_NAVY, fontWeight: 500 }}>
+                    <span style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(0.72rem, 2.4vw, 0.88rem)", color: C.roseDeep, fontWeight: 500 }}>
                       {ceremonyDate} · {siteConfig.ceremony.day}
                     </span>
                   </div>
                   <div className="flex items-start gap-2.5">
                     <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                      style={{ background: "rgba(43,74,107,0.85)", boxShadow: "0 2px 8px rgba(43,74,107,0.20)" }}>
+                      style={{ background: C.roseDeep, boxShadow: "0 2px 8px rgba(107,61,79,0.22)" }}>
                       <MapPin className="w-3.5 h-3.5 text-white" />
                     </div>
-                    <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: NAVY_MUTE, lineHeight: 1.75 }}>
+                    <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: text.body, lineHeight: 1.75 }}>
                       {toTitleCase(ceremonyVenue)}
                     </span>
                   </div>
                   <div className="flex items-center gap-2.5">
                     <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
-                      style={{ background: GOLD, boxShadow: "0 2px 8px rgba(196,152,88,0.30)" }}>
+                      style={{ background: C.goldDeep, boxShadow: "0 2px 8px rgba(201,168,108,0.28)" }}>
                       <Clock className="w-3.5 h-3.5 text-white" />
                     </div>
-                    <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: NAVY_MUTE }}>
+                    <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: text.body }}>
                       Ceremony: {ceremonyTime} &nbsp;·&nbsp; Reception: {receptionTime}
                     </span>
                   </div>
@@ -251,15 +234,15 @@ export function Footer() {
                 whileHover={{ scale: 1.012 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="h-px w-full mb-4" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
+                <div className="h-px w-full mb-4" style={{ background: goldLine, opacity: 0.5 }} />
 
-                <div className="mb-1" style={{ fontSize: "2.2rem", color: GOLD, opacity: 0.18, fontFamily: "Georgia, serif", lineHeight: 1 }}>
+                <div className="mb-1" style={{ fontSize: "2.2rem", color: C.goldDeep, opacity: 0.18, fontFamily: "Georgia, serif", lineHeight: 1 }}>
                   &#8220;
                 </div>
                 <blockquote style={{
                   fontFamily: '"Fahkwang", sans-serif',
                   fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
-                  color: NAVY_MUTE,
+                  color: text.body,
                   fontStyle: "italic",
                   lineHeight: 1.75,
                   minHeight: "clamp(3.5rem, 10vw, 5rem)",
@@ -267,13 +250,13 @@ export function Footer() {
                   {displayedText}
                   <span
                     className="inline-block w-px h-4 ml-0.5 animate-pulse align-middle"
-                    style={{ backgroundColor: GOLD }}
+                    style={{ backgroundColor: C.goldDeep }}
                   >|</span>
                 </blockquote>
                 <div className="flex items-center gap-1.5 mt-3">
-                  <div style={{ width: "5px", height: "5px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.68)" }} />
-                  <div style={{ width: "5px", height: "5px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.40)" }} />
-                  <div style={{ width: "5px", height: "5px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.68)" }} />
+                  <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: C.goldDeep, opacity: 0.68 }} />
+                  <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: C.goldDeep, opacity: 0.40 }} />
+                  <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: C.goldDeep, opacity: 0.68 }} />
                 </div>
               </motion.div>
             </motion.div>
@@ -282,24 +265,24 @@ export function Footer() {
             <motion.div className="space-y-4" variants={fadeInUp}>
               {isSameVenue ? (
                 <motion.div className="rounded-3xl p-4 sm:p-5" style={cardStyle} whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-                  <div className="h-px w-full mb-3" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
+                  <div className="h-px w-full mb-3" style={{ background: goldLine, opacity: 0.5 }} />
                   <div className="flex items-center gap-2.5 mb-3">
                     <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                      style={{ background: GOLD, boxShadow: "0 2px 10px rgba(196,152,88,0.30)" }}>
+                      style={{ background: C.goldDeep, boxShadow: "0 2px 10px rgba(201,168,108,0.28)" }}>
                       <MapPin className="w-4 h-4 text-white" />
                     </div>
-                    <h4 style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(1rem, 3.5vw, 1.4rem)", color: GOLD }}>Christening &amp; Reception</h4>
+                    <h4 style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(1rem, 3.5vw, 1.4rem)", color: C.goldDeep }}>Christening &amp; Reception</h4>
                   </div>
                   <div className="space-y-2 pl-0.5">
                     <div className="flex items-start gap-2">
-                      <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: GOLD }} />
-                      <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: NAVY_MUTE, lineHeight: 1.75 }}>
+                      <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: C.goldDeep }} />
+                      <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: text.body, lineHeight: 1.75 }}>
                         {toTitleCase(siteConfig.ceremony.location || siteConfig.reception.location)}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: GOLD }} />
-                      <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: NAVY_MUTE }}>
+                      <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: C.goldDeep }} />
+                      <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: text.body }}>
                         {ceremonyTime} · {receptionTime}
                       </span>
                     </div>
@@ -308,47 +291,47 @@ export function Footer() {
               ) : (
                 <>
                   <motion.div className="rounded-3xl p-4 sm:p-4.5" style={cardStyle} whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-                    <div className="h-px w-full mb-3" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
+                    <div className="h-px w-full mb-3" style={{ background: goldLine, opacity: 0.5 }} />
                     <div className="flex items-center gap-2.5 mb-3">
                       <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                        style={{ background: GOLD, boxShadow: "0 2px 10px rgba(196,152,88,0.30)" }}>
+                        style={{ background: C.goldDeep, boxShadow: "0 2px 10px rgba(201,168,108,0.28)" }}>
                         <Clock className="w-4 h-4 text-white" />
                       </div>
-                      <h4 style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(1rem, 3.5vw, 1.4rem)", color: GOLD }}>Christening Ceremony</h4>
+                      <h4 style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(1rem, 3.5vw, 1.4rem)", color: C.goldDeep }}>Christening Ceremony</h4>
                     </div>
                     <div className="space-y-1.5">
                       <div className="flex items-start gap-2">
-                        <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: GOLD }} />
-                        <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: NAVY_MUTE, lineHeight: 1.75 }}>
+                        <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: C.goldDeep }} />
+                        <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: text.body, lineHeight: 1.75 }}>
                           {toTitleCase(siteConfig.ceremony.location)}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: GOLD }} />
-                        <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: NAVY_MUTE }}>{ceremonyTime}</span>
+                        <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: C.goldDeep }} />
+                        <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: text.body }}>{ceremonyTime}</span>
                       </div>
                     </div>
                   </motion.div>
 
                   <motion.div className="rounded-3xl p-4 sm:p-4.5" style={cardStyle} whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-                    <div className="h-px w-full mb-3" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
+                    <div className="h-px w-full mb-3" style={{ background: goldLine, opacity: 0.5 }} />
                     <div className="flex items-center gap-2.5 mb-3">
                       <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                        style={{ background: "rgba(43,74,107,0.85)", boxShadow: "0 2px 10px rgba(43,74,107,0.20)" }}>
+                        style={{ background: C.roseDeep, boxShadow: "0 2px 10px rgba(107,61,79,0.22)" }}>
                         <Heart className="w-4 h-4 text-white" fill="white" />
                       </div>
-                      <h4 style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(1rem, 3.5vw, 1.4rem)", color: GOLD }}>Celebration Reception</h4>
+                      <h4 style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(1rem, 3.5vw, 1.4rem)", color: C.goldDeep }}>Celebration Reception</h4>
                     </div>
                     <div className="space-y-1.5">
                       <div className="flex items-start gap-2">
-                        <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: GOLD }} />
-                        <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: NAVY_MUTE, lineHeight: 1.75 }}>
+                        <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: C.goldDeep }} />
+                        <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: text.body, lineHeight: 1.75 }}>
                           {toTitleCase(siteConfig.reception.location)}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: GOLD }} />
-                        <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: NAVY_MUTE }}>{receptionTime}</span>
+                        <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: C.goldDeep }} />
+                        <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: text.body }}>{receptionTime}</span>
                       </div>
                     </div>
                   </motion.div>
@@ -357,22 +340,22 @@ export function Footer() {
 
               {/* RSVP deadline */}
               <motion.div className="rounded-3xl p-4 sm:p-4.5" style={cardStyle} whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-                <div className="h-px w-full mb-3" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
+                <div className="h-px w-full mb-3" style={{ background: goldLine, opacity: 0.5 }} />
                 <div className="flex items-center gap-2.5 mb-3">
                   <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{ background: GOLD, boxShadow: "0 2px 10px rgba(196,152,88,0.30)" }}>
+                    style={{ background: C.goldDeep, boxShadow: "0 2px 10px rgba(201,168,108,0.28)" }}>
                     <Calendar className="w-4 h-4 text-white" />
                   </div>
-                  <h4 style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(1rem, 3.5vw, 1.4rem)", color: GOLD }}>RSVP Deadline</h4>
+                  <h4 style={{ fontFamily: '"Cinzel", serif', fontSize: "clamp(1rem, 3.5vw, 1.4rem)", color: C.goldDeep }}>RSVP Deadline</h4>
                 </div>
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2">
-                    <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: GOLD }} />
-                    <span style={{ fontFamily: '"Cinzel", serif', fontWeight: 500, fontSize: "clamp(0.72rem, 2.4vw, 0.88rem)", color: DARK_NAVY }}>
+                    <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: C.goldDeep }} />
+                    <span style={{ fontFamily: '"Cinzel", serif', fontWeight: 500, fontSize: "clamp(0.72rem, 2.4vw, 0.88rem)", color: C.roseDeep }}>
                       {siteConfig.details.rsvp.deadline}
                     </span>
                   </div>
-                  <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: NAVY_MUTE, fontStyle: "italic", paddingLeft: "1.375rem" }}>
+                  <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: text.body, fontStyle: "italic", paddingLeft: "1.375rem" }}>
                     Please confirm your attendance by this date.
                   </p>
                 </div>
@@ -384,10 +367,10 @@ export function Footer() {
 
               {/* Quick links */}
               <div className="rounded-3xl p-4 sm:p-5" style={cardStyle}>
-                <div className="h-px w-full mb-4" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
+                <div className="h-px w-full mb-4" style={{ background: goldLine, opacity: 0.5 }} />
                 <div className="flex items-center gap-2 mb-3.5">
-                  <div className="w-1 h-5 rounded-full flex-shrink-0" style={{ background: GOLD }} />
-                  <h4 style={{ fontFamily: '"Cinzel", serif', fontWeight: 500, fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)", color: "rgba(72,112,148,0.80)", letterSpacing: "0.30em", textTransform: "uppercase" }}>
+                  <div className="w-1 h-5 rounded-full flex-shrink-0" style={{ background: C.goldDeep }} />
+                  <h4 style={{ fontFamily: '"Cinzel", serif', fontWeight: 500, fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)", color: text.label, letterSpacing: "0.30em", textTransform: "uppercase" }}>
                     Quick Links
                   </h4>
                 </div>
@@ -397,11 +380,11 @@ export function Footer() {
                       key={item.href}
                       href={item.href}
                       className="flex items-center gap-1.5 transition-all duration-200 hover:translate-x-1.5 group"
-                      style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: NAVY_MUTE }}
-                      onMouseEnter={(e) => { e.currentTarget.style.color = GOLD }}
-                      onMouseLeave={(e) => { e.currentTarget.style.color = NAVY_MUTE }}
+                      style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)", color: text.body }}
+                      onMouseEnter={(e) => { e.currentTarget.style.color = C.goldDeep }}
+                      onMouseLeave={(e) => { e.currentTarget.style.color = text.body }}
                     >
-                      <span className="w-1 h-1 rounded-full flex-shrink-0 opacity-50" style={{ background: GOLD }} />
+                      <span className="w-1 h-1 rounded-full flex-shrink-0 opacity-50" style={{ background: C.goldDeep }} />
                       {item.label}
                     </a>
                   ))}
@@ -410,10 +393,10 @@ export function Footer() {
 
               {/* Stay connected */}
               <div className="rounded-3xl p-4 sm:p-5" style={cardStyle}>
-                <div className="h-px w-full mb-4" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
+                <div className="h-px w-full mb-4" style={{ background: goldLine, opacity: 0.5 }} />
                 <div className="flex items-center gap-2 mb-3.5">
-                  <div className="w-1 h-5 rounded-full flex-shrink-0" style={{ background: GOLD }} />
-                  <h4 style={{ fontFamily: '"Cinzel", serif', fontWeight: 500, fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)", color: "rgba(72,112,148,0.80)", letterSpacing: "0.30em", textTransform: "uppercase" }}>
+                  <div className="w-1 h-5 rounded-full flex-shrink-0" style={{ background: C.goldDeep }} />
+                  <h4 style={{ fontFamily: '"Cinzel", serif', fontWeight: 500, fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)", color: text.label, letterSpacing: "0.30em", textTransform: "uppercase" }}>
                     Stay Connected
                   </h4>
                 </div>
@@ -432,12 +415,12 @@ export function Footer() {
                       aria-label={label}
                       className="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full border transition-all duration-200 hover:scale-110"
                       style={{
-                        background: "rgba(196,152,88,0.10)",
-                        borderColor: "rgba(196,152,88,0.30)",
-                        color: DARK_NAVY,
+                        background: C.blushSoft,
+                        borderColor: C.blushDeep,
+                        color: C.roseDeep,
                       }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = GOLD; e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.color = "white" }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(196,152,88,0.10)"; e.currentTarget.style.borderColor = "rgba(196,152,88,0.30)"; e.currentTarget.style.color = DARK_NAVY }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = C.goldDeep; e.currentTarget.style.borderColor = C.goldDeep; e.currentTarget.style.color = C.pearl }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = C.blushSoft; e.currentTarget.style.borderColor = C.blushDeep; e.currentTarget.style.color = C.roseDeep }}
                     >
                       <Icon className="w-4 h-4" />
                     </a>
@@ -450,42 +433,42 @@ export function Footer() {
           {/* ── Bottom divider + copyright ── */}
           <motion.div variants={fadeInUp}>
             <div className="mb-6 sm:mb-7">
-              <OrnamentDivider width="100%" />
+              <GoldRule width="100%" />
             </div>
 
             <div className="flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 pb-2">
               <div className="text-center md:text-left">
-                <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: NAVY_MUTE }}>
+                <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: text.body }}>
                   © {year} — {parentNames} — crafted with love, prayers, and gratitude.
                 </p>
-                <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: NAVY_MUTE, opacity: 0.85, fontStyle: "italic", marginTop: "0.2rem" }}>
+                <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: text.body, opacity: 0.85, fontStyle: "italic", marginTop: "0.2rem" }}>
                   In celebration of {childName}&apos;s christening.
                 </p>
               </div>
 
               <div className="text-center md:text-right space-y-0.5">
-                <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: NAVY_MUTE }}>
+                <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: text.body }}>
                   Developed by{" "}
                   <a
                     href="https://lance28-beep.github.io/portfolio-website/"
                     target="_blank" rel="noopener noreferrer"
                     className="underline transition-colors duration-200"
-                    style={{ color: GOLD }}
-                    onMouseEnter={(e) => { e.currentTarget.style.color = DARK_NAVY }}
-                    onMouseLeave={(e) => { e.currentTarget.style.color = GOLD }}
+                    style={{ color: C.goldDeep }}
+                    onMouseEnter={(e) => { e.currentTarget.style.color = C.roseDeep }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = C.goldDeep }}
                   >
                     Lance Valle
                   </a>
                 </p>
-                <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: NAVY_MUTE }}>
+                <p style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.72rem, 2vw, 0.82rem)", color: text.body }}>
                   Want a site like this?{" "}
                   <a
                     href="https://www.facebook.com/WeddingInvitationNaga"
                     target="_blank" rel="noopener noreferrer"
                     className="underline transition-colors duration-200"
-                    style={{ color: GOLD }}
-                    onMouseEnter={(e) => { e.currentTarget.style.color = DARK_NAVY }}
-                    onMouseLeave={(e) => { e.currentTarget.style.color = GOLD }}
+                    style={{ color: C.goldDeep }}
+                    onMouseEnter={(e) => { e.currentTarget.style.color = C.roseDeep }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = C.goldDeep }}
                   >
                     Wedding Invitation Naga
                   </a>

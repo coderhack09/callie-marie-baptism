@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useCallback } from "react"
 import { createPortal } from "react-dom"
-import { Section } from "@/components/section"
 import {
   Search,
   CheckCircle,
@@ -21,41 +20,42 @@ import {
   ChevronRight,
 } from "lucide-react"
 import { siteConfig } from "@/content/site"
+import { C, text } from "@/components/loader/christening-theme"
+import { CornerFloralDecor } from "@/components/loader/ChristeningDecor"
+import { ChristeningParticles } from "@/components/loader/ChristeningParticles"
 
-// ── Palette — aligned with entourage.tsx ───────────────────────────────────────
-const DARK_NAVY   = "#1C3050"
-const GOLD        = "#C4965A"
-const NAVY_MUTE   = "rgba(65,90,115,0.78)"
-const STEEL       = "rgba(72,112,148,0.80)"
-const GOLD_BORDER = "rgba(196,152,88,0.28)"
+// Christening palette aliases (used throughout forms & modals)
+const DARK_NAVY   = C.roseDeep
+const GOLD        = C.goldDeep
+const NAVY_MUTE   = text.body
+const STEEL       = text.label
+const GOLD_BORDER = C.blushDeep
 
 const FROSTED_CARD = {
-  background: "rgba(255,255,255,0.30)",
-  backdropFilter: "blur(14px)",
-  WebkitBackdropFilter: "blur(14px)",
-  border: "1.5px solid rgba(43,74,107,0.22)",
-  boxShadow: "0 4px 24px rgba(43,74,107,0.08), 0 1px 0 rgba(255,255,255,0.55) inset",
+  background: `linear-gradient(170deg, ${C.ivory} 0%, ${C.blushSoft} 48%, ${C.champagne} 100%)`,
+  border: `1.5px solid ${C.blushDeep}`,
+  boxShadow: "0 20px 64px rgba(107,61,79,0.08), 0 2px 10px rgba(232,196,204,0.20), inset 0 1px 0 rgba(255,255,255,0.90)",
 } as const
 
 const SUGGESTION_PANEL = {
-  background: "rgba(255,255,255,0.94)",
-  backdropFilter: "blur(16px)",
-  WebkitBackdropFilter: "blur(16px)",
-  border: `1.5px solid ${GOLD_BORDER}`,
-  boxShadow: "0 8px 32px rgba(43,74,107,0.14), 0 1px 0 rgba(255,255,255,0.65) inset",
+  background: C.pearl,
+  border: `1.5px solid ${C.blushDeep}`,
+  boxShadow: "0 12px 40px rgba(107,61,79,0.14), 0 2px 8px rgba(232,196,204,0.18)",
 } as const
 
 const MODAL_SHELL = {
-  background: "#FFFFFF",
-  border: "1.5px solid rgba(43,74,107,0.22)",
-  boxShadow: "0 16px 48px rgba(28,48,80,0.18), 0 1px 0 rgba(255,255,255,0.55) inset",
+  background: C.ivory,
+  border: `1.5px solid ${C.blushDeep}`,
+  boxShadow: "0 24px 72px rgba(107,61,79,0.20), 0 2px 12px rgba(232,196,204,0.22)",
 } as const
 
-const MODAL_BODY_BG = "linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(248,250,252,0.97) 100%)"
+const MODAL_BODY_BG = `linear-gradient(to bottom, ${C.pearl} 0%, ${C.ivory} 55%, ${C.blushSoft} 100%)`
+
+const MODAL_BACKDROP = "rgba(107,61,79,0.58)"
 
 const ICON_WRAP = {
-  background: "rgba(196,152,88,0.10)",
-  border: `1.5px solid ${GOLD_BORDER}`,
+  background: C.blushSoft,
+  border: `1.5px solid ${C.blushDeep}`,
 } as const
 
 const LAYER_TOP = 9999
@@ -83,9 +83,9 @@ const INPUT_CLASS =
   "w-full rounded-lg transition-all duration-300 shadow-sm focus:shadow-md"
 const INPUT_STYLE = {
   fontFamily: FONT_LABEL,
-  color: DARK_NAVY,
-  background: "rgba(255,255,255,0.55)",
-  border: `1.5px solid ${GOLD_BORDER}`,
+  color: C.roseDeep,
+  background: C.pearl,
+  border: `1.5px solid ${C.blushDeep}`,
 } as const
 
 interface ApiGuest {
@@ -504,72 +504,55 @@ export function GuestList() {
   }
 
   return (
-    <Section id="guest-list" className="relative z-30 py-6 sm:py-10 md:py-12 lg:py-16 overflow-visible" bgColor="none">
-      {/* Section background — aligned with entourage.tsx */}
-      <div className="absolute inset-0 -z-10" style={{ background: "#FFFFFF" }} />
-      <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: "radial-gradient(ellipse 55% 45% at 50% 30%, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.6) 45%, transparent 75%)",
-      }} />
-      <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: "linear-gradient(to top, rgba(120,175,215,0.10) 0%, rgba(120,175,215,0.04) 25%, transparent 55%)",
-      }} />
+    <section id="guest-list" className="relative z-30 py-6 sm:py-10 md:py-12 lg:py-16 overflow-visible bg-transparent">
+      <ChristeningParticles scoped opacity={0.38} />
+      <CornerFloralDecor opacity={0.68} sizeClass="w-20 sm:w-32 md:w-40 lg:w-48" />
 
       {/* Header */}
       <div className="relative z-10 text-center mb-6 sm:mb-8 md:mb-10 px-2 sm:px-3 md:px-4">
         {/* Frosted glass header card */}
         <div
-          className="inline-block rounded-3xl px-8 py-7 sm:px-14 sm:py-9"
+          className="inline-block rounded-3xl px-8 py-7 sm:px-14 sm:py-9 isolate"
           style={FROSTED_CARD}
         >
           {/* Eyebrow */}
           <p
             style={{
               fontFamily: FONT_LABEL,
-              fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)",
-              letterSpacing: "0.40em",
+              fontSize: "clamp(0.58rem, 2vw, 0.72rem)",
+              fontWeight: 600,
+              letterSpacing: "0.36em",
               textTransform: "uppercase",
-              color: STEEL,
+              color: C.goldDeep,
               marginBottom: "0.5rem",
-              paddingRight: "0.40em",
+              paddingRight: "0.36em",
             }}
           >
             Confirm Your Attendance
           </p>
 
-          {/* Ornament */}
-          <div className="flex items-center justify-center gap-3 mb-3">
-            <div className="h-px w-10 sm:w-16" style={{ background: "linear-gradient(to left, rgba(196,152,88,0.45), transparent)" }} />
-            <span style={{ color: GOLD, fontSize: "8px", opacity: 0.9 }}>✦</span>
-            <div className="h-px w-10 sm:w-16" style={{ background: "linear-gradient(to right, rgba(196,152,88,0.45), transparent)" }} />
-          </div>
-
-          {/* Title */}
           <h2
             style={{
-              fontFamily: "cinzel",
-              fontSize: "clamp(2.8rem, 12vw, 5.5rem)",
-              color: GOLD,
+              fontFamily: '"Cinzel", serif',
+              fontWeight: 700,
+              fontSize: "clamp(2.2rem, 10vw, 4.2rem)",
+              color: C.roseDeep,
               lineHeight: 1.1,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
               overflow: "visible",
               paddingTop: "0.1em",
               marginBottom: "0.5rem",
-              filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))",
             }}
           >
             RSVP
           </h2>
 
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <div className="h-px w-6 sm:w-10" style={{ background: "linear-gradient(to left, rgba(196,152,88,0.45), transparent)" }} />
-            <span style={{ color: GOLD, fontSize: "5px", letterSpacing: "0.2em" }}>◆◆◆</span>
-            <div className="h-px w-6 sm:w-10" style={{ background: "linear-gradient(to right, rgba(196,152,88,0.45), transparent)" }} />
-          </div>
-
           <p
             style={{
               fontFamily: FONT_BODY,
-              fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
-              color: NAVY_MUTE,
+              fontSize: "clamp(0.88rem, 2.8vw, 1.02rem)",
+              color: text.body,
               fontStyle: "italic",
               lineHeight: 1.75,
               maxWidth: "420px",
@@ -582,13 +565,13 @@ export function GuestList() {
           <p
             style={{
               fontFamily: FONT_LABEL,
-              fontSize: "clamp(0.72rem, 2.4vw, 0.88rem)",
-              color: DARK_NAVY,
-              fontWeight: 500,
+              fontSize: "clamp(0.75rem, 2.4vw, 0.88rem)",
+              color: C.roseDeep,
+              fontWeight: 600,
               letterSpacing: "0.04em",
             }}
           >
-            RSVP Deadline: <span style={{ color: GOLD }}>{siteConfig.details.rsvp.deadline}</span>
+            RSVP Deadline: <span style={{ color: C.goldDeep }}>{siteConfig.details.rsvp.deadline}</span>
           </p>
         </div>
       </div>
@@ -597,7 +580,7 @@ export function GuestList() {
       <div className="relative z-10 max-w-2xl mx-auto px-2 sm:px-4 md:px-6 overflow-visible">
         {/* Card with frosted ivory background */}
         <div
-          className="relative rounded-3xl overflow-visible"
+          className="relative rounded-3xl overflow-visible isolate"
           style={FROSTED_CARD}
         >
           <div className="relative p-3 sm:p-5 md:p-6 overflow-visible">
@@ -605,7 +588,7 @@ export function GuestList() {
               <div className="flex items-center gap-2 sm:gap-3">
                 <div
                   className="p-1.5 sm:p-2 rounded-lg"
-                  style={{ background: "rgba(196,152,88,0.10)", border: `1.5px solid ${GOLD_BORDER}` }}
+                  style={ICON_WRAP}
                 >
                   <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" style={{ color: GOLD }} />
                 </div>
@@ -663,13 +646,13 @@ export function GuestList() {
             ...SUGGESTION_PANEL,
           }}
         >
-          <div className="h-[3px] w-full" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.55), transparent)" }} />
+          <div className="h-[3px] w-full" style={{ background: `linear-gradient(to right, transparent, ${C.gold}, transparent)` }} />
 
           {showMatchDropdown && (
             <>
               <div
                 className="px-3 py-2 flex items-center justify-between"
-                style={{ borderBottom: `1px solid ${GOLD_BORDER}`, background: "rgba(196,152,88,0.06)" }}
+                style={{ borderBottom: `1px solid ${C.blushDeep}`, background: C.blushSoft }}
               >
                 <span style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.58rem, 1.7vw, 0.68rem)", letterSpacing: "0.22em", textTransform: "uppercase", color: STEEL }}>
                   Select your name
@@ -686,7 +669,7 @@ export function GuestList() {
                     onClick={() => handleSearchSelect(guest)}
                     className="w-full px-2.5 sm:px-3 py-2.5 sm:py-3 text-left transition-all duration-200 flex items-center gap-2 sm:gap-3 group"
                     style={{ borderBottom: index < filteredGuests.length - 1 ? `1px solid ${GOLD_BORDER}` : "none" }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(196,152,88,0.10)" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = C.blushSoft }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = "transparent" }}
                   >
                     <div className="relative flex-shrink-0">
@@ -696,8 +679,8 @@ export function GuestList() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div
-                        className="truncate transition-colors duration-200 group-hover:text-[#C4965A]"
-                        style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.78rem, 2.5vw, 0.92rem)", color: DARK_NAVY, fontWeight: 500 }}
+                        className="truncate transition-colors duration-200"
+                        style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.78rem, 2.5vw, 0.92rem)", color: C.roseDeep, fontWeight: 500 }}
                       >
                         {highlightName(guest.Name, searchQuery)}
                       </div>
@@ -707,7 +690,7 @@ export function GuestList() {
                         </div>
                       )}
                     </div>
-                    <ChevronRight className="h-4 w-4 flex-shrink-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-[#C4965A]" style={{ color: STEEL }} />
+                    <ChevronRight className="h-4 w-4 flex-shrink-0 transition-all duration-200 group-hover:translate-x-0.5" style={{ color: text.label }} />
                   </button>
                 ))}
               </div>
@@ -721,7 +704,7 @@ export function GuestList() {
                   <UserPlus className="h-3 w-3 sm:h-4 sm:w-4" style={{ color: GOLD }} />
                 </div>
                 <div className="flex-1">
-                  <h4 className="mb-1" style={{ fontFamily: "cinzel", fontSize: "clamp(1rem, 3.5vw, 1.25rem)", color: GOLD, lineHeight: 1.1, filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))" }}>
+                  <h4 className="mb-1" style={{ fontFamily: '"Cinzel", serif', fontWeight: 700, fontSize: "clamp(1rem, 3.5vw, 1.25rem)", color: C.roseDeep, lineHeight: 1.2 }}>
                     Not finding your name?
                   </h4>
                   <p style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.65rem, 2vw, 0.76rem)", color: NAVY_MUTE, lineHeight: 1.6, fontStyle: "italic" }}>
@@ -733,7 +716,7 @@ export function GuestList() {
                 type="button"
                 onClick={handleOpenRequestModal}
                 className="w-full text-white py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-semibold shadow-md transition-all duration-300 hover:opacity-90 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center"
-                style={{ background: DARK_NAVY, fontFamily: "cinzel, serif" }}
+                style={{ background: C.roseDeep, fontFamily: '"Cinzel", serif' }}
               >
                 <UserPlus className="h-3 w-3 mr-1.5 sm:mr-2 inline" />
                 Request to Join
@@ -747,8 +730,8 @@ export function GuestList() {
       {/* RSVP Modal */}
       {showModal && (
         <div 
-          className="fixed inset-0 flex items-center justify-center p-1 sm:p-2 md:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in"
-          style={{ zIndex: LAYER_TOP }}
+          className="fixed inset-0 flex items-center justify-center p-1 sm:p-2 md:p-4 backdrop-blur-sm animate-in fade-in"
+          style={{ zIndex: LAYER_TOP, background: MODAL_BACKDROP }}
           onClick={handleCloseModal}
         >
             <div 
@@ -759,16 +742,16 @@ export function GuestList() {
               {/* Modal Header */}
               <div
                 className="relative p-3 sm:p-4 md:p-5 lg:p-6 flex-shrink-0"
-                style={{ background: DARK_NAVY }}
+                style={{ background: `linear-gradient(135deg, ${C.roseDeep} 0%, #5A2F3D 100%)` }}
               >
-                <div className="h-[3px] w-full absolute top-0 left-0" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.55), transparent)" }} />
+                <div className="h-[3px] w-full absolute top-0 left-0" style={{ background: `linear-gradient(to right, transparent, ${C.gold}, transparent)` }} />
                 <div className="relative flex items-start justify-between gap-1.5 sm:gap-2">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 mb-1 sm:mb-1.5 md:mb-2 lg:mb-3">
                       <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 bg-white/25 rounded-full flex items-center justify-center flex-shrink-0">
                         <Heart className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 lg:h-5 lg:w-5 text-white" />
                       </div>
-                      <h3 className="text-white" style={{ fontFamily: "cinzel, serif", fontSize: "clamp(1.2rem, 5vw, 2rem)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em", filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))" }}>
+                      <h3 className="text-white" style={{ fontFamily: '"Cinzel", serif', fontWeight: 700, fontSize: "clamp(1.2rem, 5vw, 2rem)", lineHeight: 1.1 }}>
                         You Are Warmly Invited
                       </h3>
                     </div>
@@ -804,7 +787,7 @@ export function GuestList() {
                     <p className="mb-2 sm:mb-3 md:mb-4 px-2" style={{ fontFamily: FONT_BODY, fontSize: "clamp(0.72rem, 2.5vw, 0.88rem)", color: NAVY_MUTE, fontStyle: "italic" }}>
                       We've received your RSVP and look forward to celebrating with you!
                     </p>
-                    <div className="rounded-lg p-2.5 sm:p-3 md:p-4 space-y-2 sm:space-y-2.5 md:space-y-3" style={{ background: "rgba(196,152,88,0.08)", border: `1.5px solid ${GOLD_BORDER}` }}>
+                    <div className="rounded-lg p-2.5 sm:p-3 md:p-4 space-y-2 sm:space-y-2.5 md:space-y-3" style={{ background: C.blushSoft, border: `1.5px solid ${C.blushDeep}` }}>
                       <div className="flex items-center justify-center gap-1.5 sm:gap-2 md:gap-3 mb-1.5 sm:mb-2">
                         {selectedGuest?.RSVP === "Yes" && (
                           <>
@@ -824,7 +807,7 @@ export function GuestList() {
                         )}
                       </div>
                       {selectedGuest?.RSVP === "Yes" && (
-                        <div className="rounded-lg p-2 sm:p-2.5 md:p-3" style={{ background: "rgba(255,255,255,0.55)", border: `1.5px solid ${GOLD_BORDER}` }}>
+                        <div className="rounded-lg p-2 sm:p-2.5 md:p-3" style={{ background: C.pearl, border: `1.5px solid ${C.blushDeep}` }}>
                           <div className="text-center">
                             <p className="mb-1 font-medium" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: NAVY_MUTE }}>Number of Guests</p>
                             <p className="font-bold" style={{ fontFamily: FONT_DISPLAY, fontSize: "clamp(1.4rem, 5vw, 2rem)", color: GOLD, lineHeight: 1.1 }}>
@@ -872,8 +855,8 @@ export function GuestList() {
                           }
                           className="relative p-2 sm:p-2.5 md:p-3 lg:p-4 rounded-lg border-2 transition-all duration-300"
                           style={formData.RSVP === "Yes"
-                            ? { borderColor: GOLD, background: "rgba(196,152,88,0.10)", boxShadow: "0 4px 14px rgba(196,152,88,0.18)", transform: "scale(1.05)" }
-                            : { borderColor: GOLD_BORDER, background: "rgba(255,255,255,0.55)" }
+                            ? { borderColor: C.goldDeep, background: C.blushSoft, boxShadow: "0 4px 14px rgba(201,168,108,0.22)", transform: "scale(1.05)" }
+                            : { borderColor: C.blushDeep, background: C.pearl }
                           }
                         >
                           <div className="flex items-center justify-center gap-1.5 sm:gap-2">
@@ -892,7 +875,7 @@ export function GuestList() {
                           className="relative p-2 sm:p-2.5 md:p-3 lg:p-4 rounded-lg border-2 transition-all duration-300"
                           style={formData.RSVP === "No"
                             ? { borderColor: "#ef4444", background: "#fef2f2", transform: "scale(1.05)" }
-                            : { borderColor: GOLD_BORDER, background: "rgba(255,255,255,0.55)" }
+                            : { borderColor: C.blushDeep, background: C.pearl }
                           }
                         >
                           <div className="flex items-center justify-center gap-1.5 sm:gap-2">
@@ -922,7 +905,7 @@ export function GuestList() {
                           Please provide names and relationships for your <span className="font-semibold">{companions.length}</span> additional {companions.length === 1 ? 'guest' : 'guests'}
                         </p>
                         {companions.map((companion, index) => (
-                          <div key={index} className="rounded-lg p-2 sm:p-2.5 md:p-3 space-y-2 sm:space-y-2.5" style={{ background: "rgba(196,152,88,0.08)", border: `1.5px solid ${GOLD_BORDER}` }}>
+                          <div key={index} className="rounded-lg p-2 sm:p-2.5 md:p-3 space-y-2 sm:space-y-2.5" style={{ background: C.blushSoft, border: `1.5px solid ${C.blushDeep}` }}>
                             <div className="flex items-center gap-1.5 mb-1 sm:mb-1.5">
                               <User className="h-3 w-3 sm:h-3.5 sm:w-3.5" style={{ color: GOLD }} />
                               <span className="font-semibold" style={{ fontFamily: FONT_LABEL, fontSize: "clamp(0.62rem, 1.8vw, 0.72rem)", color: DARK_NAVY }}>
@@ -1033,7 +1016,7 @@ export function GuestList() {
 
               {/* Success Overlay — light ivory */}
               {success && (
-                <div className="absolute inset-0 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-300 p-2 sm:p-3 md:p-4" style={{ background: "rgba(255,255,255,0.92)" }}>
+                <div className="absolute inset-0 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-300 p-2 sm:p-3 md:p-4" style={{ background: "rgba(255,251,247,0.94)" }}>
                   <div className="text-center p-3 sm:p-4 md:p-5 lg:p-6 max-w-sm mx-auto">
                     {/* Icon Circle */}
                     <div className="relative inline-flex items-center justify-center mb-3 sm:mb-4">
@@ -1101,8 +1084,8 @@ export function GuestList() {
         {/* Request to Join Modal */}
         {showRequestModal && (
           <div 
-            className="fixed inset-0 flex items-center justify-center p-1 sm:p-2 md:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in"
-          style={{ zIndex: LAYER_TOP }}
+            className="fixed inset-0 flex items-center justify-center p-1 sm:p-2 md:p-4 backdrop-blur-sm animate-in fade-in"
+            style={{ zIndex: LAYER_TOP, background: MODAL_BACKDROP }}
             onClick={handleCloseRequestModal}
           >
             <div 
@@ -1112,16 +1095,16 @@ export function GuestList() {
               {/* Modal Header */}
               <div
                 className="relative p-3 sm:p-4 md:p-5 lg:p-6 flex-shrink-0"
-                style={{ background: DARK_NAVY }}
+                style={{ background: `linear-gradient(135deg, ${C.roseDeep} 0%, #5A2F3D 100%)` }}
               >
-                <div className="h-[3px] w-full absolute top-0 left-0" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.55), transparent)" }} />
+                <div className="h-[3px] w-full absolute top-0 left-0" style={{ background: `linear-gradient(to right, transparent, ${C.gold}, transparent)` }} />
                 <div className="relative flex items-start justify-between gap-1.5 sm:gap-2">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 mb-1 sm:mb-1.5 md:mb-2 lg:mb-3">
                       <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 bg-white/25 rounded-full flex items-center justify-center flex-shrink-0">
                         <UserPlus className="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 lg:h-5 lg:w-5 text-white" />
                       </div>
-                      <h3 className="text-white" style={{ fontFamily: "cinzel, serif", fontSize: "clamp(1.2rem, 5vw, 2rem)", lineHeight: 1.1, overflow: "visible", paddingTop: "0.05em", filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))" }}>
+                      <h3 className="text-white" style={{ fontFamily: '"Cinzel", serif', fontWeight: 700, fontSize: "clamp(1.2rem, 5vw, 2rem)", lineHeight: 1.1 }}>
                         Request to Join
                       </h3>
                     </div>
@@ -1268,7 +1251,7 @@ export function GuestList() {
 
               {/* Success Overlay — light ivory */}
               {requestSuccess && (
-                <div className="absolute inset-0 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-300 p-2 sm:p-3 md:p-4" style={{ background: "rgba(255,255,255,0.92)" }}>
+                <div className="absolute inset-0 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-300 p-2 sm:p-3 md:p-4" style={{ background: "rgba(255,251,247,0.94)" }}>
                   <div className="text-center p-3 sm:p-4 md:p-5 lg:p-6 max-w-sm mx-auto">
                     {/* Icon Circle */}
                     <div className="relative inline-flex items-center justify-center mb-3 sm:mb-4">
@@ -1332,6 +1315,6 @@ export function GuestList() {
           </div>
         </div>
       )}
-    </Section>
+    </section>
   )
 }

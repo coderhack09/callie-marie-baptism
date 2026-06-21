@@ -2,40 +2,34 @@
 
 import { useState } from "react"
 import { ChevronDown, HelpCircle } from "lucide-react"
-import Image from "next/image"
 import { siteConfig } from "@/content/site"
+import { C, text } from "@/components/loader/christening-theme"
+import { CornerFloralDecor } from "@/components/loader/ChristeningDecor"
 
-// ── Palette — aligned with entourage.tsx ──────────────────────────────────────
-const DARK_NAVY = "#1C3050"
-const GOLD      = "#C4965A"
-const NAVY_MUTE = "rgba(65,90,115,0.78)"
-
-const FROSTED_CARD = {
-  background: "rgba(255,255,255,0.30)",
-  backdropFilter: "blur(14px)",
-  WebkitBackdropFilter: "blur(14px)",
-  border: "1.5px solid rgba(43,74,107,0.22)",
-  boxShadow: "0 4px 24px rgba(43,74,107,0.08), 0 1px 0 rgba(255,255,255,0.55) inset",
+const cardStyle = {
+  background: `linear-gradient(170deg, ${C.ivory} 0%, ${C.blushSoft} 48%, ${C.champagne} 100%)`,
+  border: `1.5px solid ${C.blushDeep}`,
+  boxShadow: "0 20px 64px rgba(107,61,79,0.08), 0 2px 10px rgba(232,196,204,0.20), inset 0 1px 0 rgba(255,255,255,0.90)",
 } as const
 
-function OrnamentDivider({ width = "240px" }: { width?: string }) {
+const goldLine = `linear-gradient(to right, transparent, ${C.gold}, transparent)`
+
+const childName = siteConfig.couple.child
+const childFirst = childName.split(" ")[0]
+
+function GoldRule({ width = "240px" }: { width?: string }) {
   return (
-    <div className="flex items-center justify-center gap-2" style={{ maxWidth: width, margin: "0 auto" }}>
-      <div className="h-px flex-1" style={{ background: "linear-gradient(to left, rgba(196,152,88,0.45), transparent)" }} />
-      <div style={{ width: "6px", height: "6px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.68)", flexShrink: 0 }} />
-      <div className="h-px flex-1" style={{ background: "linear-gradient(to right, rgba(196,152,88,0.45), transparent)" }} />
-    </div>
+    <div className="h-px mx-auto" style={{ maxWidth: width, background: goldLine, opacity: 0.55 }} />
   )
 }
 
-// ── Floating bokeh orbs ───────────────────────────────────────────────────────
 function BokehOrbs() {
   const orbs = [
-    { w: 380, h: 380, top: "4%",  left: "2%",  color: "rgba(120,175,215,1)", opacity: 0.08, blur: 100 },
-    { w: 260, h: 260, top: "18%", left: "70%", color: "rgba(196,152,88,1)",  opacity: 0.08, blur: 80  },
-    { w: 300, h: 300, top: "55%", left: "8%",  color: "rgba(196,152,88,1)",  opacity: 0.07, blur: 90  },
-    { w: 220, h: 220, top: "70%", left: "76%", color: "rgba(120,175,215,1)", opacity: 0.08, blur: 70  },
-    { w: 170, h: 170, top: "38%", left: "44%", color: "rgba(196,152,88,1)",  opacity: 0.06, blur: 60  },
+    { w: 380, h: 380, top: "4%",  left: "2%",  color: "rgba(232,196,204,1)", opacity: 0.10, blur: 100 },
+    { w: 260, h: 260, top: "18%", left: "70%", color: "rgba(201,168,108,1)",  opacity: 0.09, blur: 80  },
+    { w: 300, h: 300, top: "55%", left: "8%",  color: "rgba(201,168,108,1)",  opacity: 0.08, blur: 90  },
+    { w: 220, h: 220, top: "70%", left: "76%", color: "rgba(232,196,204,1)", opacity: 0.09, blur: 70  },
+    { w: 170, h: 170, top: "38%", left: "44%", color: "rgba(201,168,108,1)",  opacity: 0.07, blur: 60  },
   ]
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden>
@@ -58,7 +52,7 @@ interface FAQItem {
 const faqItems: FAQItem[] = [
   {
     question: "When is the christening?",
-    answer: `Kaezar Isaiahnuel's christening will be held on ${siteConfig.ceremony.date} (${siteConfig.ceremony.day}). It is a day we have been joyfully anticipating, and we cannot wait to celebrate this sacred milestone with you.`,
+    answer: `${childName}'s christening will be held on ${siteConfig.ceremony.date} (${siteConfig.ceremony.day}). It is a day we have been joyfully anticipating, and we cannot wait to celebrate this sacred milestone with you.`,
   },
   {
     question: "What time should I arrive?",
@@ -66,7 +60,7 @@ const faqItems: FAQItem[] = [
   },
   {
     question: "Where will the ceremony and reception take place?",
-    answer: `The christening ceremony and reception will both be held at ${siteConfig.ceremony.location}, ${siteConfig.ceremony.venue}. Detailed directions, maps, and addresses are available in the Details section of this invitation.`,
+    answer: `The christening ceremony will be held at ${siteConfig.ceremony.location}, ${siteConfig.ceremony.venue}.\n\nThe reception will follow at ${siteConfig.reception.location}, ${siteConfig.reception.venue}.\n\nDetailed directions, maps, and addresses are available in the Details section of this invitation.`,
   },
   {
     question: "Is there a call time for Principal Sponsors?",
@@ -86,11 +80,11 @@ const faqItems: FAQItem[] = [
   },
   {
     question: "Is there parking available?",
-    answer: `Yes, parking is available at the venue. Parking attendants and our coordinators will be on hand to assist you on the day of the celebration. We recommend arriving a little early to allow time for parking.`,
+    answer: `Yes, parking is available at both venues. Parking attendants and our coordinators will be on hand to assist you on the day of the celebration. We recommend arriving a little early to allow time for parking.`,
   },
   {
     question: "What gifts are appropriate for a christening?",
-    answer: `Your presence and prayers are the greatest gifts you could bring to this celebration. However, if you wish to give a gift, a monetary gift or a meaningful keepsake for Kaezar Isaiahnuel would be humbly and gratefully appreciated.\n\nPlease refer to the Gift Guide section of this invitation for more details.`,
+    answer: `Your presence and prayers are the greatest gifts you could bring to this celebration. However, if you wish to give a gift, a monetary gift or a meaningful keepsake for ${childName} would be humbly and gratefully appreciated.\n\nPlease refer to the Gift Note section of this invitation for more details.`,
   },
   {
     question: "Unplugged Ceremony — Eyes Up, Hearts Open",
@@ -110,7 +104,7 @@ const faqItems: FAQItem[] = [
   },
   {
     question: "When is the appropriate time to leave?",
-    answer: `We lovingly prepared this celebration for everyone to enjoy from start to finish. We humbly request that you stay with us until the program ends.\n\nLet's laugh together, take photos, share stories, and make beautiful memories — the kind that Kaezar Isaiahnuel will one day look back on with joy.`,
+    answer: `We lovingly prepared this celebration for everyone to enjoy from start to finish. We humbly request that you stay with us until the program ends.\n\nLet's laugh together, take photos, share stories, and make beautiful memories — the kind that ${childFirst} will one day look back on with joy.`,
   },
   {
     question: "What if I have dietary restrictions or allergies?",
@@ -118,7 +112,7 @@ const faqItems: FAQItem[] = [
   },
   {
     question: "How can I help the family celebrate this beautiful day?",
-    answer: `• Pray with us for God's continued grace and blessing upon Kaezar Isaiahnuel and our family.\n\n• RSVP as soon as possible once your schedule is confirmed.\n\n• Dress in accordance with the christening motif.\n\n• Arrive on time so we may begin together.\n\n• Please keep the ceremony unplugged — phones down, hearts open.\n\n• Follow the seating arrangement at the reception.\n\n• Stay until the end of the program.\n\n• Join the activities, enjoy the food, and celebrate with us wholeheartedly!`,
+    answer: `• Pray with us for God's continued grace and blessing upon ${childName} and our family.\n\n• RSVP as soon as possible once your schedule is confirmed.\n\n• Dress in accordance with the christening motif.\n\n• Arrive on time so we may begin together.\n\n• Please keep the ceremony unplugged — phones down, hearts open.\n\n• Follow the seating arrangement at the reception.\n\n• Stay until the end of the program.\n\n• Join the activities, enjoy the food, and celebrate with us wholeheartedly!`,
   },
 ]
 
@@ -132,86 +126,78 @@ export function FAQ() {
   return (
     <section id="faq" className="relative w-full overflow-hidden">
 
-      {/* Solid base — aligned with entourage */}
-      <div className="absolute inset-0 -z-10" style={{ background: "#FFFFFF" }} />
+      {/* Layered christening background */}
+      <div className="absolute inset-0 -z-10" style={{ background: C.ivory }} />
 
       <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: "radial-gradient(ellipse 55% 45% at 50% 30%, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.6) 45%, transparent 75%)",
+        background: `radial-gradient(ellipse 55% 45% at 50% 30%, rgba(255,253,249,0.95) 0%, rgba(250,232,236,0.45) 45%, transparent 75%)`,
       }} />
 
       <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: "linear-gradient(to top, rgba(120,175,215,0.10) 0%, rgba(120,175,215,0.04) 25%, transparent 55%)",
+        background: `linear-gradient(to top, rgba(232,196,204,0.12) 0%, rgba(247,239,228,0.06) 25%, transparent 55%)`,
       }} />
 
       <div className="absolute inset-0 pointer-events-none z-0" aria-hidden style={{
         background: `
-          radial-gradient(ellipse 50% 40% at 50% 28%, rgba(196,152,88,0.06) 0%, transparent 70%),
-          radial-gradient(ellipse 38% 32% at 50% 78%, rgba(120,175,215,0.08) 0%, transparent 65%)
+          radial-gradient(ellipse 50% 40% at 50% 28%, rgba(201,168,108,0.07) 0%, transparent 70%),
+          radial-gradient(ellipse 38% 32% at 50% 78%, rgba(232,196,204,0.10) 0%, transparent 65%)
         `,
       }} />
 
       <BokehOrbs />
-
-      {/* ── Corner floral decorations ── */}
-      <div className="absolute inset-0 pointer-events-none z-[1]" aria-hidden>
-        <Image src="/decoration/left-top-removebg-preview.png"    alt="" width={200} height={200} className="absolute top-0 left-0  w-auto h-auto max-w-[100px] sm:max-w-[145px] md:max-w-[190px] opacity-40" />
-        <Image src="/decoration/right-top-removebg-preview.png"   alt="" width={200} height={200} className="absolute top-0 right-0 w-auto h-auto max-w-[100px] sm:max-w-[145px] md:max-w-[190px] opacity-40" />
-        <Image src="/decoration/bottom-left-removebg-preview.png"  alt="" width={200} height={200} className="absolute bottom-0 left-0  w-auto h-auto max-w-[100px] sm:max-w-[145px] md:max-w-[190px] opacity-40" />
-        <Image src="/decoration/bottom-right-removebg-preview.png" alt="" width={200} height={200} className="absolute bottom-0 right-0 w-auto h-auto max-w-[100px] sm:max-w-[145px] md:max-w-[190px] opacity-40" />
-      </div>
+      <CornerFloralDecor opacity={0.65} sizeClass="w-20 sm:w-32 md:w-40 lg:w-48" />
 
       <div className="relative z-10 py-12 sm:py-16 md:py-20">
         <div className="max-w-3xl mx-auto px-3 sm:px-5">
 
-          {/* ══════════════════════════════════════════════════════════════
-              SECTION HEADER
-          ══════════════════════════════════════════════════════════════ */}
+          {/* Section header */}
           <div className="text-center mb-8 sm:mb-10 md:mb-12">
+            <div className="inline-block rounded-3xl px-8 py-7 sm:px-12 sm:py-9 isolate" style={cardStyle}>
+              <p style={{
+                fontFamily: '"Cinzel", serif',
+                fontSize: "clamp(0.58rem, 2vw, 0.72rem)",
+                fontWeight: 600,
+                letterSpacing: "0.36em",
+                textTransform: "uppercase",
+                color: C.goldDeep,
+                marginBottom: "0.5rem",
+                paddingRight: "0.36em",
+              }}>
+                Everything You Need to Know
+              </p>
 
-            <p style={{
-              fontFamily: '"Cinzel", serif',
-              fontSize: "clamp(0.52rem, 1.9vw, 0.64rem)",
-              letterSpacing: "0.40em",
-              textTransform: "uppercase",
-              color: "rgba(72,112,148,0.80)",
-              marginBottom: "0.4rem",
-              paddingRight: "0.40em",
-            }}>
-              Everything You Need to Know
-            </p>
+              <h2 style={{
+                fontFamily: '"Cinzel", serif',
+                fontWeight: 700,
+                fontSize: "clamp(1.8rem, 7vw, 3rem)",
+                color: C.roseDeep,
+                lineHeight: 1.1,
+                letterSpacing: "0.06em",
+                textTransform: "uppercase",
+                marginBottom: "0.5rem",
+              }}>
+                Frequently Asked Questions
+              </h2>
 
-            <OrnamentDivider />
+              <GoldRule width="100%" />
 
-            <h2 style={{
-              fontFamily: '"Cinzel", serif',
-              fontSize: "clamp(1.6rem, 5.5vw, 2.8rem)",
-              color: GOLD,
-              lineHeight: 1.0,
-              marginTop: "1rem",
-              marginBottom: "0.5rem",
-              filter: "drop-shadow(0 2px 8px rgba(196,152,88,0.16))",
-            }}>
-              Frequently Asked Questions
-            </h2>
-
-            <p style={{
-              fontFamily: '"Fahkwang", sans-serif',
-              fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
-              color: NAVY_MUTE,
-              lineHeight: 1.75,
-              fontStyle: "italic",
-              maxWidth: "32rem",
-              margin: "0.75rem auto 0",
-            }}>
-              Helpful notes so you can arrive, celebrate, and cherish every moment of this blessed day.
-            </p>
+              <p style={{
+                fontFamily: '"Fahkwang", sans-serif',
+                fontSize: "clamp(0.88rem, 2.8vw, 1.02rem)",
+                color: text.body,
+                lineHeight: 1.8,
+                fontStyle: "italic",
+                maxWidth: "32rem",
+                margin: "0.75rem auto 0",
+              }}>
+                Helpful notes so you can arrive, celebrate, and cherish every moment of {childFirst}&apos;s blessed day.
+              </p>
+            </div>
           </div>
 
-          {/* ══════════════════════════════════════════════════════════════
-              FAQ ACCORDION
-          ══════════════════════════════════════════════════════════════ */}
-          <div className="rounded-3xl overflow-hidden" style={FROSTED_CARD}>
-            <div className="h-px w-full" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
+          {/* FAQ accordion */}
+          <div className="rounded-3xl overflow-hidden isolate" style={cardStyle}>
+            <div className="h-px w-full" style={{ background: goldLine, opacity: 0.5 }} />
 
             <div className="p-2.5 sm:p-4 md:p-5">
               <div className="space-y-1.5 sm:space-y-2">
@@ -223,38 +209,30 @@ export function FAQ() {
                       key={index}
                       className="rounded-xl overflow-hidden border transition-all duration-300"
                       style={{
-                        background: isOpen
-                          ? "rgba(255,255,255,0.55)"
-                          : "rgba(255,255,255,0.25)",
-                        borderColor: isOpen
-                          ? "rgba(196,152,88,0.35)"
-                          : "rgba(43,74,107,0.12)",
-                        boxShadow: isOpen
-                          ? "0 4px 18px rgba(43,74,107,0.08)"
-                          : "none",
+                        background: isOpen ? C.pearl : "rgba(255,253,249,0.72)",
+                        borderColor: isOpen ? C.blushDeep : C.blush,
+                        boxShadow: isOpen ? "0 4px 18px rgba(107,61,79,0.08)" : "none",
                       }}
                     >
-                      {/* Question button */}
                       <button
                         onClick={() => toggleItem(index)}
-                        className="group w-full px-3 sm:px-4 md:px-5 py-2.5 sm:py-3 flex items-center justify-between text-left outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#C4965A] transition-colors"
+                        className="group w-full px-3 sm:px-4 md:px-5 py-2.5 sm:py-3 flex items-center justify-between text-left outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#B8924E] transition-colors"
                         aria-expanded={isOpen}
                         aria-controls={contentId}
                       >
                         <div className="flex items-center gap-2.5 sm:gap-3 pr-3">
-                          {/* Number badge */}
                           <div
                             className="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center transition-all duration-300"
                             style={{
-                              background: isOpen ? GOLD : "rgba(196,152,88,0.15)",
-                              boxShadow: isOpen ? "0 2px 10px rgba(196,152,88,0.30)" : "none",
+                              background: isOpen ? C.goldDeep : C.blushSoft,
+                              boxShadow: isOpen ? "0 2px 10px rgba(201,168,108,0.28)" : "none",
                             }}
                           >
                             <span style={{
                               fontFamily: '"Cinzel", serif',
                               fontWeight: 500,
                               fontSize: "clamp(0.56rem, 1.5vw, 0.64rem)",
-                              color: isOpen ? "white" : GOLD,
+                              color: isOpen ? C.pearl : C.goldDeep,
                             }}>
                               {String(index + 1).padStart(2, "0")}
                             </span>
@@ -264,7 +242,7 @@ export function FAQ() {
                             fontFamily: '"Cinzel", serif',
                             fontWeight: 500,
                             fontSize: "clamp(0.72rem, 2.4vw, 0.88rem)",
-                            color: isOpen ? DARK_NAVY : NAVY_MUTE,
+                            color: isOpen ? C.roseDeep : text.body,
                             lineHeight: 1.55,
                             transition: "color 0.2s",
                           }}>
@@ -274,20 +252,17 @@ export function FAQ() {
 
                         <div
                           className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300"
-                          style={{
-                            background: isOpen ? "rgba(196,152,88,0.12)" : "transparent",
-                          }}
+                          style={{ background: isOpen ? C.blushSoft : "transparent" }}
                         >
                           <ChevronDown
                             size={16}
                             className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
-                            style={{ color: GOLD }}
+                            style={{ color: C.goldDeep }}
                             aria-hidden
                           />
                         </div>
                       </button>
 
-                      {/* Answer panel */}
                       <div
                         id={contentId}
                         role="region"
@@ -299,21 +274,21 @@ export function FAQ() {
                           <div
                             className="px-3 sm:px-4 md:px-5 py-3 sm:py-4 border-t"
                             style={{
-                              background: "rgba(255,255,255,0.45)",
-                              borderColor: "rgba(43,74,107,0.12)",
+                              background: C.blushSoft,
+                              borderColor: C.blushDeep,
                             }}
                           >
                             <div className="flex gap-3">
                               <div
                                 className="flex-shrink-0 w-0.5 rounded-full self-stretch"
-                                style={{ background: "linear-gradient(to bottom, rgba(196,152,88,0.68), rgba(196,152,88,0.15))" }}
+                                style={{ background: `linear-gradient(to bottom, ${C.goldDeep}, ${C.blushDeep})` }}
                               />
                               <p
                                 className="whitespace-pre-line"
                                 style={{
                                   fontFamily: '"Fahkwang", sans-serif',
                                   fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
-                                  color: NAVY_MUTE,
+                                  color: text.body,
                                   lineHeight: 1.75,
                                 }}
                               >
@@ -328,19 +303,18 @@ export function FAQ() {
                 })}
               </div>
             </div>
-
           </div>
 
-          {/* ── Closing note ── */}
+          {/* Closing note */}
           <div className="text-center mt-7 sm:mt-9">
-            <OrnamentDivider width="180px" />
+            <GoldRule width="180px" />
             <div className="flex items-center justify-center gap-2 mt-4 mb-3">
-              <HelpCircle className="h-3.5 w-3.5 opacity-50" style={{ color: GOLD }} />
+              <HelpCircle className="h-3.5 w-3.5 opacity-60" style={{ color: C.goldDeep }} />
             </div>
             <p style={{
               fontFamily: '"Fahkwang", sans-serif',
-              fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
-              color: NAVY_MUTE,
+              fontSize: "clamp(0.88rem, 2.8vw, 1.02rem)",
+              color: text.body,
               fontStyle: "italic",
               lineHeight: 1.75,
             }}>

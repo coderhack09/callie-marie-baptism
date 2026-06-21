@@ -411,11 +411,74 @@ html {
 /* Loading Screen — soft name glow pulse */
 @keyframes loader-name-glow {
   0%, 100% { text-shadow: none; }
-  50%       { text-shadow: 0 0 28px rgba(196,152,88,0.22), 0 0 54px rgba(91,157,192,0.12); }
+  50%       { text-shadow: 0 0 28px rgba(232,196,204,0.28), 0 0 54px rgba(201,168,108,0.14); }
 }
 
 .animate-bubble-rise       { animation: bubble-rise linear infinite; }
 .animate-loader-name-glow  { animation: loader-name-glow 5s ease-in-out infinite; }
+
+/* Christening — vintage lace overlay */
+.christening-lace {
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23C4A0A8' stroke-width='0.6'%3E%3Ccircle cx='40' cy='40' r='6'/%3E%3Ccircle cx='40' cy='40' r='14'/%3E%3Ccircle cx='40' cy='40' r='22'/%3E%3Cpath d='M40 4v12M40 64v12M4 40h12M64 40h12M12 12l8.5 8.5M59.5 59.5L68 68M12 68l8.5-8.5M59.5 20.5L68 12'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 80px 80px;
+}
+
+.christening-lace-dense {
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke='%23D4A0A8' stroke-width='0.4'%3E%3Cpath d='M24 4c-2 4-2 8 0 12s2 8 0 12-2 8 0 12'/%3E%3Cpath d='M4 24c4-2 8-2 12 0s8 2 12 0 8-2 12 0'/%3E%3Ccircle cx='24' cy='24' r='3'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 48px 48px;
+}
+
+@keyframes floral-sway {
+  0%, 100% { transform: rotate(-2deg) translateY(0); }
+  50%       { transform: rotate(2deg) translateY(-4px); }
+}
+
+@keyframes floral-sway-reverse {
+  0%, 100% { transform: scaleX(-1) rotate(-2deg) translateY(0); }
+  50%       { transform: scaleX(-1) rotate(2deg) translateY(-4px); }
+}
+
+.animate-floral-sway         { animation: floral-sway 6s ease-in-out infinite; }
+.animate-floral-sway-reverse { animation: floral-sway-reverse 7s ease-in-out infinite; }
+
+/* Christening — drifting rose petals */
+@keyframes petal-drift {
+  0%   { transform: translateY(-10vh) rotate(0deg) translateX(0); opacity: 0; }
+  8%   { opacity: 0.75; }
+  90%  { opacity: 0.35; }
+  100% { transform: translateY(110vh) rotate(360deg) translateX(40px); opacity: 0; }
+}
+
+@keyframes petal-sway {
+  0%, 100% { margin-left: 0; }
+  50%       { margin-left: 18px; }
+}
+
+@keyframes pearl-pulse {
+  0%, 100% { opacity: 0.45; transform: scale(1); }
+  50%       { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes ribbon-shimmer {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
+}
+
+.animate-petal-drift  { animation: petal-drift linear infinite; }
+.animate-petal-sway   { animation: petal-sway ease-in-out infinite; }
+.animate-pearl-pulse  { animation: pearl-pulse 3s ease-in-out infinite; }
+.animate-ribbon-shimmer { animation: ribbon-shimmer 4s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-petal-drift,
+  .animate-petal-sway,
+  .animate-floral-sway,
+  .animate-floral-sway-reverse {
+    animation: none;
+  }
+}
 
 /* Scrollbar styling */
 ::-webkit-scrollbar {

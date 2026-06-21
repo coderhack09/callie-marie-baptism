@@ -3,15 +3,19 @@
 import { useEffect, useState, useMemo } from "react"
 import { motion } from "motion/react"
 import Image from "next/image"
+import { C, text } from "@/components/loader/christening-theme"
+import { siteConfig } from "@/content/site"
+
+const childName = siteConfig.couple.child
 
 const desktopImages = [
 
-  "/desktop_background/image00005.jpeg",
+  "/desktop_background/box1.jpg",
 
 ]
 
 const mobileImages = [
-  "/desktop_background/image00005.jpeg",
+  "/desktop_background/box1.jpg",
 
 ]
 
@@ -315,9 +319,10 @@ export function Celebration() {
         >
           {/* Main Label */}
           <h2
-            className="style-script-regular text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-[#4a5d4e] max-w-3xl mx-auto leading-tight"
+            className="style-script-regular text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl max-w-3xl mx-auto leading-tight"
             style={{
-              textShadow: "0 3px 10px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2)",
+              color: C.roseDeep,
+              textShadow: "0 3px 14px rgba(107,61,79,0.28), 0 2px 8px rgba(196,160,168,0.22), 0 1px 3px rgba(232,196,204,0.18)",
               letterSpacing: "0.02em",
             }}
           >
@@ -326,18 +331,19 @@ export function Celebration() {
           
           {/* Sub Label */}
           <p
-            className="text-[#4a5d4e] text-sm sm:text-base md:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed font-light italic"
+            className="text-sm sm:text-base md:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed font-light italic"
             style={{
               fontFamily: '"Cormorant Garamond", serif',
               fontWeight: 300,
-              textShadow: "0 2px 8px rgba(0,0,0,0.35), 0 1px 4px rgba(0,0,0,0.25)",
+              color: text.body,
+              textShadow: "0 2px 10px rgba(107,61,79,0.20), 0 1px 4px rgba(196,160,168,0.16)",
               letterSpacing: "0.05em",
-              opacity: 0.9,
+              opacity: 0.95,
             }}
           >
-            Let us come together in faith, love, and celebration
+            Join us in faith, love, and joy as we celebrate
             <br />
-            on this very special day.
+            {childName}&apos;s christening day.
           </p>
         </motion.div>
       </div>

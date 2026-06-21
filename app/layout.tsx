@@ -6,20 +6,20 @@ import "./globals.css"
 import { siteConfig } from "@/content/site"
 import { ClientLayout } from "@/components/client-layout"
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kaezar-isaiahnuel-baptism.vercel.app/"
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://callie-marie-baptism.vercel.app/"
 const canonicalUrl = siteUrl.replace(/\/$/, "")
-const desktopHero = "/Details/newLinkPreview.png"
-const mobileHero = "/Details/newLinkPreview.png"
+const desktopHero = "/Details/LinkPreview.png"
+const mobileHero = "/Details/LinkPreview.png"
 const eventImageUrl = `${canonicalUrl}${desktopHero}`
 
-const coupleNames = `Kaezar Isaiahnuel`
-const eventTitle = `${coupleNames} - Wedding Invitation`
-const eventDescription = `Celebrate the Christening of Kaezar Isaiahnuel on ${siteConfig.wedding.date} at ${siteConfig.ceremony.venue}. RSVP, explore their story, and find everything you need to join the celebration.`
+const coupleNames = `${siteConfig.couple.child}`
+const eventTitle = `${siteConfig.couple.child} - Christening Celebration`
+const eventDescription = `Celebrate the Christening of ${siteConfig.couple.child} on ${siteConfig.wedding.date} at ${siteConfig.ceremony.venue}. RSVP, explore their story, and find everything you need to join the celebration.`
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Event",
-  name: `Kaezar Isaiahnuel - Christening Celebration`,
+  name: `${coupleNames} - Christening Celebration`,
   startDate: "2026-03-21T09:30:00+08:00",
   endDate: "2026-03-21T21:30:00+08:00",
   eventStatus: "https://schema.org/EventScheduled",
@@ -50,12 +50,12 @@ const jsonLd = {
   ],
   image: [eventImageUrl],
   description:
-        `You're invited to celebrate the Christening of Kaezar Isaiahnuel. Discover ceremony and reception details, RSVP, and explore their story.`,
+        `You're invited to celebrate the Christening of ${siteConfig.couple.child}. Discover ceremony and reception details, RSVP, and explore their story.`,
   organizer: {
     "@type": "Person",
     name: coupleNames,
   },
-  eventHashtag: `#KaezarIsaiahnuelChristening`,
+  eventHashtag: `#${siteConfig.couple.child}Christening`,
 }
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
@@ -71,10 +71,10 @@ export const metadata: Metadata = {
   },
   description: eventDescription,
   keywords:
-    `Kaezar Isaiahnuel, Christening Celebration, ${siteConfig.ceremony.venue} Christening, ${siteConfig.reception.venue} Christening, Christening Invitation, RSVP, Christening Gallery, Message Wall, Love Story, #KaezarIsaiahnuelChristening`,
-  applicationName: `${coupleNames} Wedding Invitation`,
+    `${siteConfig.couple.child}, Christening Celebration, ${siteConfig.ceremony.venue} Christening, ${siteConfig.reception.venue} Christening, Christening Invitation, RSVP, Christening Gallery, Message Wall, Love Story, #${siteConfig.couple.child}Christening`,
+  applicationName: `${coupleNames} Christening Celebration`,
   authors: [
-    { name: "Kaezar Isaiahnuel" },
+    { name: siteConfig.couple.child },
   ],
   creator: coupleNames,
   publisher: coupleNames,
@@ -101,11 +101,11 @@ export const metadata: Metadata = {
   },
   manifest: "/favicon_io/site.webmanifest",
   openGraph: {
-    title: `Kaezar Isaiahnuel - Christening Celebration`,
+    title: `${coupleNames} - Christening Celebration`,
     description:
-      `Celebrate the Christening of Kaezar Isaiahnuel on ${siteConfig.wedding.date}. Discover their story, RSVP, and find important details for the ceremony and reception.`,
+      `Celebrate the Christening of ${siteConfig.couple.child} on ${siteConfig.wedding.date}. Discover their story, RSVP, and find important details for the ceremony and reception.`,
     url: canonicalUrl,
-    siteName: `${coupleNames} Wedding`,
+    siteName: `${coupleNames} Christening Celebration`,
     locale: "en_PH",
     type: "website",
     images: [
@@ -115,18 +115,18 @@ export const metadata: Metadata = {
         width: 1200,
         height: 630,
         type: "image/jpeg",
-        alt: `Kaezar Isaiahnuel - Christening Celebration`,
+        alt: `${coupleNames} - Christening Celebration`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `Kaezar Isaiahnuel - Christening Celebration`,
+    title: `${siteConfig.couple.child} - Christening Celebration`,
     description:
-      `You're invited to the Christening of Kaezar Isaiahnuel on ${siteConfig.wedding.date}. RSVP, explore their story, and get all the details for the big day! #KaezarIsaiahnuelChristening`,
+      `You're invited to the Christening of ${siteConfig.couple.child} on ${siteConfig.wedding.date}. RSVP, explore their story, and get all the details for the big day! #${siteConfig.couple.child}Christening`,
     images: [eventImageUrl],
-    creator: `@KaezarIsaiahnuel`,
-    site: `@KaezarIsaiahnuel`,
+    creator: `@${siteConfig.couple.child}`,
+    site: `@${siteConfig.couple.child}`,
   },
   robots: {
     index: true,

@@ -8,6 +8,7 @@
     "lint": "eslint .",
     "start": "next start",
     "images:webp": "tsx scripts/convert-to-webp.ts",
+    "florals:pink": "tsx scripts/tint-florals-pink.ts",
 "upload:cloudinary": "node --env-file=.env.local --import tsx/esm scripts/upload-to-cloudinary.ts --project \"Niahna Celestine\"",
 "upload:cloudinary:overwrite": "node --env-file=.env.local --import tsx/esm scripts/upload-to-cloudinary.ts --project \"Niahna Celestine\" --overwrite",
 "upload:cloudinary:dry-run": "node --env-file=.env.local --import tsx/esm scripts/upload-to-cloudinary.ts --project \"Niahna Celestine\" --dry-run",

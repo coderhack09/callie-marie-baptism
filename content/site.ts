@@ -4,27 +4,27 @@ export const siteConfig = {
     brideNickname: "Macy",
     groom: "Kenneth Erwin Brucelo Jose",
     groomNickname: "Kenneth",
-    child: "Kaezar Isaiahnuel Gallardo",
+    child: "Callie Marie",
     childNickname: "King",
-    monogram:"/monogram/new-mongoram.png" ,//Ltryl
+    monogram:"/monogram/monog.png" ,//Ltryl
     backgroundMusic:"/background_music/For This Child - Baby Dedication Song - Ken Blount.mp3",
-    parents: "Engr. Carl Kevin & Christine Marie Gallardo",
+    parents: "Jhoana Marie & Anthony Shane R. Blas",
   },
   googleAPI:{
-    messageForm: "https://docs.google.com/forms/d/e/1FAIpQLSf2Fcojdr0e_YGsDJ57o18TCLorKbikJ9nYHxP4YoYZxwZCVA/formResponse", //done
-    message: "https://script.google.com/macros/s/AKfycbySmBAbDJxdKkOZgZmyXeLFUAFXwIvSaS977jpXpln55QqEFgB_JMQ4dYnUcoju6_61/exec",  //done
-    guestList: "https://script.google.com/macros/s/AKfycbwmdvcrI3ncACz2Q4o3nJ_ID0k1SzypIoTNy1kpoIxHazv_U_LrWc0y0lFfJNaBWDLs/exec",  //done
-    guestRequest: "https://script.google.com/macros/s/AKfycbzjdlkPc7YbvE61eVpHJLfEQOHzk5XvMUdybT7FBu6TSeWXHQbUYOaq3IKgf3RxFYsJ/exec",  //done
-    entourage: "https://script.google.com/macros/s/AKfycby5xxc-ROzVmY0H3XzTeocqhHKWqbEJ2ztAqSWq3pFGR6WeP2UxUdSCDQcGPV1GDOkS/exec", ///done
-    sponsors: "https://script.google.com/macros/s/AKfycbyUQ0oKOH_krrt7fAhS-sTZtz3xCqeaPNPblKRbiY002yC_UGeIpqT5f4jOAOen0ahc/exec",  //donee
+    messageForm: "https://docs.google.com/forms/d/e/1FAIpQLSfESWn88PcJWazUe8GyLCWSsYTGysnPeUgtSA8N3CWgXkVLjA/formResponse", //done
+    message: "https://script.google.com/macros/s/AKfycbwZCHyS8heRNO-OdJDlfILvMPKamoih5HfuxSAM1ynpJhfxWFa_Cm5DIQQI7DKfZE3r/exec",  //done
+    guestList: "https://script.google.com/macros/s/AKfycbyNPWlGz6pCWA7Wda8rlIMTaEwUnPyl6Vpcii0_jlGYWqjyTWQQwo1VUz2eaD9VMFET/exec",  //done
+    guestRequest: "https://script.google.com/macros/s/AKfycbwruiWpmXe6UEyRorFzhW2bsw1iJOMne7DKDid8e3pjFWceJN9GKylKXTcEr324NhbG/exec",  //done
+    entourage: "https://script.google.com/macros/s/AKfycbx2d3ySwfAIlyPbazj0TY_jSdLhOfO-bc2fcJu5s9PdUG7imNx6W7JIyvA78H0_PI4C/exec", ///done
+    sponsors: "https://script.google.com/macros/s/AKfycby-Bnaq9TVz6pwnZ8pnQCaI59XWxLmkNmuHoPevE_kwF9Qvz3F9MEsV4BrwXA0ABBr1/exec",  //donee
     weddingDetails: "https://script.google.com/macros/s/AKfycbzTqnFT9QwM1erY_wU2AgPBds0IZ87RLM-srVgIBqhlbEuYl9o4eONgqxqj2TCb9hYV/exec",  //done
 ////google share 
-    googleShare: "https://docs.google.com/spreadsheets/d/1SBfQNHq4k9d3QlsDpjUa1SxSSHEm-ZG2fwcvCZA3w5I/edit?usp=sharing", //done
+    googleShare: "https://docs.google.com/spreadsheets/d/1Kj8COzOL-MpuoOiAQR-Fnoi8JhhDQqzBskCMlirK19c/edit?usp=sharing", //done
   },
   wedding: {
-    date: "July 4, 2026",
-    time: "10:00 AM",
-    venue: "Cathedral of Our Lady of Arabia, Awali, Kingdom of Bahrain",
+    date: "July 12,2026",
+    time: "3:00 PM",
+    venue: "St. Aedan’s Church",
     tagline: "are getting married!",
     theme: "Our wedding palette is inspired by timeless elegance and warmth.Motif Colors: Champagne Gold, Soft Beige, Warm Soft Brown",
     motif: "#001F4B, #04396D, #015B97, #6497B2, #B2CDE0",
@@ -32,46 +32,46 @@ export const siteConfig = {
   details: {
     rsvp: {
       deadline: "JULY 4, 2026",
-      contact: "Kaezar Isaiahnuel Gallardo",
+      contact: "Kaezar Isaiah Nathaniel Gallardo",
       phone: "+973 3999 9999",
     },
   },
   giftRegistry: {
     QR_1: {
-      id: "Gcash",
-      src: "/QR/newGcash.png",
-      label: "GCash",
-      accountNumber: "GCash: GE***L A** V.",
+      id: "Zelle",
+      src: "/monogram/Zelle.png",
+      label: "Zelle",
+      accountNumber: "Zelle: kenneth.brucelo@gmail.com",
     },
-    QR_2: {
-      id: "PNB",
-      src: "/desktop_background/image00003.jpeg",
-      label: "PNB",
-      accountNumber: "PNB Account",
-    },
-    QR_3: {
-      id: "BenefitPay",
-      src: "/desktop_background/image00002.jpeg",
-      label: "BenefitPay Transfer",
-      accountNumber: "BenefitPay",
-    },
+    // QR_2: {
+    //   id: "PNB",
+    //   src: "/desktop_background/image00003.jpeg",
+    //   label: "PNB",
+    //   accountNumber: "PNB Account",
+    // },
+    // QR_3: {
+    //   id: "BenefitPay",
+    //   src: "/desktop_background/image00002.jpeg",
+    //   label: "BenefitPay Transfer",
+    //   accountNumber: "BenefitPay",
+    // },
   },
   ceremony: {
-    location: "Cathedral of Our Lady of Arabia, Awali, Kingdom of Bahrain",
-    venue: "Cathedral of Our Lady of Arabia, Awali, Kingdom of Bahrain",
+    location: "St. Aedan’s Church",
+    venue: "800 Bergen Ave, Jersey City, NJ 07306",
     date: "July 4, 2026",
     day: "Saturday",
-    time: "10:00 AM",
-    entourageTime: "8:00 AM",
-    guestsTime: "8:30 AM",
+    time: "3:00 PM",
+    entourageTime: "2:00 PM",
+    guestsTime: "2:30 PM",
     image: "/Details/ceremony.png",
   },
   reception: {
-    location: "Pinoy Turo Party Hall, UmAlhassam, Kingdom of Bahrain",
-    venue: "Pinoy Turo Party Hall, UmAlhassam, Kingdom of Bahrain",
+    location: "The Highlawn",
+    venue: "1 Crest Dr. West Orange, NJ 07052",
     date: "July 4, 2026",
-    time: "11:30 AM",
-    image: ["/Details/reception.png","/Details/reception2.png"],
+    time: "5:00 PM",
+    image: ["/Details/reception1.png","/Details/reception.png"],
   },                          
   dressCode: {
       theme: "SEMI-FORMAL",
@@ -125,8 +125,8 @@ Now, as they prepare to say yes before God and the people they love most, Cather
     secondary: "#F5F5DC",
   },
   snapShare: {
-    googleDriveLink: "https://drive.google.com/drive/folders/1afJ-_8usKnZq41lE9GKq3H-fh5Hb_BxH?usp=sharing",
-    hashtag: ["#KaezarIsaiahnuelChristening","#KaezarIsaiahnuelChristeningCelebration"],
+    googleDriveLink: "https://drive.google.com/drive/folders/16pm7PhDtt52xLCq8Buz4yaV5-d_wB6Hu?usp=sharing",
+    hashtag: ["#CallieMarieChristening","#CallieMarieChristeningCelebration"],
     instructions: "Please scan this QR Code, create a folder with your name and upload the photos and videos you have taken during our wedding reception. We are delighted to see your snaps too!",
   },
 }

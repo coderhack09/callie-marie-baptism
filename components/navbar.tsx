@@ -5,6 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import StaggeredMenu from "./StaggeredMenu"
 import { siteConfig } from "@/content/site"
+import { C } from "@/components/loader/christening-theme"
 
 const navLinks = [
   { href: "#home", label: "Main" },
@@ -77,18 +78,18 @@ export function Navbar() {
     <nav
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-700 ease-out ${
         isScrolled
-          ? "backdrop-blur-xl shadow-[0_8px_32px_rgba(43,74,107,0.10)] border-b border-[#C4965A]/30"
-          : "backdrop-blur-lg border-b border-[#C4965A]/18"
+          ? "backdrop-blur-xl shadow-[0_8px_32px_rgba(107,61,79,0.08)] border-b"
+          : "backdrop-blur-lg border-b"
       }`}
       style={{
-        background: isScrolled
-          ? "rgba(255,255,255,0.97)"
-          : "rgba(255,255,255,0.92)",
+        background: isScrolled ? "rgba(255,251,247,0.97)" : "rgba(255,251,247,0.92)",
+        borderColor: isScrolled ? "rgba(232,196,204,0.45)" : "rgba(232,196,204,0.28)",
       }}
     >
-      {/* Gold bottom accent line */}
-      <div className="absolute bottom-0 left-0 right-0 h-px pointer-events-none"
-        style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
+      <div
+        className="absolute bottom-0 left-0 right-0 h-px pointer-events-none"
+        style={{ background: `linear-gradient(to right, transparent, rgba(201,168,108,0.40), transparent)` }}
+      />
 
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 relative">
         <div className="flex justify-between items-center h-14 sm:h-16 md:h-20">
@@ -104,14 +105,15 @@ export function Navbar() {
                 style={{
                   width: "100%", height: "100%",
                   objectFit: "contain",
-                  filter: "brightness(0) sepia(1) saturate(0.18) brightness(1.35)",
-                  opacity: 0.88,
+                  filter: "brightness(0) sepia(1) saturate(0.35) hue-rotate(295deg) brightness(1.15)",
+                  opacity: 0.90,
                 }}
               />
             </div>
-            {/* Gold glow on hover */}
-            <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-10"
-              style={{ background: "radial-gradient(circle, rgba(196,152,88,0.22) 0%, transparent 70%)" }} />
+            <div
+              className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-10"
+              style={{ background: `radial-gradient(circle, rgba(232,196,204,0.35) 0%, transparent 70%)` }}
+            />
           </Link>
 
           <div className="hidden md:flex gap-1 items-center">
@@ -123,28 +125,34 @@ export function Navbar() {
                   href={link.href}
                   className={`px-3 lg:px-4 py-2 text-xs lg:text-sm uppercase rounded-sm transition-all duration-500 relative group ${
                     isActive
-                      ? "bg-white/80 backdrop-blur-md shadow-[0_4px_16px_rgba(196,152,88,0.18)] border border-[rgba(196,152,88,0.45)]"
-                      : "hover:bg-white/70 hover:border hover:border-[rgba(196,152,88,0.35)] hover:shadow-[0_4px_14px_rgba(196,152,88,0.14)] hover:scale-105 active:scale-95 bg-transparent border border-transparent"
+                      ? "backdrop-blur-md shadow-[0_4px_16px_rgba(232,196,204,0.35)] border"
+                      : "hover:backdrop-blur-md hover:border hover:shadow-[0_4px_14px_rgba(232,196,204,0.22)] hover:scale-105 active:scale-95 bg-transparent border border-transparent"
                   }`}
                   style={{
                     fontFamily: '"Cinzel", serif',
                     fontWeight: isActive ? 600 : 400,
-                    color: isActive ? "#2B4A6B" : "rgba(43,74,107,0.72)",
+                    color: isActive ? C.roseDeep : "rgba(125,74,90,0.75)",
                     letterSpacing: "0.10em",
+                    ...(isActive
+                      ? { background: "rgba(255,253,249,0.85)", borderColor: "rgba(201,168,108,0.40)" }
+                      : {}),
                   }}
                 >
                   {link.label.toUpperCase()}
-                  {/* Gold underline */}
                   <span
                     className={`absolute bottom-0 left-0 h-px transition-all duration-500 rounded-full ${
                       isActive ? "w-full" : "w-0 group-hover:w-full"
                     }`}
-                    style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.70), transparent)" }}
+                    style={{ background: `linear-gradient(to right, transparent, rgba(201,168,108,0.65), transparent)` }}
                   />
-                  {/* Active gold dot */}
                   {isActive && (
-                    <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full animate-pulse"
-                      style={{ background: "#C4965A", boxShadow: "0 0 6px rgba(196,152,88,0.70)" }} />
+                    <div
+                      className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full animate-pulse"
+                      style={{
+                        background: C.gold,
+                        boxShadow: "0 0 6px rgba(201,168,108,0.75)",
+                      }}
+                    />
                   )}
                 </Link>
               )
@@ -153,25 +161,21 @@ export function Navbar() {
 
           <div className="md:hidden flex items-center h-full">
             <div className="relative">
-              <div className="absolute -inset-1 rounded-full pointer-events-none blur-md"
-                style={{ background: "radial-gradient(circle, rgba(196,152,88,0.22) 0%, transparent 70%)" }} />
+              <div
+                className="absolute -inset-1 rounded-full pointer-events-none blur-md"
+                style={{ background: `radial-gradient(circle, rgba(232,196,204,0.30) 0%, transparent 70%)` }}
+              />
               <StaggeredMenu
                 position="left"
                 items={menuItems}
                 socialItems={[]}
                 displaySocials={false}
                 displayItemNumbering={true}
-                menuButtonColor="var(--color-motif-deep)"
-                openMenuButtonColor="var(--color-motif-deep)"
+                menuButtonColor={C.roseDeep}
+                openMenuButtonColor={C.roseDeep}
                 changeMenuColorOnOpen={true}
-                colors={[
-                  "var(--color-motif-deep)",
-                  "var(--color-motif-medium)",
-                  "var(--color-motif-cream)",
-                  "var(--color-motif-soft)",
-                  "var(--color-motif-silver)"
-                ]}
-                accentColor="var(--color-motif-accent)"
+                colors={[C.peonySoft, C.blush, C.champagne, C.blushSoft]}
+                accentColor={C.gold}
                 isFixed={true}
                 onMenuOpen={() => {}}
                 onMenuClose={() => {}}

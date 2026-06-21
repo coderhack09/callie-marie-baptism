@@ -2,55 +2,36 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
-import { Section } from "@/components/section"
-import { CloudinaryImage } from "@/components/ui/cloudinary-image"
 import { getCloudinaryUrl } from "@/lib/cloudinary"
+import { C, roseLine, text } from "@/components/loader/christening-theme"
+import { CornerFloralDecor, DiamondRule } from "@/components/loader/ChristeningDecor"
+import { ChristeningParticles } from "@/components/loader/ChristeningParticles"
 
-/** Returns the Cloudinary URL if CLOUD_NAME is set, otherwise the local public path. */
 function imgSrc(path: string, width: number): string {
   return getCloudinaryUrl(path, { width, quality: "auto" })
 }
 
-/** Falls back to the local public path on any load error (e.g. not yet uploaded). */
 function onImgError(e: React.SyntheticEvent<HTMLImageElement>, fallback: string) {
   const img = e.currentTarget
-  if (img.src !== fallback) {
-    img.src = fallback
-  }
+  if (img.src !== fallback) img.src = fallback
 }
-// Removed circular gallery in favor of a responsive masonry layout
-
-// ── Motif palette ─────────────────────────────────────────────────────────────
-const DEEP   = "#8B6F5A"
-const MEDIUM = "#BFA07A"
-const ACCENT = "#CFA06B"
 
 const galleryItems = [
-  { image: "/gallery/baby (1).jpg"  },
-  { image: "/gallery/baby (2).jpg"  },
-  { image: "/gallery/baby (3).jpg"  },
-  { image: "/gallery/baby (4).jpg"  },
-  { image: "public/gallery/baby (1).jpg"  },
-  { image: "/mobile_display/baby (3).jpg"  },
-  { image: "/mobile_display/baby (4).jpg"  },
-  { image: "/mobile_display/baby (5).jpg"  },
-  { image: "/mobile_display/baby (6).jpg"  },
-  { image: "/mobile_display/baby (8).jpg"  },
-  { image: "/mobile_display/baby (9).jpg"  },
-  { image: "/mobile_display/baby (11).jpg" },
-  { image: "/mobile_display/baby (13).jpg" },
-  { image: "/mobile_display/baby (15).jpg" },
-  { image: "/mobile_display/baby (17).jpg" },
-  { image: "/mobile_display/baby (18).jpg" },
-  { image: "/mobile_display/baby (20).jpg" },
-  { image: "/mobile_display/baby (21).jpg" },
+  { image: "/desktop_background/box1.jpg" },
+  { image: "/desktop_background/box2.jpg" },
+  { image: "/desktop_background/box3.jpg" },
+  { image: "/desktop_background/box4.jpg" },
 ]
+
+const tileStyle = {
+  border: `1.5px solid ${C.blushDeep}`,
+  boxShadow: "0 8px 32px rgba(107,61,79,0.08), inset 0 1px 0 rgba(255,255,255,0.70)",
+} as const
 
 export function Gallery() {
   const [selectedImage, setSelectedImage] = useState<(typeof galleryItems)[0] | null>(null)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
-  // reserved for potential skeleton tracking; not used after fade-in simplification
   const [touchStartX, setTouchStartX] = useState<number | null>(null)
   const [touchDeltaX, setTouchDeltaX] = useState(0)
   const [zoomScale, setZoomScale] = useState(1)
@@ -61,19 +42,16 @@ export function Gallery() {
   const [panStart, setPanStart] = useState<{ x: number; y: number; panX: number; panY: number } | null>(null)
 
   useEffect(() => {
-    // Simulate loading for better UX
     const timer = setTimeout(() => setIsLoading(false), 500)
     return () => clearTimeout(timer)
   }, [])
 
-  const navigateImage = useCallback((direction: 'prev' | 'next') => {
+  const navigateImage = useCallback((direction: "prev" | "next") => {
     setCurrentIndex((prevIndex) => {
-      let newIndex = prevIndex
-      if (direction === 'next') {
-        newIndex = (prevIndex + 1) % galleryItems.length
-      } else {
-        newIndex = (prevIndex - 1 + galleryItems.length) % galleryItems.length
-      }
+      const newIndex =
+        direction === "next"
+          ? (prevIndex + 1) % galleryItems.length
+          : (prevIndex - 1 + galleryItems.length) % galleryItems.length
       setSelectedImage(galleryItems[newIndex])
       return newIndex
     })
@@ -82,28 +60,19 @@ export function Gallery() {
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (!selectedImage) return
-      if (e.key === 'ArrowLeft') navigateImage('prev')
-      if (e.key === 'ArrowRight') navigateImage('next')
-      if (e.key === 'Escape') setSelectedImage(null)
+      if (e.key === "ArrowLeft") navigateImage("prev")
+      if (e.key === "ArrowRight") navigateImage("next")
+      if (e.key === "Escape") setSelectedImage(null)
     }
-
-    window.addEventListener('keydown', handleKeyPress)
-    return () => window.removeEventListener('keydown', handleKeyPress)
+    window.addEventListener("keydown", handleKeyPress)
+    return () => window.removeEventListener("keydown", handleKeyPress)
   }, [selectedImage, currentIndex, navigateImage])
 
-  // Prevent background scroll when lightbox is open
   useEffect(() => {
-    if (selectedImage) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-    return () => {
-      document.body.style.overflow = ''
-    }
+    document.body.style.overflow = selectedImage ? "hidden" : ""
+    return () => { document.body.style.overflow = "" }
   }, [selectedImage])
 
-  // Preload adjacent images for smoother nav
   useEffect(() => {
     if (selectedImage) {
       const next = new window.Image()
@@ -120,274 +89,279 @@ export function Gallery() {
     setPanStart(null)
   }
 
+  const openImage = (item: (typeof galleryItems)[0], index: number) => {
+    setSelectedImage(item)
+    setCurrentIndex(index)
+  }
+
   return (
-    <div
-      className="relative w-full"
-      style={{ backgroundColor: 'var(--color-motif-cream)' }}
+    <section
+      id="gallery"
+      className="relative overflow-hidden py-14 sm:py-20 md:py-24 lg:py-28"
+      style={{
+        background: `linear-gradient(175deg, ${C.ivory} 0%, ${C.champagne} 35%, ${C.blushSoft} 100%)`,
+      }}
     >
-      {/* Full-bleed layered background — same as hero (inline styles so it always applies) */}
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div
-          className="absolute inset-0 opacity-[0.25]"
-          style={{
-            background: 'linear-gradient(165deg, var(--color-motif-cream) 0%, color-mix(in srgb, var(--color-motif-soft) 13%, transparent) 35%, color-mix(in srgb, var(--color-motif-medium) 6%, transparent) 70%, color-mix(in srgb, var(--color-motif-deep) 5%, transparent) 100%)',
-          }}
-        />
-        <div
-          className="absolute inset-0 opacity-[0.08]"
-          style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 15%, var(--color-motif-soft) 0%, transparent 55%)' }}
-        />
-      </div>
+      <div
+        className="pointer-events-none absolute inset-0"
+        aria-hidden
+        style={{
+          background: `
+            radial-gradient(ellipse 70% 50% at 50% 0%, rgba(255,253,249,0.90) 0%, transparent 70%),
+            radial-gradient(ellipse 40% 30% at 10% 80%, rgba(245,221,224,0.35) 0%, transparent 70%),
+            radial-gradient(ellipse 40% 30% at 90% 75%, rgba(232,196,204,0.28) 0%, transparent 70%)
+          `,
+        }}
+      />
 
-      <Section
-        id="gallery"
-        className="relative z-10 py-16 sm:py-20 md:py-24 lg:py-28"
-      >
-      {/* Corner floral decoration - aligned with Details section */}
-      <div className="absolute inset-0 pointer-events-none z-[1]">
-       
-      </div>
+      <ChristeningParticles scoped opacity={0.38} />
+      <CornerFloralDecor opacity={0.75} sizeClass="w-24 sm:w-36 md:w-44 lg:w-52" />
 
-      {/* Header */}
-      <div className="relative z-10 text-center mb-12 sm:mb-16 md:mb-20 px-4 sm:px-6">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
 
-        {/* Eyebrow */}
-        <p
-          className="garamond"
-          style={{
-            fontSize: "clamp(0.56rem, 2.2vw, 0.72rem)",
-            letterSpacing: "0.48em",
+        {/* Header */}
+        <div className="text-center mb-10 sm:mb-14 md:mb-16 max-w-lg mx-auto">
+          <p style={{
+            fontFamily: '"Cinzel", serif',
+            fontSize: "clamp(0.65rem, 2.4vw, 0.82rem)",
+            fontWeight: 600,
+            letterSpacing: "0.36em",
             textTransform: "uppercase",
-            color: ACCENT,
-            marginBottom: "0.5rem",
-            paddingRight: "0.48em",
-          }}
-        >
-          Precious Moments
-        </p>
-
-        {/* Ornament */}
-        <div className="flex items-center justify-center gap-3 mb-2">
-          <div className="h-px w-8 sm:w-12" style={{ background: `linear-gradient(to left, rgba(207,160,107,0.4), transparent)` }} />
-          <span style={{ color: ACCENT, fontSize: "7px", opacity: 0.7 }}>✦</span>
-          <div className="h-px w-8 sm:w-12" style={{ background: `linear-gradient(to right, rgba(207,160,107,0.4), transparent)` }} />
-        </div>
-
-        {/* Main title */}
-        <h2
-          className="gistesy"
-          style={{
-            fontSize: "clamp(2.4rem, 10vw, 5rem)",
-            color: DEEP,
-            lineHeight: 1.3,
-            letterSpacing: "-0.01em",
-            textShadow: `0 2px 24px rgba(139,111,90,0.12)`,
+            color: C.goldDeep,
             marginBottom: "0.6rem",
-            overflow: "visible",
-            paddingTop: "0.2em",
-          }}
-        >
+            paddingRight: "0.36em",
+          }}>
+            Precious Moments
+          </p>
+
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <div className="h-px w-10 sm:w-14" style={{ background: roseLine("left", 0.50) }} />
+            <div className="animate-pearl-pulse" style={{
+              width: "5px", height: "5px", borderRadius: "1px", transform: "rotate(45deg)",
+              background: C.gold, opacity: 0.75,
+            }} />
+            <div className="h-px w-10 sm:w-14" style={{ background: roseLine("right", 0.50) }} />
+          </div>
+
+          <h2 style={{
+            fontFamily: '"Cinzel", serif',
+            fontWeight: 700,
+            fontSize: "clamp(2.2rem, 9vw, 4.2rem)",
+            color: C.roseDeep,
+            lineHeight: 1.1,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            marginBottom: "0.8rem",
+          }}>
             Gallery
-        </h2>
+          </h2>
 
+          <DiamondRule width="clamp(180px, 55vw, 260px)" margin="0 auto" />
 
-        {/* Divider */}
-        <div className="flex items-center justify-center gap-3">
-          <div className="h-px w-10 sm:w-14" style={{ background: `linear-gradient(to left, rgba(207,160,107,0.45), transparent)` }} />
-          <span style={{ color: "#D4B896", fontSize: "5px" }}>◆</span>
-          <div className="h-px w-10 sm:w-14" style={{ background: `linear-gradient(to right, rgba(207,160,107,0.45), transparent)` }} />
+          <p style={{
+            fontFamily: '"Fahkwang", sans-serif',
+            fontWeight: 400,
+            fontSize: "clamp(0.82rem, 2.8vw, 0.96rem)",
+            color: text.body,
+            marginTop: "clamp(0.9rem, 2.8vw, 1.3rem)",
+            lineHeight: 1.7,
+            letterSpacing: "0.01em",
+          }}>
+            A glimpse of our little blessing — each photo a treasured memory
+          </p>
         </div>
-      </div>
 
-      {/* Gallery content */}
-      <div className="relative z-10 w-full">
-        <div className="flex justify-center px-4 sm:px-6 md:px-8">
-          <div className="max-w-6xl w-full">
-            {isLoading ? (
-              <div className="flex items-center justify-center h-64 sm:h-80 md:h-96">
-                <div className="w-12 h-12 border-[3px] border-motif-accent/30 border-t-motif-accent rounded-full animate-spin" />
-              </div>
-            ) : (
-              <>
-                {/* Mobile: swipeable sliding gallery (scroll-snap carousel) */}
-                <div className="sm:hidden">
-                  <div
-                    className="flex gap-3 overflow-x-auto px-1 pb-3 snap-x snap-mandatory scroll-px-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-                    aria-label="Gallery carousel"
-                  >
-                    {galleryItems.map((item, index) => (
-                      <button
-                        key={item.image + index}
-                        type="button"
-                        className="group relative snap-center shrink-0 w-[82%] overflow-hidden rounded-lg border border-motif-accent/40 transition-all duration-300 active:border-motif-accent/60"
-                        onClick={() => {
-                          setSelectedImage(item)
-                          setCurrentIndex(index)
-                        }}
-                        aria-label={`Open image ${index + 1}`}
-                      >
-                        <div className="relative aspect-[3/4] overflow-hidden">
-                          <img
-                            src={imgSrc(item.image, 600)}
-                            onError={(e) => onImgError(e, item.image)}
-                            alt={`Gallery image ${index + 1}`}
-                            loading="lazy"
-                            decoding="async"
-                            className="w-full h-full object-cover transition-transform duration-500 group-active:scale-[1.02]"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-active:opacity-100 transition-opacity duration-300" />
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-
-                  <p className="mt-2 text-center text-xs font-[family-name:var(--font-crimson)] tracking-wide" style={{ color: 'var(--color-motif-medium)' }}>
-                    Swipe to explore
-                  </p>
-                </div>
-
-                {/* Tablet/Desktop: existing grid */}
-                <div className="hidden sm:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5 lg:gap-6">
+        {/* Gallery grid */}
+        <div className="w-full">
+          {isLoading ? (
+            <div className="flex items-center justify-center h-64 sm:h-80 md:h-96">
+              <div
+                className="w-12 h-12 rounded-full animate-spin"
+                style={{
+                  border: `3px solid ${C.blushDeep}`,
+                  borderTopColor: C.gold,
+                }}
+              />
+            </div>
+          ) : (
+            <>
+              {/* Mobile carousel */}
+              <div className="sm:hidden">
+                <div
+                  className="flex gap-3 overflow-x-auto px-1 pb-3 snap-x snap-mandatory scroll-px-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                  aria-label="Gallery carousel"
+                >
                   {galleryItems.map((item, index) => (
                     <button
                       key={item.image + index}
                       type="button"
-                      className="group relative w-full overflow-hidden rounded-xl border border-motif-accent/40 transition-all duration-300 hover:border-motif-accent/60"
-                      onClick={() => {
-                        setSelectedImage(item)
-                        setCurrentIndex(index)
-                      }}
+                      className="group relative snap-center shrink-0 w-[82%] overflow-hidden rounded-xl transition-all duration-300 active:scale-[0.99]"
+                      style={tileStyle}
+                      onClick={() => openImage(item, index)}
                       aria-label={`Open image ${index + 1}`}
                     >
-                      <div className="relative aspect-[3/4] md:aspect-square overflow-hidden">
+                      <div className="relative aspect-[3/4] overflow-hidden">
                         <img
-                          src={imgSrc(item.image, 500)}
+                          src={imgSrc(item.image, 600)}
                           onError={(e) => onImgError(e, item.image)}
                           alt={`Gallery image ${index + 1}`}
                           loading="lazy"
                           decoding="async"
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          className="w-full h-full object-cover transition-transform duration-500 group-active:scale-[1.03]"
                         />
-                        {/* Gradient overlay on hover */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div
+                          className="absolute inset-0 opacity-0 group-active:opacity-100 transition-opacity duration-300"
+                          style={{ background: "linear-gradient(to top, rgba(107,61,79,0.45) 0%, transparent 55%)" }}
+                        />
                       </div>
                     </button>
                   ))}
                 </div>
-              </>
-            )}
+                <p style={{
+                  marginTop: "0.6rem",
+                  textAlign: "center",
+                  fontFamily: '"Cinzel", serif',
+                  fontSize: "clamp(0.55rem, 1.8vw, 0.68rem)",
+                  letterSpacing: "0.28em",
+                  textTransform: "uppercase",
+                  color: text.caption,
+                }}>
+                  Swipe to explore
+                </p>
+              </div>
 
-          </div>
+              {/* Tablet / desktop grid */}
+              <div className="hidden sm:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5 lg:gap-6">
+                {galleryItems.map((item, index) => (
+                  <button
+                    key={item.image + index}
+                    type="button"
+                    className="group relative w-full overflow-hidden rounded-xl transition-all duration-300 hover:-translate-y-0.5"
+                    style={tileStyle}
+                    onClick={() => openImage(item, index)}
+                    aria-label={`Open image ${index + 1}`}
+                  >
+                    <div className="relative aspect-[3/4] md:aspect-square overflow-hidden">
+                      <img
+                        src={imgSrc(item.image, 500)}
+                        onError={(e) => onImgError(e, item.image)}
+                        alt={`Gallery image ${index + 1}`}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <div
+                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        style={{ background: "linear-gradient(to top, rgba(107,61,79,0.50) 0%, transparent 55%)" }}
+                      />
+                      <div
+                        className="absolute bottom-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        style={{ background: `linear-gradient(to right, transparent, ${C.gold}, transparent)` }}
+                      />
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
 
-      {/* Lightbox Modal */}
+      {/* Lightbox */}
       {selectedImage && (
         <div
-          className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4"
-          onClick={() => {
-            setSelectedImage(null)
-            resetZoom()
-          }}
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4"
+          style={{ background: "rgba(43, 28, 35, 0.94)", backdropFilter: "blur(8px)" }}
+          onClick={() => { setSelectedImage(null); resetZoom() }}
         >
-            <div
-              className="relative max-w-6xl w-full h-full sm:h-auto flex flex-col items-center justify-center"
-              onTouchStart={(e) => {
-                if (e.touches.length === 1) {
-                  const now = Date.now()
-                  if (now - lastTap < 300) {
-                    setZoomScale((s) => (s > 1 ? 1 : 2))
-                    setPan({ x: 0, y: 0 })
-                  }
-                  setLastTap(now)
-                  const t = e.touches[0]
-                  setTouchStartX(t.clientX)
-                  setTouchDeltaX(0)
-                  if (zoomScale > 1) {
-                    setPanStart({ x: t.clientX, y: t.clientY, panX: pan.x, panY: pan.y })
-                  }
+          <div
+            className="relative max-w-6xl w-full h-full sm:h-auto flex flex-col items-center justify-center"
+            onTouchStart={(e) => {
+              if (e.touches.length === 1) {
+                const now = Date.now()
+                if (now - lastTap < 300) {
+                  setZoomScale((s) => (s > 1 ? 1 : 2))
+                  setPan({ x: 0, y: 0 })
                 }
-                if (e.touches.length === 2) {
-                  const dx = e.touches[0].clientX - e.touches[1].clientX
-                  const dy = e.touches[0].clientY - e.touches[1].clientY
-                  const dist = Math.hypot(dx, dy)
-                  setPinchStartDist(dist)
-                  setPinchStartScale(zoomScale)
-                }
-              }}
-              onTouchMove={(e) => {
-                if (e.touches.length === 2 && pinchStartDist) {
-                  const dx = e.touches[0].clientX - e.touches[1].clientX
-                  const dy = e.touches[0].clientY - e.touches[1].clientY
-                  const dist = Math.hypot(dx, dy)
-                  const scale = clamp((dist / pinchStartDist) * pinchStartScale, 1, 3)
-                  setZoomScale(scale)
-                } else if (e.touches.length === 1) {
-                  const t = e.touches[0]
-                  if (zoomScale > 1 && panStart) {
-                    const dx = t.clientX - panStart.x
-                    const dy = t.clientY - panStart.y
-                    setPan({ x: panStart.panX + dx, y: panStart.panY + dy })
-                  } else if (touchStartX !== null) {
-                    setTouchDeltaX(t.clientX - touchStartX)
-                  }
-                }
-              }}
-              onTouchEnd={() => {
-                setPinchStartDist(null)
-                setPanStart(null)
-                if (zoomScale === 1 && Math.abs(touchDeltaX) > 50) {
-                  navigateImage(touchDeltaX > 0 ? 'prev' : 'next')
-                }
-                setTouchStartX(null)
+                setLastTap(now)
+                const t = e.touches[0]
+                setTouchStartX(t.clientX)
                 setTouchDeltaX(0)
-              }}
-            >
-            {/* Top bar with counter and close */}
+                if (zoomScale > 1) {
+                  setPanStart({ x: t.clientX, y: t.clientY, panX: pan.x, panY: pan.y })
+                }
+              }
+              if (e.touches.length === 2) {
+                const dx = e.touches[0].clientX - e.touches[1].clientX
+                const dy = e.touches[0].clientY - e.touches[1].clientY
+                setPinchStartDist(Math.hypot(dx, dy))
+                setPinchStartScale(zoomScale)
+              }
+            }}
+            onTouchMove={(e) => {
+              if (e.touches.length === 2 && pinchStartDist) {
+                const dx = e.touches[0].clientX - e.touches[1].clientX
+                const dy = e.touches[0].clientY - e.touches[1].clientY
+                setZoomScale(clamp((Math.hypot(dx, dy) / pinchStartDist) * pinchStartScale, 1, 3))
+              } else if (e.touches.length === 1) {
+                const t = e.touches[0]
+                if (zoomScale > 1 && panStart) {
+                  setPan({ x: panStart.panX + t.clientX - panStart.x, y: panStart.panY + t.clientY - panStart.y })
+                } else if (touchStartX !== null) {
+                  setTouchDeltaX(t.clientX - touchStartX)
+                }
+              }
+            }}
+            onTouchEnd={() => {
+              setPinchStartDist(null)
+              setPanStart(null)
+              if (zoomScale === 1 && Math.abs(touchDeltaX) > 50) {
+                navigateImage(touchDeltaX > 0 ? "prev" : "next")
+              }
+              setTouchStartX(null)
+              setTouchDeltaX(0)
+            }}
+          >
             <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between p-4 sm:p-6">
-              {/* Image counter */}
-              <div className="backdrop-blur-md rounded-full px-4 py-2 border" style={{ backgroundColor: "rgba(0,0,0,0.4)", borderColor: 'color-mix(in srgb, var(--color-motif-accent) 50%, transparent)' }}>
-                <span className="text-sm sm:text-base font-medium text-motif-cream">
+              <div
+                className="backdrop-blur-md rounded-full px-4 py-2 border"
+                style={{ backgroundColor: "rgba(107,61,79,0.45)", borderColor: "rgba(201,168,108,0.45)" }}
+              >
+                <span style={{
+                  fontFamily: '"Cinzel", serif',
+                  fontSize: "clamp(0.72rem, 2.2vw, 0.88rem)",
+                  fontWeight: 600,
+                  color: C.pearl,
+                  letterSpacing: "0.08em",
+                }}>
                   {currentIndex + 1} / {galleryItems.length}
                 </span>
               </div>
-              
-              {/* Close button */}
+
               <button
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setSelectedImage(null)
-                  resetZoom()
-                }}
-                className="bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-full p-2 sm:p-3 transition-all duration-200 border border-white/20 hover:border-white/40"
+                onClick={(e) => { e.stopPropagation(); setSelectedImage(null); resetZoom() }}
+                className="backdrop-blur-md rounded-full p-2 sm:p-3 transition-all duration-200 border hover:scale-105"
+                style={{ backgroundColor: "rgba(107,61,79,0.45)", borderColor: "rgba(255,253,249,0.25)" }}
                 aria-label="Close lightbox"
               >
                 <X size={20} className="sm:w-6 sm:h-6 text-white" />
               </button>
             </div>
 
-            {/* Navigation buttons */}
             {galleryItems.length > 1 && (
               <>
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    navigateImage('prev')
-                    resetZoom()
-                  }}
-                  className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-full p-3 sm:p-4 transition-all duration-200 border border-white/20 hover:border-white/40"
+                  onClick={(e) => { e.stopPropagation(); navigateImage("prev"); resetZoom() }}
+                  className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 backdrop-blur-md rounded-full p-3 sm:p-4 transition-all duration-200 border hover:scale-105"
+                  style={{ backgroundColor: "rgba(107,61,79,0.45)", borderColor: "rgba(255,253,249,0.20)" }}
                   aria-label="Previous image"
                 >
                   <ChevronLeft size={24} className="sm:w-7 sm:h-7 text-white" />
                 </button>
-
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    navigateImage('next')
-                    resetZoom()
-                  }}
-                  className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-full p-3 sm:p-4 transition-all duration-200 border border-white/20 hover:border-white/40"
+                  onClick={(e) => { e.stopPropagation(); navigateImage("next"); resetZoom() }}
+                  className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 backdrop-blur-md rounded-full p-3 sm:p-4 transition-all duration-200 border hover:scale-105"
+                  style={{ backgroundColor: "rgba(107,61,79,0.45)", borderColor: "rgba(255,253,249,0.20)" }}
                   aria-label="Next image"
                 >
                   <ChevronRight size={24} className="sm:w-7 sm:h-7 text-white" />
@@ -395,31 +369,29 @@ export function Gallery() {
               </>
             )}
 
-            {/* Image container */}
             <div className="relative w-full h-full flex items-center justify-center pt-16 sm:pt-20 pb-4 sm:pb-6 overflow-hidden">
-              <div
-                className="relative inline-block max-w-full max-h-full"
-                onClick={(e) => e.stopPropagation()}
-              >
+              <div className="relative inline-block max-w-full max-h-full" onClick={(e) => e.stopPropagation()}>
                 <img
                   src={imgSrc(selectedImage.image, 1200)}
                   onError={(e) => onImgError(e, selectedImage.image)}
                   alt="Gallery image"
-                  style={{ 
-                    transform: `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${zoomScale})`, 
-                    transition: pinchStartDist ? 'none' : 'transform 200ms ease-out' 
+                  style={{
+                    transform: `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${zoomScale})`,
+                    transition: pinchStartDist ? "none" : "transform 200ms ease-out",
                   }}
                   className="max-w-full max-h-[75vh] sm:max-h-[85vh] object-contain rounded-lg shadow-2xl will-change-transform"
                 />
-                
-                {/* Zoom reset button */}
                 {zoomScale > 1 && (
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      resetZoom()
+                    onClick={(e) => { e.stopPropagation(); resetZoom() }}
+                    className="absolute bottom-2 right-2 backdrop-blur-md rounded-full px-3 py-1.5 text-xs font-medium border transition-all duration-200"
+                    style={{
+                      backgroundColor: "rgba(107,61,79,0.55)",
+                      borderColor: "rgba(201,168,108,0.40)",
+                      color: C.pearl,
+                      fontFamily: '"Cinzel", serif',
+                      letterSpacing: "0.12em",
                     }}
-                    className="absolute bottom-2 right-2 bg-black/60 hover:bg-black/80 backdrop-blur-md text-white rounded-full px-3 py-1.5 text-xs font-medium border border-white/20 transition-all duration-200"
                   >
                     Reset Zoom
                   </button>
@@ -427,10 +399,19 @@ export function Gallery() {
               </div>
             </div>
 
-            {/* Bottom hint for mobile */}
             {galleryItems.length > 1 && (
               <div className="absolute bottom-2 left-1/2 -translate-x-1/2 sm:hidden z-20">
-                <p className="text-xs text-white/60 bg-black/40 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/10">
+                <p style={{
+                  fontFamily: '"Cinzel", serif',
+                  fontSize: "0.65rem",
+                  letterSpacing: "0.20em",
+                  color: "rgba(255,253,249,0.70)",
+                  backgroundColor: "rgba(107,61,79,0.40)",
+                  backdropFilter: "blur(4px)",
+                  borderRadius: "9999px",
+                  padding: "0.4rem 0.85rem",
+                  border: "1px solid rgba(255,253,249,0.12)",
+                }}>
                   Swipe to navigate
                 </p>
               </div>
@@ -438,7 +419,6 @@ export function Gallery() {
           </div>
         </div>
       )}
-      </Section>
-    </div>
+    </section>
   )
 }

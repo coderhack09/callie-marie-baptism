@@ -4,65 +4,21 @@ import React from "react"
 import { useState, useEffect, useRef } from "react"
 import { principalSponsors as staticSponsors } from "@/content/site"
 import { Loader2 } from "lucide-react"
-import Image from "next/image"
+import { C, text } from "@/components/loader/christening-theme"
+import { CornerFloralDecor } from "@/components/loader/ChristeningDecor"
+import { ChristeningParticles } from "@/components/loader/ChristeningParticles"
 
-// ── Palette — aligned with loader/Hero.tsx ────────────────────────────────────
-const DARK_NAVY   = "#1C3050"
-const GOLD        = "#C4965A"
-const NAVY_MUTE   = "rgba(65,90,115,0.78)"
-
-const FROSTED_CARD = {
-  background: "rgba(255,255,255,0.30)",
-  backdropFilter: "blur(14px)",
-  WebkitBackdropFilter: "blur(14px)",
-  border: "1.5px solid rgba(43,74,107,0.22)",
-  boxShadow: "0 4px 24px rgba(43,74,107,0.08), 0 1px 0 rgba(255,255,255,0.55) inset",
+const cardStyle = {
+  background: `linear-gradient(170deg, ${C.ivory} 0%, ${C.blushSoft} 48%, ${C.champagne} 100%)`,
+  border: `1.5px solid ${C.blushDeep}`,
+  boxShadow: "0 20px 64px rgba(107,61,79,0.08), 0 2px 10px rgba(232,196,204,0.20), inset 0 1px 0 rgba(255,255,255,0.90)",
 } as const
-
-function OrnamentDivider({ width = "240px" }: { width?: string }) {
-  return (
-    <div className="flex items-center justify-center gap-2" style={{ maxWidth: width, margin: "0 auto" }}>
-      <div className="h-px flex-1" style={{ background: "linear-gradient(to left, rgba(196,152,88,0.45), transparent)" }} />
-      <div style={{ width: "6px", height: "6px", borderRadius: "1px", transform: "rotate(45deg)", background: "rgba(196,152,88,0.68)", flexShrink: 0 }} />
-      <div className="h-px flex-1" style={{ background: "linear-gradient(to right, rgba(196,152,88,0.45), transparent)" }} />
-    </div>
-  )
-}
-
-// ── Floating bokeh orbs ───────────────────────────────────────────────────────
-function BokehOrbs() {
-  const orbs = [
-    { w: 380, h: 380, top: "4%",  left: "2%",  color: "rgba(120,175,215,1)", opacity: 0.08, blur: 100 },
-    { w: 260, h: 260, top: "18%", left: "70%", color: "rgba(196,152,88,1)",  opacity: 0.08, blur: 80  },
-    { w: 300, h: 300, top: "55%", left: "8%",  color: "rgba(196,152,88,1)",  opacity: 0.07, blur: 90  },
-    { w: 220, h: 220, top: "70%", left: "76%", color: "rgba(120,175,215,1)", opacity: 0.08, blur: 70  },
-    { w: 170, h: 170, top: "38%", left: "44%", color: "rgba(196,152,88,1)",  opacity: 0.06, blur: 60  },
-  ]
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden>
-      {orbs.map((o, i) => (
-        <div
-          key={i}
-          className="absolute rounded-full"
-          style={{
-            width: o.w, height: o.h,
-            top: o.top, left: o.left,
-            background: o.color,
-            opacity: o.opacity,
-            filter: `blur(${o.blur}px)`,
-          }}
-        />
-      ))}
-    </div>
-  )
-}
 
 interface PrincipalSponsor {
   MalePrincipalSponsor: string
   FemalePrincipalSponsor: string
 }
 
-/** Returns true if a name appears to carry a female title */
 function isFemaleTitle(name: string): boolean {
   return /^(Mrs\.|Dra\.|Miss\b|Ma\.\s|Vice\s|Madam\b)/i.test(name.trim())
 }
@@ -76,7 +32,6 @@ function mapStaticSponsors(): PrincipalSponsor[] {
     }))
 }
 
-/** Separate raw sponsor pairs into two flat lists: Ninong and Ninang */
 function splitSponsors(sponsors: PrincipalSponsor[]): {
   ninongs: string[]
   ninangs: string[]
@@ -103,7 +58,6 @@ function splitSponsors(sponsors: PrincipalSponsor[]): {
   return { ninongs, ninangs }
 }
 
-/** Split a flat name list into left/right columns; odd count centers the last name */
 function splitIntoTwoColumns(names: string[]): {
   left: string[]
   right: string[]
@@ -122,9 +76,10 @@ function splitIntoTwoColumns(names: string[]): {
 
 const NAME_STYLE = {
   fontFamily: '"Fahkwang", sans-serif',
-  fontSize: "clamp(0.78rem, 2.5vw, 0.92rem)",
-  color: DARK_NAVY,
-  lineHeight: 1.65,
+  fontSize: "clamp(0.82rem, 2.6vw, 0.96rem)",
+  color: text.body,
+  lineHeight: 1.7,
+  fontWeight: 500,
 } as const
 
 function GodparentNameGrid({
@@ -197,21 +152,23 @@ function GodparentSection({
   names,
   isVisible,
   rowOffset = 0,
+  className = "",
 }: {
   title: string
   names: string[]
   isVisible: boolean
   rowOffset?: number
+  className?: string
 }) {
   if (names.length === 0) return null
 
   return (
-    <div className="text-center">
+    <div className={`text-center ${className}`}>
       <h3
         style={{
           fontFamily: '"LeJourScript", cursive',
           fontSize: "clamp(1.5rem, 5vw, 2.4rem)",
-          color: DARK_NAVY,
+          color: C.roseDeep,
           lineHeight: 1.15,
           marginBottom: "1.25rem",
         }}
@@ -259,142 +216,132 @@ export function Entourage() {
       ([entry]) => { if (entry.isIntersecting) setIsVisible(true) },
       { threshold: 0.06 }
     )
-    if (sectionRef.current) observer.observe(sectionRef.current)
-    return () => { if (sectionRef.current) observer.unobserve(sectionRef.current) }
+    const node = sectionRef.current
+    if (node) observer.observe(node)
+    return () => { if (node) observer.unobserve(node) }
   }, [])
 
   const { ninongs, ninangs } = splitSponsors(sponsors)
 
   return (
-    <div className="relative w-full overflow-hidden">
+    <section
+      ref={sectionRef}
+      id="entourage"
+      className="relative overflow-hidden py-14 sm:py-20 md:py-24"
+      style={{
+        background: `linear-gradient(175deg, ${C.ivory} 0%, ${C.champagne} 32%, ${C.blushSoft} 100%)`,
+      }}
+    >
+      <div
+        className="pointer-events-none absolute inset-0"
+        aria-hidden
+        style={{
+          background: `
+            radial-gradient(ellipse 70% 50% at 50% 15%, rgba(255,253,249,0.92) 0%, transparent 70%),
+            radial-gradient(ellipse 35% 28% at 10% 85%, rgba(245,221,224,0.38) 0%, transparent 70%),
+            radial-gradient(ellipse 35% 28% at 90% 80%, rgba(232,196,204,0.30) 0%, transparent 70%)
+          `,
+        }}
+      />
 
-      {/* Solid base */}
-      <div className="absolute inset-0 -z-10" style={{ background: "#FFFFFF" }} />
+      <ChristeningParticles scoped opacity={0.35} />
+      <CornerFloralDecor opacity={0.72} sizeClass="w-24 sm:w-36 md:w-44 lg:w-52" />
 
-      <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: "radial-gradient(ellipse 55% 45% at 50% 30%, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.6) 45%, transparent 75%)",
-      }} />
-
-      <div className="absolute inset-0 -z-10 pointer-events-none" style={{
-        background: "linear-gradient(to top, rgba(120,175,215,0.10) 0%, rgba(120,175,215,0.04) 25%, transparent 55%)",
-      }} />
-
-      <div className="absolute inset-0 pointer-events-none z-0" aria-hidden style={{
-        background: `
-          radial-gradient(ellipse 50% 40% at 50% 28%, rgba(196,152,88,0.06) 0%, transparent 70%),
-          radial-gradient(ellipse 38% 32% at 50% 78%, rgba(120,175,215,0.08) 0%, transparent 65%)
-        `,
-      }} />
-
-      <BokehOrbs />
-
-      <section
-        ref={sectionRef}
-        id="entourage"
-        className="relative z-10 py-12 md:py-16 lg:py-20 overflow-hidden"
+      {/* Section header */}
+      <div
+        className={`relative z-10 max-w-3xl mx-auto px-4 sm:px-6 mb-8 sm:mb-10 text-center transition-all duration-1000 ${
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+        }`}
       >
-        {/* Corner florals */}
-        <div className="absolute inset-0 pointer-events-none z-[1]" aria-hidden>
-          <Image src="/decoration/left-top-removebg-preview.png"    alt="" width={180} height={180} className="absolute top-0 left-0  w-auto h-auto max-w-[100px] sm:max-w-[140px] md:max-w-[180px] opacity-40" />
-          <Image src="/decoration/right-top-removebg-preview.png"   alt="" width={180} height={180} className="absolute top-0 right-0 w-auto h-auto max-w-[100px] sm:max-w-[140px] md:max-w-[180px] opacity-40" />
-          <Image src="/decoration/bottom-left-removebg-preview.png"  alt="" width={180} height={180} className="absolute bottom-0 left-0  w-auto h-auto max-w-[100px] sm:max-w-[140px] md:max-w-[180px] opacity-40" />
-          <Image src="/decoration/bottom-right-removebg-preview.png" alt="" width={180} height={180} className="absolute bottom-0 right-0 w-auto h-auto max-w-[100px] sm:max-w-[140px] md:max-w-[180px] opacity-40" />
-        </div>
+        <p style={{
+          fontFamily: '"Cinzel", serif',
+          fontSize: "clamp(0.65rem, 2.4vw, 0.82rem)",
+          fontWeight: 600,
+          letterSpacing: "0.36em",
+          textTransform: "uppercase",
+          color: C.goldDeep,
+          marginBottom: "0.6rem",
+          paddingRight: "0.36em",
+        }}>
+          Guided by Faith &amp; Love
+        </p>
 
-        {/* ── Section header ──────────────────────────────────────────── */}
-        <div
-          className={`relative z-30 max-w-3xl mx-auto px-4 sm:px-6 mb-7 text-center transition-all duration-1000 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
-        >
-          <OrnamentDivider />
+        <h2 style={{
+          fontFamily: '"Cinzel", serif',
+          fontWeight: 700,
+          fontSize: "clamp(1.8rem, 7.5vw, 3.2rem)",
+          color: C.roseDeep,
+          lineHeight: 1.1,
+          letterSpacing: "0.06em",
+          textTransform: "uppercase",
+        }}>
+          My Godparents
+        </h2>
 
-          <h2
-            className="mt-4"
-            style={{
-              fontFamily: '"Cinzel", serif',
-              fontWeight: 600,
-              fontSize: "clamp(1.6rem, 7vw, 3.2rem)",
-              color: NAVY_MUTE,
-              lineHeight: 1.1,
-              letterSpacing: "0.02em",
-            }}>
-            My Godparents
-          </h2>
+        <p style={{
+          fontFamily: '"Fahkwang", sans-serif',
+          fontSize: "clamp(0.88rem, 2.8vw, 1.02rem)",
+          color: text.body,
+          lineHeight: 1.8,
+          maxWidth: "36rem",
+          margin: "0.9rem auto 0",
+        }}>
+          Mommy and Daddy chose these wonderful people to guide me with love, faith, and prayers as I grow.
+        </p>
+      </div>
 
-          <p style={{
-            fontFamily: '"Fahkwang", sans-serif',
-            fontSize: "clamp(0.80rem, 2.6vw, 0.92rem)",
-            color: NAVY_MUTE,
-            lineHeight: 1.75,
-            maxWidth: "36rem",
-            margin: "1rem auto 0",
-          }}>
-            Mommy and Daddy chose these wonderful people to guide me with love, faith, and prayers as I grow.
-          </p>
-        </div>
-
-        {/* ── Sponsors Card ───────────────────────────────────────────── */}
-        <div
-          className={`relative z-30 max-w-4xl mx-auto px-3 sm:px-5 pb-6 transition-all duration-1000 delay-200 ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
-        >
+      {/* Sponsors card */}
+      <div
+        className={`relative z-10 max-w-4xl mx-auto px-3 sm:px-5 pb-2 transition-all duration-1000 delay-200 ${
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+        }`}
+      >
+        <div className="relative rounded-3xl overflow-hidden isolate" style={cardStyle}>
           <div
-            className="relative rounded-3xl overflow-hidden"
-            style={FROSTED_CARD}
-          >
-            {isLoading ? (
-              <div className="p-5 sm:p-7 md:p-9 space-y-6">
-                {Array.from({ length: 2 }).map((_, section) => (
-                  <div key={section} className="space-y-3">
-                    <div className="h-8 rounded-lg mx-auto animate-pulse" style={{ width: "45%", background: "rgba(43,74,107,0.08)" }} />
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {Array.from({ length: 6 }).map((_, i) => (
-                        <div key={i} className="h-5 rounded-lg animate-pulse" style={{ width: `${70 + (i % 3) * 8}%`, background: "rgba(43,74,107,0.08)" }} />
-                      ))}
-                    </div>
+            className="pointer-events-none absolute inset-[1px] rounded-[inherit]"
+            aria-hidden
+            style={{ border: "1px solid rgba(201,168,108,0.18)" }}
+          />
+
+          {isLoading ? (
+            <div className="relative p-5 sm:p-7 md:p-9 space-y-6">
+              {Array.from({ length: 2 }).map((_, section) => (
+                <div key={section} className="space-y-3">
+                  <div className="h-8 rounded-lg mx-auto animate-pulse" style={{ width: "45%", background: C.blushSoft }} />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <div key={i} className="h-5 rounded-lg animate-pulse" style={{ width: `${70 + (i % 3) * 8}%`, background: C.blushSoft }} />
+                    ))}
                   </div>
-                ))}
-                <div className="flex justify-center pt-2 gap-2">
-                  <Loader2 className="h-5 w-5 animate-spin" style={{ color: GOLD, opacity: 0.65 }} />
-                  <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "0.82rem", color: NAVY_MUTE, fontStyle: "italic" }}>Loading godparents…</span>
                 </div>
+              ))}
+              <div className="flex justify-center pt-2 gap-2">
+                <Loader2 className="h-5 w-5 animate-spin" style={{ color: C.goldDeep }} />
+                <span style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "0.88rem", color: text.caption, fontStyle: "italic" }}>
+                  Loading godparents…
+                </span>
               </div>
-            ) : (
-              <div className="p-4 sm:p-6 md:p-8 space-y-10 sm:space-y-12">
+            </div>
+          ) : (
+            <div className="relative p-4 sm:p-6 md:p-8 space-y-10 sm:space-y-12">
+              <GodparentSection
+                title="My Ninangs"
+                names={ninangs}
+                isVisible={isVisible}
+                rowOffset={0}
+                className="mt-8 sm:mt-10 md:mt-12"
+              />
 
-                <div className="h-px" style={{ background: "linear-gradient(to right, transparent, rgba(196,152,88,0.35), transparent)" }} />
-
-                <GodparentSection
-                  title="My Ninangs"
-                  names={ninangs}
-                  isVisible={isVisible}
-                  rowOffset={0}
-                />
-
-                {ninangs.length > 0 && ninongs.length > 0 && (
-                  <div className="py-1">
-                    <OrnamentDivider width="100%" />
-                  </div>
-                )}
-
-                <GodparentSection
-                  title="My Ninongs"
-                  names={ninongs}
-                  isVisible={isVisible}
-                  rowOffset={ninangs.length}
-                />
-
-                <div className="pt-2">
-                  <OrnamentDivider width="100%" />
-                </div>
-
-              </div>
-            )}
-          </div>
+              <GodparentSection
+                title="My Ninongs"
+                names={ninongs}
+                isVisible={isVisible}
+                rowOffset={ninangs.length}
+              />
+            </div>
+          )}
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   )
 }
