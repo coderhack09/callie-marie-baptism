@@ -158,7 +158,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
         </div>
 
         <div style={vis(5, "0ms")}>
-          <p style={nameStyles.parentLabel}>Son of</p>
+          <p style={nameStyles.parentLabel}>Daughter of</p>
           <p style={nameStyles.parentNames}>{siteConfig.couple.parents}</p>
         </div>
       </div>

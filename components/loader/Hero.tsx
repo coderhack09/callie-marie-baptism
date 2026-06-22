@@ -76,7 +76,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpen, visible }) => {
 
         <FadeIn show={visible} delay={780}>
           <div style={{ marginBottom: "clamp(1.1rem,3.2vw,1.6rem)" }}>
-            <p style={nameStyles.parentLabel}>Son of</p>
+            <p style={nameStyles.parentLabel}>Daughter of</p>
             <p style={nameStyles.parentNames}>{siteConfig.couple.parents}</p>
           </div>
         </FadeIn>

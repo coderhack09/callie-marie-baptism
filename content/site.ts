@@ -12,7 +12,7 @@ export const siteConfig = {
     child: "Callie Marie",
     childNickname: "King",
     monogram:"/monogram/monog.png" ,//Ltryl
-    backgroundMusic:"/background_music/For This Child - Baby Dedication Song - Ken Blount.mp3",
+    backgroundMusic:"/background_music/I Get to Love You (Piano Instrumental).mp3",
     parents: "Jhoana Marie & Anthony Shane R. Blas",
   },
   googleAPI:{
@@ -42,8 +42,8 @@ export const siteConfig = {
   },
   details: {
     rsvp: {
-      deadline: "JULY 4, 2026",
-      contact: "Kaezar Isaiah Nathaniel Gallardo",
+      deadline: "JULY 5, 2026",
+      contact: "Kenneth Erwin Brucelo Jose",
       phone: "+973 3999 9999",
     },
   },
@@ -52,7 +52,7 @@ export const siteConfig = {
       id: "Zelle",
       src: "/monogram/Zelle.png",
       label: "Zelle",
-      accountNumber: "Zelle: kenneth.brucelo@gmail.com",
+      accountNumber: "Zelle: Jhoanablas24@gmail.com",
     },
     // QR_2: {
     //   id: "PNB",
@@ -74,7 +74,7 @@ export const siteConfig = {
     day: "Sunday",
     time: "3:00 PM",
     entourageTime: "2:00 PM",
-    guestsTime: "2:30 PM",
+    guestsTime: "2:45 PM",
     image: "/Details/ceremony.png",
   },
   reception: {

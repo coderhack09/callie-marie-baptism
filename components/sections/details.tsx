@@ -556,7 +556,7 @@ export function Details() {
       </div>
 
       {/* Dress code */}
-      <motion.div
+      {/* <motion.div
         className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 mb-12 sm:mb-16"
         custom={2}
         variants={fadeUp}
@@ -658,7 +658,7 @@ export function Details() {
             </div>
           </div>
         </div>
-      </motion.div>
+      </motion.div> */}
 
       {/* Gentle reminders */}
       <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 mb-12 sm:mb-16">

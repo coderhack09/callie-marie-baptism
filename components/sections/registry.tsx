@@ -138,7 +138,7 @@ export function Registry() {
               maxWidth: "36rem",
               marginInline: "auto",
             }}>
-              &ldquo;Your love, prayers, and presence are the greatest gifts I could ever receive.&rdquo;
+              As we gather to celebrate our daughter&apos;s Baptism, your presence, love, and prayers are the greatest gifts we could receive.
             </p>
             <p style={{
               fontFamily: '"Fahkwang", sans-serif',
@@ -148,7 +148,7 @@ export function Registry() {
               maxWidth: "36rem",
               marginInline: "auto",
             }}>
-              Should you wish to bless me with something more, Mommy and Daddy would sincerely appreciate a small contribution toward my future and the many adventures waiting for me ahead.
+              Should you wish to bless her with a gift, a monetary contribution would be sincerely appreciated, as she is already fortunate to have all the essentials she needs. Your generosity will help support her future as she grows.
             </p>
           </div>
 
@@ -295,7 +295,7 @@ export function Registry() {
               lineHeight: 1.8,
               marginBottom: "1rem",
             }}>
-              Thank you for your kindness, love, and generosity toward my future adventures.
+              Thank you for sharing in this special and meaningful day with our family.
             </p>
             <p style={{
               fontFamily: '"LeJourScript", cursive',

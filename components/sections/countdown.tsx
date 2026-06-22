@@ -452,7 +452,7 @@ export function Countdown() {
             maxWidth: "clamp(16rem, 90%, 26rem)",
             marginTop: "clamp(0.9rem,2.8vw,1.3rem)",
           }}>
-            {siteConfig.ceremony.venue}
+            {siteConfig.ceremony.location}
           </p>
         </motion.div>
       </div>

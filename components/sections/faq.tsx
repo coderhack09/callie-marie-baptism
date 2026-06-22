@@ -56,7 +56,7 @@ const faqItems: FAQItem[] = [
   },
   {
     question: "What time should I arrive?",
-    answer: `The christening ceremony will begin promptly at ${siteConfig.ceremony.time}. We kindly ask guests to arrive 30–45 minutes early to allow time for parking, settling in, and finding your seats — so we may begin this blessed celebration on time and in peace.`,
+    answer: `The christening ceremony will begin promptly at ${siteConfig.ceremony.time}. We kindly ask guests to arrive not later than ${siteConfig.ceremony.guestsTime} to allow time for parking, settling in, and finding your seats — so we may begin this blessed celebration on time and in peace.`,
   },
   {
     question: "Where will the ceremony and reception take place?",
@@ -64,7 +64,7 @@ const faqItems: FAQItem[] = [
   },
   {
     question: "Is there a call time for Principal Sponsors?",
-    answer: `Yes. We kindly request all Ninongs and Ninangs to arrive by ${siteConfig.ceremony.entourageTime} so we can prepare and gather together before the ceremony begins. Your presence and guidance are deeply meaningful to us.`,
+    answer: `Yes. We kindly request all Ninongs and Ninangs to arrive by ${siteConfig.ceremony.guestsTime} so we can prepare and gather together before the ceremony begins. Your presence and guidance are deeply meaningful to us.`,
   },
   {
     question: "How do I RSVP?",

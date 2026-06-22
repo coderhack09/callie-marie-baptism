@@ -8,8 +8,8 @@ import { ClientLayout } from "@/components/client-layout"
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://callie-marie-baptism.weddinginvitationrsvp.com/"
 const canonicalUrl = siteUrl.replace(/\/$/, "")
-const desktopHero = "/Details/LinkPreview.png"
-const mobileHero = "/Details/LinkPreview.png"
+const desktopHero = "/Details/newlink.png"
+const mobileHero = "/Details/newlink.png"
 const eventImageUrl = `${canonicalUrl}${desktopHero}`
 
 const coupleNames = `${siteConfig.couple.child}`
