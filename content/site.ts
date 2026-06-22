@@ -43,7 +43,7 @@ export const siteConfig = {
   details: {
     rsvp: {
       deadline: "JULY 5, 2026",
-      contact: "Kenneth Erwin Brucelo Jose",
+      contact: "Jhoana Marie Magtalas-blas",
       phone: "+973 3999 9999",
     },
   },

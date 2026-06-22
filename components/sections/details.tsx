@@ -687,7 +687,7 @@ export function Details() {
             index={1}
           >
             <p className="text-center" style={{ fontFamily: '"Fahkwang", sans-serif', fontSize: "clamp(0.88rem, 2.7vw, 1rem)", color: text.body, lineHeight: 1.85 }}>
-              Please arrive at least 30 minutes early. The ceremony begins at{" "}
+              Please arrive at least 15 minutes early. The ceremony begins at{" "}
               <span style={{ color: C.roseDeep, fontWeight: 600 }}>{siteConfig.ceremony.time}</span>, so kindly be seated by{" "}
               <span style={{ color: C.roseDeep, fontWeight: 600 }}>{siteConfig.ceremony.guestsTime}</span>.
             </p>
