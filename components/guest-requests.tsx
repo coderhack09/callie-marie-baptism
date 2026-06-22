@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { postGoogleScript } from "@/lib/google-script-client"
 import { Button } from "@/components/ui/button"
 import {
   CheckCircle,
@@ -76,24 +77,15 @@ export function GuestRequests({ requests, onRefresh, onApproveRequest, isLoading
     }
 
     try {
-      const response = await fetch("/api/guest-requests", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          Name: formData.Name,
-          Email: formData.Email,
-          Phone: formData.Phone,
-          RSVP: formData.RSVP,
-          Guest: formData.Guest,
-          Message: formData.Message,
-        }),
+      await postGoogleScript("guestRequest", {
+        action: "update",
+        Name: formData.Name,
+        Email: formData.Email,
+        Phone: formData.Phone,
+        RSVP: formData.RSVP,
+        Guest: formData.Guest,
+        Message: formData.Message,
       })
-
-      if (!response.ok) {
-        throw new Error("Failed to update request")
-      }
 
       setSuccessMessage("Request updated successfully!")
       setTimeout(() => setSuccessMessage(null), 3000)
@@ -113,17 +105,7 @@ export function GuestRequests({ requests, onRefresh, onApproveRequest, isLoading
     }
 
     try {
-      const response = await fetch("/api/guest-requests", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ Name: requestName }),
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to delete request")
-      }
+      await postGoogleScript("guestRequest", { action: "delete", Name: requestName })
 
       setSuccessMessage("Request deleted successfully!")
       setTimeout(() => setSuccessMessage(null), 3000)
@@ -174,7 +156,7 @@ export function GuestRequests({ requests, onRefresh, onApproveRequest, isLoading
           <div className="flex-1">
             <h3 className="font-semibold text-purple-900 mb-1">Join Requests</h3>
             <p className="text-sm text-purple-700">
-              These are guests who have requested to join your wedding. Review and approve them to add to your guest list, or edit/delete as needed.
+              These are guests who have requested to join Callie Marie&apos;s baptism. Review and approve them to add to your guest list, or edit/delete as needed.
             </p>
           </div>
         </div>

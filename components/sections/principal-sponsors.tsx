@@ -6,6 +6,7 @@ import { Section } from "@/components/section"
 import { Loader2, Users } from "lucide-react"
 import { Cormorant_Garamond } from "next/font/google"
 import { siteConfig } from "@/content/site"
+import { fetchGoogleScript } from "@/lib/google-script-client"
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -72,9 +73,7 @@ export function PrincipalSponsors() {
   const fetchSponsors = async () => {
     setIsLoading(true)
     try {
-      const res = await fetch("/api/principal-sponsor", { cache: "no-store" })
-      if (!res.ok) throw new Error("Failed to load principal sponsors")
-      const data: PrincipalSponsor[] = await res.json()
+      const data = await fetchGoogleScript<PrincipalSponsor[]>("sponsors")
       setSponsors(data)
     } catch (e: any) {
       console.error(e)

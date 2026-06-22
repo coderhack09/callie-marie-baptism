@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import MessageWallDisplay from "./message-wall-display"
 import { siteConfig } from "@/content/site"
+import { fetchGoogleScript } from "@/lib/google-script-client"
+import { parseMessagesFromGoogleSheet, type Message } from "@/lib/messages"
 import { C, text } from "@/components/loader/christening-theme"
 import { CornerFloralDecor } from "@/components/loader/ChristeningDecor"
 import { ChristeningParticles } from "@/components/loader/ChristeningParticles"
@@ -19,12 +21,6 @@ const cardStyle = {
 } as const
 
 const childName = siteConfig.couple.child
-
-interface Message {
-  timestamp: string
-  name: string
-  message: string
-}
 
 interface MessageFormProps {
   onSuccess?: () => void
@@ -246,16 +242,16 @@ export function Messages() {
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(false)
 
-  const fetchMessages = useCallback(() => {
+  const fetchMessages = useCallback(async () => {
     setLoading(true)
-    fetch("/api/messages", { cache: "no-store", headers: { "Cache-Control": "no-cache" } })
-      .then((r) => r.json())
-      .then((data) => {
-        if (!Array.isArray(data)) { setMessages([]); setLoading(false); return }
-        setMessages(data.filter((m) => m.name || m.message || m.timestamp).reverse())
-        setLoading(false)
-      })
-      .catch(() => setLoading(false))
+    try {
+      const data = await fetchGoogleScript<unknown>("message")
+      setMessages(parseMessagesFromGoogleSheet(data).reverse())
+    } catch {
+      setMessages([])
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => { fetchMessages() }, [fetchMessages])

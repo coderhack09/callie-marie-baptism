@@ -20,6 +20,7 @@ import {
   ChevronRight,
 } from "lucide-react"
 import { siteConfig } from "@/content/site"
+import { fetchGoogleScript, postGoogleScript, normalizeGuests } from "@/lib/google-script-client"
 import { C, text } from "@/components/loader/christening-theme"
 import { CornerFloralDecor } from "@/components/loader/ChristeningDecor"
 import { ChristeningParticles } from "@/components/loader/ChristeningParticles"
@@ -295,13 +296,7 @@ export function GuestList() {
   const fetchGuests = async () => {
     setIsLoading(true)
     try {
-      // Fetch from local API route which connects to Google Sheets
-      const response = await fetch("/api/guests")
-      
-      if (!response.ok) {
-        throw new Error("Failed to fetch guests")
-      }
-      const data: ApiGuest[] = await response.json()
+      const data = normalizeGuests(await fetchGoogleScript("guestList"))
       
       // Map API response to expected Guest format
       const mappedGuests: Guest[] = data
@@ -392,25 +387,16 @@ export function GuestList() {
       // Determine the status based on RSVP
       const status = formData.RSVP === "Yes" ? "confirmed" : formData.RSVP === "No" ? "declined" : "pending"
       
-      const response = await fetch("/api/guests", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: String(selectedGuest.id),
-          name: formData.Name,
-          email: formData.Email || "Pending",
-          status: status,
-          allowedGuests: parseInt(guestCount),
-          message: formData.Message,
-          companions: companions, // Include companion names
-        }),
+      await postGoogleScript("guestList", {
+        action: "update",
+        id: String(selectedGuest.id),
+        name: formData.Name,
+        email: formData.Email || "Pending",
+        status: status,
+        allowedGuests: parseInt(guestCount),
+        message: formData.Message,
+        companions: companions,
       })
-
-      if (!response.ok) {
-        throw new Error("Failed to submit RSVP")
-      }
 
       // Show success and close modal after delay
       setSuccess("Thank you for your response!")
@@ -458,25 +444,14 @@ export function GuestList() {
     setRequestSuccess(null)
 
     try {
-      // Submit to guest-requests API
-      const response = await fetch("/api/guest-requests", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          Name: requestFormData.Name,
-          Email: requestFormData.Email || "",
-          Phone: requestFormData.Phone || "",
-          RSVP: "",
-          Guest: requestFormData.Guest || "1",
-          Message: requestFormData.Message || "",
-        }),
+      await postGoogleScript("guestRequest", {
+        Name: requestFormData.Name,
+        Email: requestFormData.Email || "",
+        Phone: requestFormData.Phone || "",
+        RSVP: "",
+        Guest: requestFormData.Guest || "1",
+        Message: requestFormData.Message || "",
       })
-
-      if (!response.ok) {
-        throw new Error("Failed to submit request")
-      }
 
       setRequestSuccess("Request submitted! We'll review and get back to you.")
       

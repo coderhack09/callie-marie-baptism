@@ -1,3 +1,8 @@
+import {
+  proposalRoleDefinitions,
+  proposalRoleIdAliases,
+} from "@/content/proposal-roles"
+
 export const siteConfig = {
   couple: {
     bride: "Clarisse Mae Arnan Reyes",
@@ -11,15 +16,16 @@ export const siteConfig = {
     parents: "Jhoana Marie & Anthony Shane R. Blas",
   },
   googleAPI:{
-    messageForm: "https://docs.google.com/forms/d/e/1FAIpQLSfESWn88PcJWazUe8GyLCWSsYTGysnPeUgtSA8N3CWgXkVLjA/formResponse", //done
-    message: "https://script.google.com/macros/s/AKfycbwZCHyS8heRNO-OdJDlfILvMPKamoih5HfuxSAM1ynpJhfxWFa_Cm5DIQQI7DKfZE3r/exec",  //done
-    guestList: "https://script.google.com/macros/s/AKfycbyNPWlGz6pCWA7Wda8rlIMTaEwUnPyl6Vpcii0_jlGYWqjyTWQQwo1VUz2eaD9VMFET/exec",  //done
-    guestRequest: "https://script.google.com/macros/s/AKfycbwruiWpmXe6UEyRorFzhW2bsw1iJOMne7DKDid8e3pjFWceJN9GKylKXTcEr324NhbG/exec",  //done
-    entourage: "https://script.google.com/macros/s/AKfycbx2d3ySwfAIlyPbazj0TY_jSdLhOfO-bc2fcJu5s9PdUG7imNx6W7JIyvA78H0_PI4C/exec", ///done
-    sponsors: "https://script.google.com/macros/s/AKfycby-Bnaq9TVz6pwnZ8pnQCaI59XWxLmkNmuHoPevE_kwF9Qvz3F9MEsV4BrwXA0ABBr1/exec",  //donee
-    weddingDetails: "https://script.google.com/macros/s/AKfycbzTqnFT9QwM1erY_wU2AgPBds0IZ87RLM-srVgIBqhlbEuYl9o4eONgqxqj2TCb9hYV/exec",  //done
+    messageForm: "https://docs.google.com/forms/d/e/1FAIpQLSfpZnsWiMG7wxwnzPnSNg1AIlznOcE6NN1hOe19m4PwVzio-A/formResponse", //done
+    message: "https://script.google.com/macros/s/AKfycbz8BXK2HSCGHQS1xQ3Q_fwjFGsNpbWZ2FofhEJVlbknA9iee4xYvDMCnwdquKSym0JI/exec",  //done
+    guestList: "https://script.google.com/macros/s/AKfycbwCpMJqo0DePgyeZQwj5FQcO0TmNn_lny3B0GluhCJDWln751afXg3wUR89PpO8eCAQ/exec",  //done
+    guestRequest: "https://script.google.com/macros/s/AKfycbwwoMYNxl46jM0OxjOliVrZtajgoYFzJbDErvdVBQCUnn5CLnrsJ9frUkjrQO2WB_cp/exec",  //done
+    entourage: "https://script.google.com/macros/s/AKfycbxQ5OlQJQY0C_9SBvOgqRkq1QlR67cJ6raFBkk992o6bibihFYOR3sqk2bTh-GwItB7/exec", //done
+    sponsors: "https://script.google.com/macros/s/AKfycbxvutbexiMSYnaI17quELLMZyoOadM8GMxKVSNvfAT6nhGwJdktcoKbWpY2AkFdY5Xe/exec",  //done
+    proposalResponses: "https://script.google.com/macros/s/AKfycbxvutbexiMSYnaI17quELLMZyoOadM8GMxKVSNvfAT6nhGwJdktcoKbWpY2AkFdY5Xe/exec", //done
+    weddingDetails: "https://script.google.com/macros/s/AKfycbzTqnFT9QwM1erY_wU2AgPBds0IZ87RLM-srVgIBqhlbEuYl9o4eONgqxqj2TCb9hYV/exec",  
 ////google share 
-    googleShare: "https://docs.google.com/spreadsheets/d/1Kj8COzOL-MpuoOiAQR-Fnoi8JhhDQqzBskCMlirK19c/edit?usp=sharing", //done
+    googleShare: "https://docs.google.com/spreadsheets/d/1HwbO0W-mg252srS5EOaiB_OdiNxbqwZseDSd0OSnpS4/edit?usp=sharing", 
   },
   wedding: {
     date: "July 12,2026",
@@ -28,6 +34,11 @@ export const siteConfig = {
     tagline: "are getting married!",
     theme: "Our wedding palette is inspired by timeless elegance and warmth.Motif Colors: Champagne Gold, Soft Beige, Warm Soft Brown",
     motif: "#001F4B, #04396D, #015B97, #6497B2, #B2CDE0",
+  },
+  proposal: {
+    honorAttendant: "Maid of Honor" as "Matron of Honor" | "Maid of Honor",
+    roles: proposalRoleDefinitions,
+    roleIdAliases: proposalRoleIdAliases,
   },
   details: {
     rsvp: {
@@ -59,8 +70,8 @@ export const siteConfig = {
   ceremony: {
     location: "St. Aedan’s Church",
     venue: "800 Bergen Ave, Jersey City, NJ 07306",
-    date: "July 4, 2026",
-    day: "Saturday",
+    date: "July 12, 2026",
+    day: "Sunday",
     time: "3:00 PM",
     entourageTime: "2:00 PM",
     guestsTime: "2:30 PM",
@@ -69,7 +80,7 @@ export const siteConfig = {
   reception: {
     location: "The Highlawn",
     venue: "1 Crest Dr. West Orange, NJ 07052",
-    date: "July 4, 2026",
+    date: "July 12, 2026",
     time: "5:00 PM",
     image: ["/Details/reception1.png","/Details/reception.png"],
   },                          

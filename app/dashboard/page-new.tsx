@@ -65,7 +65,7 @@ export default function DashboardPage() {
   const [showAddGuestModal, setShowAddGuestModal] = useState(false)
   const [editingGuest, setEditingGuest] = useState<Guest | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<"dashboard" | "guests" | "requests" | "messages" | "entourage" | "details">("dashboard")
+  const [activeTab, setActiveTab] = useState<"dashboard" | "guests" | "requests" | "messages" | "entourage" | "proposals" | "details">("dashboard")
   
   // Guest Request state
   const [guestRequests, setGuestRequests] = useState<GuestRequest[]>([])

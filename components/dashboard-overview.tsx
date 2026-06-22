@@ -14,7 +14,7 @@ interface DashboardOverviewProps {
     entourage?: number
     principalSponsors?: number
   }
-  weddingBrief?: {
+  baptismBrief?: {
     title: string
     content: string
   }
@@ -49,19 +49,19 @@ function StatCard({ icon, value, label, iconBgColor, iconColor }: StatCardProps)
   )
 }
 
-export function DashboardOverview({ stats, weddingBrief }: DashboardOverviewProps) {
+export function DashboardOverview({ stats, baptismBrief }: DashboardOverviewProps) {
   const defaultBrief = {
-    title: "Gemini's Wedding Brief",
-    content: `Here are a few options for a joyful status update: **Option 1: Sweet and simple** "The countdown is officially on! 🔔 We already have ${stats.confirmedPax} of our favorite people confirmed, and we can't wait to hear from the rest of you. We are so excited to see our final group of ${stats.guestGroups} come together for the big day! ❤️ **Option 2: High energy** "RSVPs are rolling in and our hearts are full! ❤️ ${stats.confirmedPax} 'Yes' responses down, ${stats.pendingRSVP} more to hear from! We can't wait to reach our magic number of ${stats.guestGroups} and celebrate the best day ever with you all! 🎉 ✨ **Option 3: Short and punchy** "${stats.confirmedPax} confirmed, ${stats.pendingRSVP} to go! 📝 Watching the guest list grow is getting us so excited for our celebration of ${stats.guestGroups}. Let the wedding countdown begin! 🔔 ✨ **Option 4: Focus on the "Yes"*** "It's getting real! ⭕ We've got ${stats.confirmedPax} 'Yes' votes in the bag and ${stats.pendingRSVP} more pending. We can't wait to see who fills our final ${stats.guestGroups} spots—see you at the altar! 💕 🔔 ""`
+    title: "Baptism Brief",
+    content: `Here are a few options for a joyful status update: **Option 1: Sweet and simple** "The countdown is officially on! 🔔 We already have ${stats.confirmedPax} of our loved ones confirmed, and we can't wait to hear from the rest of you. We are so excited to see our final group of ${stats.guestGroups} come together for Callie's baptism day! ✝️ **Option 2: High energy** "RSVPs are rolling in and our hearts are full! ✝️ ${stats.confirmedPax} 'Yes' responses down, ${stats.pendingRSVP} more to hear from! We can't wait to reach our magic number of ${stats.guestGroups} and celebrate this blessed day with you all! 🎉 ✨ **Option 3: Short and punchy** "${stats.confirmedPax} confirmed, ${stats.pendingRSVP} to go! 📝 Watching the guest list grow is getting us so excited for our baptism celebration of ${stats.guestGroups} families. Let the countdown begin! 🔔 ✨ **Option 4: Focus on the "Yes"*** "It's getting real! ⭕ We've got ${stats.confirmedPax} 'Yes' votes in the bag and ${stats.pendingRSVP} more pending. We can't wait to see who fills our final ${stats.guestGroups} spots—see you at the church! 💕 🔔 ""`
   }
 
-  const brief = weddingBrief || defaultBrief
+  const brief = baptismBrief || defaultBrief
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-[#111827] mb-2">Wedding Overview</h1>
+        <h1 className="text-3xl font-bold text-[#111827] mb-2">Baptism Overview</h1>
       </div>
 
       {/* Stats Cards Grid */}
@@ -124,7 +124,7 @@ export function DashboardOverview({ stats, weddingBrief }: DashboardOverviewProp
         />
       </div>
 
-      {/* Wedding Brief Card */}
+      {/* Baptism Brief Card */}
       <div className="bg-gradient-to-br from-[#8B6F47] to-[#6B5335] rounded-2xl p-8 shadow-lg">
         <div className="flex items-center gap-3 mb-4">
           <Plane className="h-6 w-6 text-white" />

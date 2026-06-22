@@ -8,6 +8,8 @@ import {
   RefreshCw,
   Clock,
 } from "lucide-react"
+import { fetchGoogleScript } from "@/lib/google-script-client"
+import { parseMessagesFromGoogleSheet } from "@/lib/messages"
 
 interface Message {
   timestamp: string
@@ -17,9 +19,10 @@ interface Message {
 
 interface GuestMessagesProps {
   guests?: any[]
+  onMessagesLoaded?: (count: number) => void
 }
 
-export function GuestMessages({ guests = [] }: GuestMessagesProps) {
+export function GuestMessages({ guests = [], onMessagesLoaded }: GuestMessagesProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [messages, setMessages] = useState<Message[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -29,20 +32,10 @@ export function GuestMessages({ guests = [] }: GuestMessagesProps) {
     setIsLoading(true)
     setError(null)
     try {
-      const response = await fetch("/api/messages", {
-        cache: "no-store",
-        headers: {
-          "Cache-Control": "no-cache",
-        },
-      })
-      
-      if (!response.ok) {
-        throw new Error("Failed to fetch messages")
-      }
-      
-      const data = await response.json()
-      console.log("Messages fetched:", data)
-      setMessages(Array.isArray(data) ? data : [])
+      const data = await fetchGoogleScript<unknown>("message")
+      const parsed = parseMessagesFromGoogleSheet(data)
+      setMessages(parsed)
+      onMessagesLoaded?.(parsed.length)
     } catch (error) {
       console.error("Error fetching messages:", error)
       setError("Failed to load messages")
@@ -116,7 +109,7 @@ export function GuestMessages({ guests = [] }: GuestMessagesProps) {
           <div className="flex-1">
             <h3 className="font-semibold text-[#6B4423] text-lg mb-2">Messages from Your Guests</h3>
             <p className="text-sm text-[#6B7280]">
-              Read heartfelt messages and well wishes from your guests. These messages were submitted through your wedding website.
+              Read heartfelt messages and well wishes from your guests. These messages were submitted through the baptism invitation site.
             </p>
           </div>
         </div>

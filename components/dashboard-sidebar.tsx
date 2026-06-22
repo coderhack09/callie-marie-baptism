@@ -4,18 +4,18 @@ import {
   Users,
   MessageSquare,
   Crown,
-  FileText,
   LayoutDashboard,
   RefreshCw,
   ExternalLink,
   UserPlus,
+  Heart,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { siteConfig } from "@/content/site"
 
 interface DashboardSidebarProps {
-  activeTab: "dashboard" | "guests" | "requests" | "messages" | "entourage" | "details"
-  onTabChange: (tab: "dashboard" | "guests" | "requests" | "messages" | "entourage" | "details") => void
+  activeTab: "dashboard" | "guests" | "requests" | "messages" | "entourage" | "proposals"
+  onTabChange: (tab: "dashboard" | "guests" | "requests" | "messages" | "entourage" | "proposals") => void
   guestRequestCount: number
   messageCount: number
 }
@@ -58,9 +58,9 @@ export function DashboardSidebar({
       badge: null,
     },
     {
-      id: "details" as const,
-      label: "Wedding Details",
-      icon: FileText,
+      id: "proposals" as const,
+      label: "Godparent Proposals",
+      icon: Heart,
       badge: null,
     },
   ]
@@ -71,11 +71,11 @@ export function DashboardSidebar({
       <div className="p-6 border-b border-[#E5E7EB]">
         <div className="flex items-center gap-2 mb-2">
           <div className="w-8 h-8 bg-[#A67C52] rounded-lg flex items-center justify-center">
-            <span className="text-white font-serif text-lg">♥</span>
+            <span className="text-white font-serif text-lg">✝</span>
           </div>
-          <span className="font-serif text-lg font-bold text-[#6B4423]">Wedding Invitation</span>
+          <span className="font-serif text-lg font-bold text-[#6B4423]">Holy Baptism</span>
         </div>
-        <p className="text-xs text-[#6B7280] uppercase tracking-wide">Dashboard Panel</p>
+        <p className="text-xs text-[#6B7280] uppercase tracking-wide">Baptism Dashboard</p>
       </div>
 
       {/* Navigation Items */}

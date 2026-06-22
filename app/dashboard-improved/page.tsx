@@ -1,10 +1,9 @@
 "use client"
 
 /**
- * Example Dashboard Page with Improved Guest List
+ * Baptism Dashboard Page with Improved Guest List
  * 
- * This is a complete example showing how to integrate the ImprovedGuestList component
- * into your wedding website dashboard.
+ * Guest management dashboard for Callie Marie's baptism invitation site.
  * 
  * To use this:
  * 1. Set up the Google Apps Script (see GUEST_MANAGEMENT_SETUP.md)
@@ -42,7 +41,7 @@ export default function ImprovedDashboardPage() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   // Dashboard password - CHANGE THIS!
-  const DASHBOARD_PASSWORD = "wedding2025" // ⚠️ Change this to your preferred password
+  const DASHBOARD_PASSWORD = "2026" // ⚠️ Change this to your preferred password
 
   // Check if already authenticated
   useEffect(() => {
@@ -277,10 +276,10 @@ export default function ImprovedDashboardPage() {
                 <Lock className="h-8 w-8 text-white" />
               </div>
               <h1 className="text-2xl font-bold text-[#111827] mb-2">
-                Guest Management Dashboard
+                Baptism Guest Dashboard
               </h1>
               <p className="text-[#6B7280] text-sm">
-                Enter password to access the improved guest list
+                Enter password to access the baptism guest management panel
               </p>
             </div>
 
@@ -316,7 +315,7 @@ export default function ImprovedDashboardPage() {
 
             <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <p className="text-xs text-blue-700">
-                <strong>Note:</strong> This is the improved guest management system with companion tracking and VIP features.
+                <strong>Note:</strong> Baptism guest management with companion tracking and VIP features.
               </p>
             </div>
           </div>
@@ -336,10 +335,10 @@ export default function ImprovedDashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-[#6E4C3A]">
-                Guest Management Dashboard
+                Baptism Guest Dashboard
               </h1>
               <p className="text-sm text-gray-500 mt-1">
-                Improved system with companion tracking and VIP features
+                Manage guests, companions, and RSVPs for Callie Marie&apos;s baptism
               </p>
             </div>
             <div className="flex items-center gap-3">

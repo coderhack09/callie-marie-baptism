@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { postGoogleScript } from "@/lib/google-script-client"
 import { Button } from "@/components/ui/button"
 import {
   Crown,
@@ -101,17 +102,7 @@ export function EntourageSponsors({
     setProcessingAction("Adding entourage member")
 
     try {
-      const response = await fetch("/api/entourage", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(entourageFormData),
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to add entourage member")
-      }
+      await postGoogleScript("entourage", entourageFormData)
 
       setIsProcessing(false)
       setSuccessMessage("Entourage member added successfully!")
@@ -139,21 +130,11 @@ export function EntourageSponsors({
     setProcessingAction("Updating entourage member")
 
     try {
-      const response = await fetch("/api/entourage", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          action: "update",
-          originalName: editingEntourage.Name,
-          ...entourageFormData,
-        }),
+      await postGoogleScript("entourage", {
+        action: "update",
+        originalName: editingEntourage.Name,
+        ...entourageFormData,
       })
-
-      if (!response.ok) {
-        throw new Error("Failed to update entourage member")
-      }
 
       setIsProcessing(false)
       setSuccessMessage("Entourage member updated successfully!")
@@ -179,17 +160,7 @@ export function EntourageSponsors({
     setProcessingAction("Deleting entourage member")
 
     try {
-      const response = await fetch("/api/entourage", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ Name: memberName }),
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to delete entourage member")
-      }
+      await postGoogleScript("entourage", { action: "delete", Name: memberName })
 
       setIsProcessing(false)
       setSuccessMessage("Entourage member deleted successfully!")
@@ -216,17 +187,7 @@ export function EntourageSponsors({
     setProcessingAction("Adding principal sponsor")
 
     try {
-      const response = await fetch("/api/principal-sponsor", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(sponsorFormData),
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to add principal sponsor")
-      }
+      await postGoogleScript("sponsors", { action: "create", ...sponsorFormData })
 
       setIsProcessing(false)
       setSuccessMessage("Principal sponsor added successfully!")
@@ -251,21 +212,12 @@ export function EntourageSponsors({
     setProcessingAction("Updating principal sponsor")
 
     try {
-      const response = await fetch("/api/principal-sponsor", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          originalMale: editingSponsor.MalePrincipalSponsor,
-          originalFemale: editingSponsor.FemalePrincipalSponsor,
-          ...sponsorFormData,
-        }),
+      await postGoogleScript("sponsors", {
+        action: "update",
+        originalMale: editingSponsor.MalePrincipalSponsor,
+        originalFemale: editingSponsor.FemalePrincipalSponsor,
+        ...sponsorFormData,
       })
-
-      if (!response.ok) {
-        throw new Error("Failed to update principal sponsor")
-      }
 
       setIsProcessing(false)
       setSuccessMessage("Principal sponsor updated successfully!")
@@ -291,20 +243,10 @@ export function EntourageSponsors({
     setProcessingAction("Deleting principal sponsor")
 
     try {
-      const response = await fetch("/api/principal-sponsor", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          MalePrincipalSponsor: sponsor.MalePrincipalSponsor,
-          FemalePrincipalSponsor: sponsor.FemalePrincipalSponsor,
-        }),
+      await postGoogleScript("sponsors", {
+        action: "delete",
+        MalePrincipalSponsor: sponsor.MalePrincipalSponsor,
       })
-
-      if (!response.ok) {
-        throw new Error("Failed to delete principal sponsor")
-      }
 
       setIsProcessing(false)
       setSuccessMessage("Principal sponsor deleted successfully!")

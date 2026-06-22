@@ -3,6 +3,7 @@
 import React from "react"
 import { useState, useEffect, useRef } from "react"
 import { principalSponsors as staticSponsors } from "@/content/site"
+import { fetchGoogleScript } from "@/lib/google-script-client"
 import { Loader2 } from "lucide-react"
 import { C, text } from "@/components/loader/christening-theme"
 import { CornerFloralDecor } from "@/components/loader/ChristeningDecor"
@@ -189,9 +190,7 @@ export function Entourage() {
   const fetchSponsors = async () => {
     setIsLoading(true)
     try {
-      const res = await fetch("/api/principal-sponsor", { cache: "no-store" })
-      if (!res.ok) throw new Error("Failed to load")
-      const data: PrincipalSponsor[] = await res.json()
+      const data = await fetchGoogleScript<PrincipalSponsor[]>("sponsors")
       const list =
         Array.isArray(data) && data.length > 0
           ? data.filter((s) => s.MalePrincipalSponsor || s.FemalePrincipalSponsor)

@@ -11,13 +11,23 @@ import {
   X,
 } from "lucide-react"
 import { siteConfig } from "@/content/site"
+import {
+  fetchGoogleScript,
+  postGoogleScript,
+  normalizeGuests,
+  normalizeGuestRequests,
+  createGuestOnSheet,
+  updateGuestOnSheet,
+  deleteGuestOnSheet,
+} from "@/lib/google-script-client"
+import { parseMessagesFromGoogleSheet } from "@/lib/messages"
 import { DashboardSidebar } from "@/components/dashboard-sidebar"
 import { DashboardOverview } from "@/components/dashboard-overview"
 import { ImprovedGuestList, Guest } from "@/components/improved-guest-list"
 import { GuestRequests } from "@/components/guest-requests"
 import { GuestMessages } from "@/components/guest-messages"
 import { EntourageSponsors } from "@/components/entourage-sponsors"
-import { WeddingDetailsEditor } from "@/components/wedding-details-editor"
+import { ProposalDashboard } from "@/components/proposal-dashboard"
 
 interface GuestRequest {
   Name: string
@@ -48,7 +58,7 @@ export default function DashboardPage() {
   const [filteredGuests, setFilteredGuests] = useState<Guest[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<"dashboard" | "guests" | "requests" | "messages" | "entourage" | "details">("dashboard")
+  const [activeTab, setActiveTab] = useState<"dashboard" | "guests" | "requests" | "messages" | "entourage" | "proposals">("dashboard")
   
   // Guest Request state
   const [guestRequests, setGuestRequests] = useState<GuestRequest[]>([])
@@ -62,6 +72,9 @@ export default function DashboardPage() {
   const [principalSponsors, setPrincipalSponsors] = useState<PrincipalSponsor[]>([])
   const [filteredPrincipalSponsors, setFilteredPrincipalSponsors] = useState<PrincipalSponsor[]>([])
 
+  // Guest messages count (from Messages sheet)
+  const [messageCount, setMessageCount] = useState(0)
+
   // Password - you can change this!
   const DASHBOARD_PASSWORD = "2026" // Change this to your preferred password
 
@@ -74,25 +87,25 @@ export default function DashboardPage() {
       fetchGuestRequests()
       fetchEntourage()
       fetchPrincipalSponsors()
+      fetchMessages()
     }
   }, [])
+
+  const fetchMessages = async () => {
+    try {
+      const data = await fetchGoogleScript<unknown>("message")
+      setMessageCount(parseMessagesFromGoogleSheet(data).length)
+    } catch (error) {
+      console.error("Error fetching messages:", error)
+    }
+  }
 
   const fetchGuests = async () => {
     setIsLoading(true)
     try {
-      const response = await fetch("/api/guests")
-      if (!response.ok) {
-        throw new Error("Failed to fetch guests")
-      }
-      const data = await response.json()
-      
-      // Handle error response
-      if (data.error) {
-        throw new Error(data.error)
-      }
-      
-      setGuests(Array.isArray(data) ? data : [])
-      setFilteredGuests(Array.isArray(data) ? data : [])
+      const data = normalizeGuests(await fetchGoogleScript("guestList"))
+      setGuests(data)
+      setFilteredGuests(data)
     } catch (error) {
       console.error("Error fetching guests:", error)
       setError("Failed to load guest list")
@@ -104,25 +117,9 @@ export default function DashboardPage() {
   const fetchGuestRequests = async () => {
     setIsLoading(true)
     try {
-      // Fetch from guest-requests API with cache busting
-      const response = await fetch("/api/guest-requests", {
-        cache: "no-store",
-        headers: {
-          "Cache-Control": "no-cache",
-        },
-      })
-      
-      if (!response.ok) {
-        const errorText = await response.text()
-        console.error("Failed to fetch guest requests:", errorText)
-        throw new Error("Failed to fetch guest requests")
-      }
-      
-      const data = await response.json()
-      console.log("Guest requests fetched:", data)
-      
-      setGuestRequests(Array.isArray(data) ? data : [])
-      setFilteredRequests(Array.isArray(data) ? data : [])
+      const data = normalizeGuestRequests(await fetchGoogleScript("guestRequest"))
+      setGuestRequests(data)
+      setFilteredRequests(data)
     } catch (error) {
       console.error("Error fetching guest requests:", error)
       setError("Failed to load guest requests. Please check your connection.")
@@ -134,13 +131,9 @@ export default function DashboardPage() {
 
   const fetchEntourage = async () => {
     try {
-      const response = await fetch("/api/entourage")
-      if (!response.ok) {
-        throw new Error("Failed to fetch entourage")
-      }
-      const data = await response.json()
-      setEntourage(data)
-      setFilteredEntourage(data)
+      const data = await fetchGoogleScript<Entourage[]>("entourage")
+      setEntourage(Array.isArray(data) ? data : [])
+      setFilteredEntourage(Array.isArray(data) ? data : [])
     } catch (error) {
       console.error("Error fetching entourage:", error)
     }
@@ -148,13 +141,9 @@ export default function DashboardPage() {
 
   const fetchPrincipalSponsors = async () => {
     try {
-      const response = await fetch("/api/principal-sponsor")
-      if (!response.ok) {
-        throw new Error("Failed to fetch principal sponsors")
-      }
-      const data = await response.json()
-      setPrincipalSponsors(data)
-      setFilteredPrincipalSponsors(data)
+      const data = await fetchGoogleScript<PrincipalSponsor[]>("sponsors")
+      setPrincipalSponsors(Array.isArray(data) ? data : [])
+      setFilteredPrincipalSponsors(Array.isArray(data) ? data : [])
     } catch (error) {
       console.error("Error fetching principal sponsors:", error)
     }
@@ -170,6 +159,7 @@ export default function DashboardPage() {
       fetchGuestRequests()
       fetchEntourage()
       fetchPrincipalSponsors()
+      fetchMessages()
     } else {
       setError("Incorrect password. Please try again.")
       setPassword("")
@@ -182,6 +172,7 @@ export default function DashboardPage() {
     setPassword("")
     setGuests([])
     setFilteredGuests([])
+    setMessageCount(0)
   }
 
   const handleSyncSpreadsheet = () => {
@@ -189,10 +180,11 @@ export default function DashboardPage() {
     fetchGuestRequests()
     fetchEntourage()
     fetchPrincipalSponsors()
+    fetchMessages()
   }
 
   const handleApproveRequest = async (request: GuestRequest) => {
-    if (!confirm(`Add ${request.Name} to the guest list?`)) {
+    if (!confirm(`Approve ${request.Name} and add them to the guest list as confirmed?`)) {
       return
     }
 
@@ -201,48 +193,27 @@ export default function DashboardPage() {
     setSuccessMessage(null)
 
     try {
-      // Add to main guest list
-      const addResponse = await fetch("/api/guests", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: request.Name,
-          role: "Guest",
-          email: request.Email || "",
-          contact: request.Phone || "",
-          message: request.Message || "",
-          allowedGuests: parseInt(request.Guest) || 1,
-          companions: [],
-          tableNumber: "",
-          isVip: false,
-          status: request.RSVP === "Yes" ? "confirmed" : "pending",
-          addedBy: "Request Approved",
-        }),
+      await createGuestOnSheet({
+        name: request.Name,
+        role: "Guest",
+        email: request.Email && request.Email !== "Pending" ? request.Email : "",
+        contact: request.Phone || "",
+        message: request.Message || "",
+        allowedGuests: parseInt(request.Guest) || 1,
+        companions: [],
+        tableNumber: "",
+        isVip: false,
+        status: "confirmed",
+        addedBy: "Request Approved",
       })
 
-      if (!addResponse.ok) {
-        throw new Error("Failed to add to guest list")
-      }
+      await postGoogleScript("guestRequest", { action: "delete", Name: request.Name })
 
-      // Delete from guest requests
-      const deleteResponse = await fetch("/api/guest-requests", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ Name: request.Name }),
-      })
-
-      if (!deleteResponse.ok) {
-        throw new Error("Failed to remove from requests")
-      }
-
-      setSuccessMessage(`${request.Name} added to guest list!`)
+      setSuccessMessage(`${request.Name} added to guest list as confirmed!`)
       setTimeout(() => setSuccessMessage(null), 3000)
       await fetchGuests()
       await fetchGuestRequests()
+      setActiveTab("guests")
     } catch (error) {
       console.error("Error approving request:", error)
       setError("Failed to approve request")
@@ -259,23 +230,7 @@ export default function DashboardPage() {
     setSuccessMessage(null)
 
     try {
-      const response = await fetch("/api/guests", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(guestData),
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to add guest")
-      }
-
-      const data = await response.json()
-      
-      if (data.error) {
-        throw new Error(data.error)
-      }
+      await createGuestOnSheet(guestData)
 
       setSuccessMessage(`✓ ${guestData.name} added successfully!`)
       setTimeout(() => setSuccessMessage(null), 3000)
@@ -295,23 +250,7 @@ export default function DashboardPage() {
     setSuccessMessage(null)
 
     try {
-      const response = await fetch("/api/guests", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(guest),
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to update guest")
-      }
-
-      const data = await response.json()
-      
-      if (data.error) {
-        throw new Error(data.error)
-      }
+      await updateGuestOnSheet(guest)
 
       setSuccessMessage(`✓ ${guest.name} updated successfully!`)
       setTimeout(() => setSuccessMessage(null), 3000)
@@ -337,23 +276,7 @@ export default function DashboardPage() {
     setSuccessMessage(null)
 
     try {
-      const response = await fetch("/api/guests", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id }),
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to delete guest")
-      }
-
-      const data = await response.json()
-      
-      if (data.error) {
-        throw new Error(data.error)
-      }
+      await deleteGuestOnSheet(id)
 
       setSuccessMessage(`✓ Guest deleted successfully!`)
       setTimeout(() => setSuccessMessage(null), 3000)
@@ -380,9 +303,6 @@ export default function DashboardPage() {
 
   const stats = getRSVPStats()
 
-  // Count messages (guests with messages)
-  const messageCount = guests.filter(g => g.message && g.message.trim()).length
-
   // Login Screen
   if (!isAuthenticated) {
     return (
@@ -394,15 +314,15 @@ export default function DashboardPage() {
                 <Lock className="h-8 w-8 text-white" />
               </div>
               <div className="mb-2">
-                <span className="font-serif text-sm text-[#A67C52]">♥</span>
-                <span className="font-serif text-2xl font-bold text-[#6B4423] mx-2">Wedding Invitation</span>
-                <span className="font-serif text-sm text-[#A67C52]">♥</span>
+                <span className="font-serif text-sm text-[#A67C52]">✝</span>
+                <span className="font-serif text-2xl font-bold text-[#6B4423] mx-2">Holy Baptism</span>
+                <span className="font-serif text-sm text-[#A67C52]">✝</span>
               </div>
               <h1 className="text-2xl font-bold text-[#111827] mb-2">
                 Admin Dashboard
               </h1>
               <p className="text-[#6B7280] text-sm">
-                Enter password to access the wedding management panel
+                Enter password to access the baptism management panel
               </p>
             </div>
 
@@ -460,7 +380,7 @@ export default function DashboardPage() {
             <div>
               <h2 className="text-sm text-[#6B7280] font-medium">Welcome back,</h2>
               <h1 className="text-xl font-bold text-[#111827]">
-                {siteConfig.couple.groomNickname} & {siteConfig.couple.brideNickname}
+                {siteConfig.couple.child}&apos;s Baptism
               </h1>
             </div>
             <div className="flex items-center gap-3">
@@ -550,7 +470,7 @@ export default function DashboardPage() {
           )}
 
           {activeTab === "messages" && (
-            <GuestMessages />
+            <GuestMessages onMessagesLoaded={setMessageCount} />
           )}
 
           {activeTab === "entourage" && (
@@ -563,9 +483,7 @@ export default function DashboardPage() {
             />
           )}
 
-          {activeTab === "details" && (
-            <WeddingDetailsEditor />
-          )}
+          {activeTab === "proposals" && <ProposalDashboard />}
         </div>
       </div>
     </div>

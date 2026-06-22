@@ -41,17 +41,20 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { MalePrincipalSponsor, FemalePrincipalSponsor } = body
 
-    // Validation
-    if (!MalePrincipalSponsor || typeof MalePrincipalSponsor !== 'string') {
+    if (
+      (!MalePrincipalSponsor || typeof MalePrincipalSponsor !== "string") &&
+      (!FemalePrincipalSponsor || typeof FemalePrincipalSponsor !== "string")
+    ) {
       return NextResponse.json(
-        { error: 'MalePrincipalSponsor is required' },
+        { error: "At least one sponsor name is required" },
         { status: 400 }
       )
     }
 
     const sponsorData = {
-      MalePrincipalSponsor: MalePrincipalSponsor.trim(),
-      FemalePrincipalSponsor: FemalePrincipalSponsor?.trim() || '',
+      action: "create",
+      MalePrincipalSponsor: MalePrincipalSponsor?.trim() || "",
+      FemalePrincipalSponsor: FemalePrincipalSponsor?.trim() || "",
     }
 
     const response = await fetch(PRINCIPAL_SPONSOR_SCRIPT_URL, {

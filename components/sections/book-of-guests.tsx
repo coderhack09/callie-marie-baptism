@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react"
 import { RefreshCw, TrendingUp, Users, Crown } from "lucide-react"
 import Counter from "@/components/Counter"
 import { siteConfig } from "@/content/site"
+import { fetchGoogleScript, normalizeGuests } from "@/lib/google-script-client"
 import { C, text } from "@/components/loader/christening-theme"
 import { CornerFloralDecor } from "@/components/loader/ChristeningDecor"
 import { ChristeningParticles } from "@/components/loader/ChristeningParticles"
@@ -97,9 +98,7 @@ export function BookOfGuests() {
   const fetchGuests = async (showLoading = false) => {
     if (showLoading) setIsRefreshing(true)
     try {
-      const res = await fetch("/api/guests", { cache: "no-store" })
-      if (!res.ok) throw new Error("fetch failed")
-      const data: Guest[] = await res.json()
+      const data = normalizeGuests(await fetchGoogleScript("guestList"))
       const attending = data.filter((g) => g.status === "confirmed")
       const sorted = [...attending].sort((a, b) => {
         if (a.isVip && !b.isVip) return -1

@@ -30,8 +30,8 @@ export interface Guest {
 
 interface ImprovedGuestListProps {
   guests: Guest[];
-  onUpdateGuest: (guest: Guest) => void;
-  onDeleteGuest: (id: string) => void;
+  onUpdateGuest: (guest: Guest) => Promise<void>;
+  onDeleteGuest: (id: string) => Promise<void>;
   onAddGuest: (guest: Omit<Guest, 'id'>) => Promise<void>;
 }
 
@@ -154,7 +154,7 @@ export const ImprovedGuestList: React.FC<ImprovedGuestListProps> = ({
 
     try {
       if (editingGuest) {
-        onUpdateGuest({ ...editingGuest, ...guestData });
+        await onUpdateGuest({ ...editingGuest, ...guestData });
       } else {
         await onAddGuest(guestData);
       }
@@ -190,7 +190,7 @@ export const ImprovedGuestList: React.FC<ImprovedGuestListProps> = ({
     setSavedGuestName(guest.name);
 
     try {
-      onDeleteGuest(guest.id);
+      await onDeleteGuest(guest.id);
       
       // Wait a bit for the delete to complete
       await new Promise(resolve => setTimeout(resolve, 500));

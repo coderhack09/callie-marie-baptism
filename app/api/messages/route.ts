@@ -1,14 +1,11 @@
 import { siteConfig } from "@/content/site"
+import { parseMessagesFromGoogleSheet, type Message } from "@/lib/messages"
 import { type NextRequest, NextResponse } from "next/server"
 
 // Google Apps Script URL for Messages sheet
 const MESSAGES_SCRIPT_URL = siteConfig.googleAPI.message
 
-export interface Message {
-  timestamp: string
-  name: string
-  message: string
-}
+export type { Message }
 
 // GET: Fetch all messages from Google Sheets
 export async function GET() {
@@ -29,49 +26,7 @@ export async function GET() {
     }
 
     const data = await response.json()
-    console.log('Raw data from Google Script:', data)
-
-    // Handle various response formats from Google Sheets
-    const possibleRows = (data && (data.GoogleSheetData ?? data.rows ?? data.values ?? data)) as unknown
-    
-    if (!Array.isArray(possibleRows)) {
-      console.warn("Unexpected messages payload shape; expected an array", data)
-      return NextResponse.json([], { status: 200 })
-    }
-
-    const rows = possibleRows as string[][]
-    
-    if (rows.length === 0) {
-      return NextResponse.json([], { status: 200 })
-    }
-
-    // Extract header row
-    const [header, ...entries] = rows
-    
-    if (!Array.isArray(header)) {
-      console.warn("Unexpected header row format", header)
-      return NextResponse.json([], { status: 200 })
-    }
-
-    // Find column indices (case-insensitive)
-    const idxName = header.findIndex((h: string) => typeof h === "string" && h.toLowerCase().includes("name"))
-    const idxMsg = header.findIndex((h: string) => typeof h === "string" && h.toLowerCase().includes("message"))
-    const idxTime = header.findIndex((h: string) => typeof h === "string" && h.toLowerCase().includes("timestamp"))
-
-    const safeIdxName = idxName >= 0 ? idxName : 0
-    const safeIdxMsg = idxMsg >= 0 ? idxMsg : 1
-    const safeIdxTime = idxTime >= 0 ? idxTime : 2
-
-    // Parse and filter messages
-    const parsed: Message[] = entries
-      .filter((row: unknown) => Array.isArray(row))
-      .map((row: string[]) => ({
-        timestamp: row[safeIdxTime] ?? "",
-        name: row[safeIdxName] ?? "",
-        message: row[safeIdxMsg] ?? "",
-      }))
-      .filter((m) => m.name || m.message || m.timestamp)
-    
+    const parsed = parseMessagesFromGoogleSheet(data)
     console.log('Parsed messages:', parsed.length)
     return NextResponse.json(parsed, { status: 200 })
   } catch (error) {
